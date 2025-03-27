@@ -1,6 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 
-namespace OOP_HotelBooking;
+namespace HotelBooking;
 
 public class DatabaseConnection
 {

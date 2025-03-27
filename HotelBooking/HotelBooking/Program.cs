@@ -1,8 +1,7 @@
-﻿using HotelBooking;
-using HotelBooking.Services;
-using HotelBooking.Models;
-using OOP_HotelBooking.Models;
+﻿
 using OOP_HotelBooking.Services;
+using HotelBooking.Models;
+
 
 namespace HotelBooking
 {
