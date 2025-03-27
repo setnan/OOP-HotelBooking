@@ -1,5 +1,52 @@
+# Rider spesifikke filer og mapper
+.idea/
+
+# Visual Studio spesifikke filer og mapper
+.vs/
+
+# Byggeartefakter og binærfiler
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+out/
+
+# OS-spesifikke filer
+.DS_Store
+Thumbs.db
+
+# Brukerspesifikke filer
+*.user
+*.suo
+*.userprefs
+*.csproj.user
+*.tmp
+
+# Rider tilleggsfiler
+*.DotSettings.user
+
+# JetBrains Rider cache- og arbeidsmapper
+_ReSharper.Caches/
+
+# Midlertidige filer
+*.log
+*.tmp
+
+# Environment filer (hvis du bruker disse)
+.env
+
+# Build resultater
+publish/
+
+# NuGet-pakker (bør hentes av restore)
+*.nupkg
+packages/
+
+# Crash dumps
+dump/
+
+# Testing og dekningsrapporter
+coverage/
+TestResults/
+*.trx
+
+# Node moduler (hvis relevant)
+node_modules/
