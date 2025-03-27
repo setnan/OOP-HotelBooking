@@ -1,4 +1,5 @@
-﻿using OOP_HotelBooking.Models;
+﻿using HotelBooking;
+using HotelBooking.Models;
 
 namespace OOP_HotelBooking.Services;
 
