@@ -50,3 +50,7 @@ TestResults/
 
 # Node moduler (hvis relevant)
 node_modules/
+
+# JetBrains Rider cache- og arbeidsmapper
+_ReSharper.Caches/
+_ReSharper*/
