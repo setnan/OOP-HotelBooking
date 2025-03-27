@@ -27,3 +27,10 @@ public class RoomService
         });
     }
 }
+
+
+// legge til update
+// i hovedmenyen alt for loging 
+// async
+// return
+
