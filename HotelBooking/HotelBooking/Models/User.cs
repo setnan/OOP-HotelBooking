@@ -3,14 +3,24 @@
 public enum Role
 {
     Admin,
-    Receptionist
+    Receptionist,
+    Unknown
 }
-public class User(int UserID, string name, string email, string password)
+public class User()
 {
     public int UserID { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
     public Role Role { get; set; }
-    
+
+
+    public User(int id, string name, string email, string password, Role admin) : this()
+    {
+        UserID = id;
+        Name = name;
+        Email = email;
+        Password = password;
+        Role = Role.Unknown;
+    }
 }

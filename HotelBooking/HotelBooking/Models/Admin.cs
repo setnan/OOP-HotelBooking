@@ -8,7 +8,7 @@ public class Admin: User
 
 
     public Admin(int id, string name, string email, string password, string employeeCode)
-        : base(id, name, email, password)
+        : base(id, name, email, password, Role.Admin)
     {
         AdminID = id;
         EmployeeCode = employeeCode;
