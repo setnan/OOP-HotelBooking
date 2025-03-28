@@ -1,4 +1,7 @@
-﻿using MySql.Data.MySqlClient;
+﻿using HotelBooking.Models;
+using MySql.Data.MySqlClient;
+using Dapper;
+using MySqlX.XDevAPI.Common;
 
 namespace HotelBooking;
 
@@ -36,4 +39,12 @@ public class DatabaseConnection
         using var command = new MySqlCommand(query, _connection);
         command.ExecuteNonQuery();
     }
+
+    public User? GetUserFromMail(string mail)
+    {
+        var query = "SELECT * FROM User WHERE EMAIL = @email";
+        var user = _connection.Query<User>(query, new { email = mail }).FirstOrDefault();
+        return user;
+    }
+    
 }
