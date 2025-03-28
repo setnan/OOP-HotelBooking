@@ -3,8 +3,7 @@
 public enum Role
 {
     Admin,
-    Receptionist,
-    Unknown
+    Receptionist
 }
 public class User
 {
