@@ -15,11 +15,11 @@ public class BookingService
     public void CreateBooking(Booking booking)
     {
         string query = $@"
-            INSERT INTO Booking (guest_id, room_id, check_in, check_out)
+            INSERT INTO Booking (GuestId, RoomId, CheckIn, CheckOut)
             VALUES ({booking.Guest.GuestId}, {booking.Room.RoomId}, 
                     '{booking.CheckIn:yyyy-MM-dd}', '{booking.CheckOut:yyyy-MM-dd}');
 
-            UPDATE Room SET is_available = 0 WHERE room_id = {booking.Room.RoomId};
+            UPDATE Room SET IsAvailable = 0 WHERE RoomId = {booking.Room.RoomId};
         ";
 
         _db.ExecuteNonQuery(query);
@@ -28,39 +28,39 @@ public class BookingService
     {
         string query = @"
         SELECT 
-            b.booking_id,
-            b.check_in,
-            b.check_out,
-            g.guest_id,
-            g.name AS guest_name,
-            g.contact_number,
-            g.email,
-            r.room_id,
-            r.room_number,
-            r.type,
-            r.price
+            b.BookingId,
+            b.CheckIn,
+            b.CheckOut,
+            g.GuestId,
+            g.name AS Name,
+            g.ContactNumber,
+            g.Email,
+            r.RoomId,
+            r.RoomNumber,
+            r.Type,
+            r.Price
         FROM Booking b
-        JOIN Guest g ON b.guest_id = g.guest_id
-        JOIN Room r ON b.room_id = r.room_id";
+        JOIN Guest g ON b.GuestId = g.GuestId
+        JOIN Room r ON b.RoomId = r.RoomId";
 
         return _db.ExecuteQuery(query, reader => new Booking
         {
-            BookingId = reader.GetInt32("booking_id"),
-            CheckIn = reader.GetDateTime("check_in"),
-            CheckOut = reader.GetDateTime("check_out"),
+            BookingId = reader.GetInt32("BookingId"),
+            CheckIn = reader.GetDateTime("CheckIn"),
+            CheckOut = reader.GetDateTime("CheckOut"),
             Guest = new Guest
             {
-                GuestId = reader.GetInt32("guest_id"),
-                Name = reader.GetString("guest_name"),
-                ContactNumber = reader.GetString("contact_number"),
-                Email = reader.GetString("email")
+                GuestId = reader.GetInt32("GuestId"),
+                Name = reader.GetString("Name"),
+                ContactNumber = reader.GetString("ContactNumber"),
+                Email = reader.GetString("Email")
             },
             Room = new Room
             {
-                RoomId = reader.GetInt32("room_id"),
-                RoomNumber = reader.GetString("room_number"),
-                Type = reader.GetString("type"),
-                Price = reader.GetDecimal("price")
+                RoomId = reader.GetInt32("RoomId"),
+                RoomNumber = reader.GetString("RoomNumber"),
+                Type = reader.GetString("Type"),
+                Price = reader.GetDecimal("Price")
             }
         });
     }
