@@ -2,7 +2,7 @@ namespace HotelBooking.Models;
 
 public class Admin: User
 {
-    public int AdminID { get; set; }
+    public int AdminId { get; set; }
     
     public string EmployeeCode { get; set; }
 
@@ -10,7 +10,7 @@ public class Admin: User
     public Admin(int id, string name, string email, string password, string employeeCode)
         : base(id, name, email, password, Role.Admin)
     {
-        AdminID = id;
+        AdminId = id;
         EmployeeCode = employeeCode;
     }
 }
