@@ -1,5 +1,6 @@
-﻿using OOP_HotelBooking;
-using OOP_HotelBooking.Models;
+﻿using HotelBooking;
+using HotelBooking.Models;
+
 using OOP_HotelBooking.Services;
 
 public static class MenuHandler
