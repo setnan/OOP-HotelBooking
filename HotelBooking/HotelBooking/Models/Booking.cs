@@ -1,4 +1,6 @@
-﻿namespace OOP_HotelBooking.Models;
+﻿using HotelBooking.Models;
+
+namespace HotelBooking;
 
 public class Booking
 {

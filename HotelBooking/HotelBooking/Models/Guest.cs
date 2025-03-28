@@ -1,4 +1,4 @@
-﻿namespace OOP_HotelBooking.Models;
+﻿namespace HotelBooking.Models;
 
 public class Guest
 {

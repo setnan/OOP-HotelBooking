@@ -2,9 +2,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using OOP_HotelBooking.Models;
+using HotelBooking;
+using HotelBooking.Models;
 
-namespace OOP_HotelBooking
+namespace HotelBooking
 {
     public class Hotel
     {
