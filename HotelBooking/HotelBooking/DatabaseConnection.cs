@@ -7,14 +7,17 @@ namespace HotelBooking;
 
 public class DatabaseConnection
 {
-    private MySqlConnection _connection;
-    private string _connectionString = "server=localhost;" +
+    private static DatabaseConnection? _instance;
+    public static DatabaseConnection Instance => _instance ??= new DatabaseConnection();
+    
+    private readonly MySqlConnection _connection;
+    private readonly string _connectionString = "server=localhost;" +
                                        "port=3306;" +
                                        "database=HotelBooking;" +
                                        "uid=hotelluser;" +
                                        "pwd=hotellpass;";
 
-    public DatabaseConnection()
+    private DatabaseConnection()
     {
         _connection = new MySqlConnection(_connectionString);
     }
@@ -39,12 +42,31 @@ public class DatabaseConnection
         using var command = new MySqlCommand(query, _connection);
         command.ExecuteNonQuery();
     }
-
-    public User? GetUserFromMail(string mail)
+    
+    public void ExecuteSql(string sql, object parameters)
     {
-        var query = "SELECT * FROM User WHERE EMAIL = @email";
-        var user = _connection.Query<User>(query, new { email = mail }).FirstOrDefault();
+        _connection.Execute(sql, parameters);
+    }
+    
+    public object? ExecuteQueryRow(string mail)
+    {
+        
+        var query = "SELECT * FROM User WHERE Email = @email";
+        var user = _connection.QuerySingleOrDefault<User>(query, new { email = mail });
         return user;
     }
+
+    public List<T> GetAll<T>(string tableName)
+    {
+        var query = "SELECT * FROM " + tableName;
+        return _connection.Query<T>(query).ToList();
+    }
+    
+    public T? GetOne<T>(string sql, object parameters)
+    {
+        return _connection.QuerySingleOrDefault<T>(sql, parameters);
+    }
+
+    
     
 }
