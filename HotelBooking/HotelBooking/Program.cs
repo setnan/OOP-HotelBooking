@@ -19,7 +19,7 @@ class Program
         var bookingService = new BookingService(db);
 
         MenuHandler.RunMainMenu(guestService, roomService, bookingService, db);
-        return;
+        
     }
 }
 }
