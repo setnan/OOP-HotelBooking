@@ -1,10 +1,10 @@
 using HotelBooking.Models;
 
-namespace OOP_HotelBooking.Services;
+namespace HotelBooking.Services;
 
 public class UserSession
 {
-    private static UserSession  _instance;
+    private static UserSession?  _instance;
     
     public int? UserId { get; set; }
     public string? Name { get; set; }
