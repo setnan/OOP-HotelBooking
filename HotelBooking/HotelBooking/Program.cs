@@ -11,7 +11,7 @@ class Program
 {
     static void Main()
     {
-        var db = new DatabaseConnection();
+        var db = DatabaseConnection.Instance;
         db.Open();
 
         var guestService = new GuestService(db);
