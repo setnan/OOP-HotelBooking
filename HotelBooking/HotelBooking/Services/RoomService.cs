@@ -1,17 +1,4 @@
-﻿using HotelBooking;
-using HotelBooking.Models;
-
-namespace OOP_HotelBooking.Services;
-
-public class RoomService
-{
-    private readonly DatabaseConnection _db;
-
-    public RoomService(DatabaseConnection db)
-    {
-        _db = db;
-    }
-
+﻿
     public List<Room> GetAvailableRooms()
     {
         string query = "SELECT * FROM Room WHERE is_available = 1";
