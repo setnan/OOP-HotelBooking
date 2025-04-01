@@ -11,18 +11,6 @@ CREATE TABLE User (
     Role ENUM('Admin', 'Receptionist') NOT NULL
 );
 
-CREATE TABLE Admin (
-    AdminId INT PRIMARY KEY,
-    EmployeeCode VARCHAR(50),
-    FOREIGN KEY (AdminId) REFERENCES User(UserId)
-);
-
-CREATE TABLE Receptionist (
-    ReceptionistId INT PRIMARY KEY,
-    EmployeeCode VARCHAR(50),
-    FOREIGN KEY (ReceptionistId) REFERENCES User(UserId)
-);
-
 CREATE TABLE Hotel (
     HotelId INT AUTO_INCREMENT PRIMARY KEY,
     Name VARCHAR(100),
@@ -59,9 +47,6 @@ CREATE TABLE Booking (
 INSERT INTO User (Name, Email, Password, Role) VALUES
 ('Alice Admin', 'alice@hotel.com', 'pass123', 'Admin'),
 ('Bob Resepsjonist', 'bob@hotel.com', 'pass123', 'Receptionist');
-
-INSERT INTO Admin (AdminId, EmployeeCode) VALUES (1, 'ADM001');
-INSERT INTO Receptionist (ReceptionistId, EmployeeCode) VALUES (2, 'REC001');
 
 INSERT INTO Hotel (Name, Address) VALUES
 ('Ocean View Hotel', 'Strandgata 42, Oslo');
