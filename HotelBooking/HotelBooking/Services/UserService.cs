@@ -24,7 +24,7 @@ public static class UserService
 
     public static List<User> GetAllUsers()
     {
-        return DatabaseConnection.Instance.GetAll<User>("Users");
+        return DatabaseConnection.Instance.GetAll<User>("User");
     }
 
     public static void AddUser(User user)
@@ -58,6 +58,25 @@ public static class UserService
             return true;
         }
         return false;
+    }
+
+    public static User? GetUserById(int userId)
+    {
+        var query = "SELECT * FROM User WHERE UserId = @userId";
+        return DatabaseConnection.Instance.GetOne<User>(query, new { userId });
+    }
+    
+    public static bool DeleteUser(int userId)
+    {
+        var user =  GetUserById(userId);
+        if (user == null)
+        {
+            return false;
+        }
+        
+        var query = "DELETE FROM User WHERE UserId = @userId";
+        DatabaseConnection.Instance.ExecuteSql(query, new { userId });
+        return true;
     }
     
 }
