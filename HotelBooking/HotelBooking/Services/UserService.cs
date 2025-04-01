@@ -39,5 +39,25 @@ public static class UserService
         return DatabaseConnection.Instance.GetOne<User>(query, new { email });
     }
 
+    public static bool ValidatePassword(int userId, string? password)
+    {
+        var validateQuery = @"SELECT * FROM User WHERE UserId = @userId";
+        var userData = DatabaseConnection.Instance.GetOne<User>(validateQuery, new { userId});
+        if (password != null && userData != null && !userData.Password.Equals(password))
+        {
+            return false;
+        }
+        return true;
+    }
 
+    public static bool ChangePassword(int userId, string oldPassword, string newPassword)
+    {
+        if (ValidatePassword(userId, oldPassword))
+        {
+            UpdateUserPassword(userId, newPassword);
+            return true;
+        }
+        return false;
+    }
+    
 }

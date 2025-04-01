@@ -1,7 +1,6 @@
 ﻿using HotelBooking.Models;
 using MySql.Data.MySqlClient;
 using Dapper;
-using MySqlX.XDevAPI.Common;
 
 namespace HotelBooking;
 

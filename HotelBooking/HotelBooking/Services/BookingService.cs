@@ -1,7 +1,7 @@
 ﻿using HotelBooking;
 using HotelBooking.Models;
 
-namespace OOP_HotelBooking.Services;
+namespace HotelBooking.Services;
 
 public class BookingService
 {
