@@ -29,7 +29,7 @@ public static class UserService
 
     public static void AddUser(User user)
     {
-        string insertQuery = @"INSERT INTO User (Name, Email, Password, Role)  VALUES (@name, @email, @password, @role)";
+        string insertQuery = @"INSERT INTO User (Name, Email, Password, Role)  VALUES (@Name, @Email, @Password, @Role)";
         DatabaseConnection.Instance.ExecuteSql(insertQuery, user);
     }
     
