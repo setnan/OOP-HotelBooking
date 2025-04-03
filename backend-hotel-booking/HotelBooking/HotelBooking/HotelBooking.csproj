@@ -9,7 +9,9 @@
 
     <ItemGroup>
       <PackageReference Include="Dapper" Version="2.1.66" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="10.0.0-preview.2.25163.2" />
       <PackageReference Include="MySql.Data" Version="9.2.0" />
+      <PackageReference Include="Npgsql" Version="9.0.3" />
     </ItemGroup>
 
 </Project>
