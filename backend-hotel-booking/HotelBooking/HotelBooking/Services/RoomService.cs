@@ -1,4 +1,5 @@
-﻿using HotelBooking.Models;
+﻿using System.Collections;
+using HotelBooking.Models;
 
 namespace HotelBooking.Services;
 
@@ -31,7 +32,10 @@ public class RoomService(DatabaseConnection db)
     {
         return DatabaseConnection.Instance.GetAll<Room>("Room");
     }
-    
-    
-    
+
+
+    public IEnumerable GetAvailableRooms()
+    {
+        throw new NotImplementedException();
+    }
 }

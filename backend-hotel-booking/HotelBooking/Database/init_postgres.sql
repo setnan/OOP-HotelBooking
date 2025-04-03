@@ -64,8 +64,13 @@ INSERT INTO Hotel (Name, Address) VALUES
 ('Ocean View Hotel', 'Strandgata 42, Oslo');
 
 INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES
-(1, '101', 'Single', 899.00, true),
-(1, '102', 'Double', 1199.00, true);
+(1, '101', 'Single', 899.00, TRUE),
+(1, '102', 'Double', 1199.00, TRUE),
+(1, '201', 'Suite', 1899.00, TRUE),
+(1, '202', 'Family', 1499.00, TRUE),
+(1, '301', 'Deluxe', 1599.00, TRUE),
+(1, '302', 'Presidential Suite', 2999.00, TRUE),
+(1, '401', 'Twin', 999.00, TRUE);
 
 INSERT INTO Guest (Name, ContactNumber, Email) VALUES
 ('Anna Berg', '+4798765432', 'anna.berg92@gmail.com'),
