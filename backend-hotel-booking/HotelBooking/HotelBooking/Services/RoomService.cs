@@ -2,7 +2,7 @@
 
 namespace HotelBooking.Services;
 
-public static class RoomService
+public class RoomService(DatabaseConnection db)
 {
     // public static List<Room> GetAvailableRooms()
     // {
@@ -21,9 +21,10 @@ public static class RoomService
 
     public static void AddRoom(Room room)
     {
-        var insertQuery =
-            @"INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES (@HotelId, @RoomNumber, @Type, @Price,  @IsAvailable)";
+        var insertQuery = @"
+        INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES (@HotelId, @RoomNumber, @Type, @Price,  @IsAvailable)";
         DatabaseConnection.Instance.ExecuteSql(insertQuery, room);
+
     }
 
     public static List<Room> GetAllRooms()
