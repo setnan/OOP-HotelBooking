@@ -1,61 +1,104 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
-import styles from "../styles/Login.module.css";
+import styles from "../styles/Home.module.css";
 
-export default function LoginPage() {
-  const [forgotPassword, setForgotPassword] = useState(false);
-  const [email, setEmail] = useState("");
+export default function Home() {
+  const [rooms, setRooms] = useState([]);
+  const [selectedRoomId, setSelectedRoomId] = useState("");
+  const [checkInDate, setCheckInDate] = useState("");
+  const [checkOutDate, setCheckOutDate] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleForgotPassword = () => {
-    setForgotPassword(true);
-  };
+  useEffect(() => {
+    // Dummy data til backend er koblet på
+    setRooms([
+      { id: 1, name: "Rom 101" },
+      { id: 2, name: "Rom 202" },
+      { id: 3, name: "Rom 303" },
+    ]);
+  }, []);
 
-  const handleLogin = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    // Her kan du legge til login-logikk senere
-    alert("Logget inn (dummy)");
-  };
 
-  const handleResetPassword = () => {
-    // Her kan du legge til logikk for å sende e-post hvis e-post stemmer
-    alert(`Sender reset-link til ${email}`);
+    const selectedRoom = rooms.find((r) => r.id.toString() === selectedRoomId);
+
+    alert(
+      `Booking:
+      Navn: ${e.target[0].value} ${e.target[1].value}
+      Rom: ${selectedRoom?.name || selectedRoomId}
+      Fra: ${checkInDate}
+      Til: ${checkOutDate}`
+    );
   };
 
   return (
     <>
       <Head>
-        <title>Login</title>
+        <title>Hotel Booking</title>
       </Head>
-      <main className={styles.container}>
-        <h1>Hotel Booking Login</h1>
 
-        <form className={styles.form} onSubmit={handleLogin}>
-          <input type="text" placeholder="Brukernavn" required />
-          <input type="password" placeholder="Passord" required />
+      <header className={styles.navbar}>
+        <div
+          className={`${styles.menuIcon} ${menuOpen ? styles.open : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          ☰
+        </div>
 
-          <button type="submit">Logg inn</button>
+        {menuOpen && (
+          <nav className={styles.sidebar}>
+            <ul>
+              <li>Se alle bookinger</li>
+              <li>Romoversikt</li>
+              <li>Innstillinger</li>
+              <li>Logg ut</li>
+            </ul>
+          </nav>
+        )}
 
-          {!forgotPassword && (
-            <p className={styles.forgot} onClick={handleForgotPassword}>
-              Glemt passord?
-            </p>
-          )}
+        <input
+          type="text"
+          placeholder="Søk i databasen..."
+          className={styles.search}
+        />
+      </header>
 
-          {forgotPassword && (
-            <div className={styles.emailReset}>
-              <p>Skriv inn e-post tilknyttet brukernavn:</p>
-              <input
-                type="email"
-                placeholder="Din e-post"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <button type="button" onClick={handleResetPassword}>
-                Send tilbakestilling
-              </button>
-            </div>
-          )}
+      <main className={styles.main}>
+        <h1>Book a Room</h1>
+
+        <form className={styles.form} onSubmit={handleSubmit}>
+          <input type="text" placeholder="Navn" required />
+          <input type="text" placeholder="Etternavn" required />
+
+          <select
+            required
+            className={styles.select}
+            value={selectedRoomId}
+            onChange={(e) => setSelectedRoomId(e.target.value)}
+          >
+            <option value="">Velg et rom</option>
+            {rooms.map((room) => (
+              <option key={room.id} value={room.id}>
+                {room.name || `Rom ${room.id}`}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            value={checkInDate}
+            onChange={(e) => setCheckInDate(e.target.value)}
+            required
+          />
+          <input
+            type="date"
+            value={checkOutDate}
+            onChange={(e) => setCheckOutDate(e.target.value)}
+            required
+          />
+
+          <button type="submit">Book</button>
         </form>
       </main>
     </>
