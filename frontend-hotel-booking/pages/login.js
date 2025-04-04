@@ -12,19 +12,17 @@ export default function LoginPage() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Her kan du legge til login-logikk senere
     alert("Logget inn (dummy)");
   };
 
   const handleResetPassword = () => {
-    // Her kan du legge til logikk for å sende e-post hvis e-post stemmer
     alert(`Sender reset-link til ${email}`);
   };
 
   return (
     <>
       <Head>
-        <title>Login</title>
+        <title>Hotel Booking Innlogging</title>
       </Head>
       <main className={styles.container}>
         <h1>Innlogging</h1>

@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const list = document.getElementById("bookingList");
 
   // Fetch bookings from backend
-  fetch("https://your-backend-api-url/booking")
+  /*   fetch("https://your-backend-api-url/booking")
     .then((res) => res.json())
     .then((bookings) => {
       bookings.forEach((b) => {
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         li.textContent = `Room ${b.room.roomNumber} - Guest: ${b.guest.name} (${b.checkIn} to ${b.checkOut})`;
         list.appendChild(li);
       });
-    });
+    }); */
 
   // Submit form
   form.addEventListener("submit", async (e) => {
