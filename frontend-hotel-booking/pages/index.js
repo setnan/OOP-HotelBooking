@@ -27,7 +27,7 @@ export default function LoginPage() {
         <title>Login</title>
       </Head>
       <main className={styles.container}>
-        <h1>Innlogging</h1>
+        <h1>Hotel Booking Login</h1>
 
         <form className={styles.form} onSubmit={handleLogin}>
           <input type="text" placeholder="Brukernavn" required />
