@@ -1,0 +1,20 @@
+﻿using HotelBooking;
+using Microsoft.AspNetCore.Mvc;
+using HotelBooking.Models;
+
+[ApiController]
+[Route("[controller]")]
+public class BookingController : ControllerBase
+{
+    private static List<Booking> bookings = new List<Booking>();
+
+    [HttpGet]
+    public IActionResult GetAll() => Ok(bookings);
+
+    [HttpPost]
+    public IActionResult Create([FromBody] Booking booking)
+    {
+        bookings.Add(booking);
+        return Ok(booking);
+    }
+}
