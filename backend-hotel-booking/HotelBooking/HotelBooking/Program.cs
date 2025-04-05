@@ -35,7 +35,6 @@ builder.Services.AddSingleton<BookingService>();
 builder.Services.AddSingleton<GuestService>();
 builder.Services.AddSingleton<RoomService>();
 builder.Services.AddSingleton<ClientService>();
-builder.Services.AddSingleton<CateringService>();
 builder.Services.AddSingleton<EventService>();
 
 builder.Services.AddControllers();
