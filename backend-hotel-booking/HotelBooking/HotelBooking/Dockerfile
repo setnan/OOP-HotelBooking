@@ -5,13 +5,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
+
+# Sørger for at init_postgres.sql blir med i publikasjonen
 RUN dotnet publish -c Release -o /app
 
 # Kjøresteg
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
+
+# Kopierer ut applikasjonen
 COPY --from=build /app .
 
-# Render krav at appen vår bruker PORT fra env
+# Sørger for at init_postgres.sql følger med i runtime
+COPY HotelBooking/Database/init_postgres.sql ./Database/init_postgres.sql
+
+# Render krever at vi lytter på $PORT
 ENV ASPNETCORE_URLS=http://+:$PORT
+
 ENTRYPOINT ["dotnet", "HotelBooking.dll"]
