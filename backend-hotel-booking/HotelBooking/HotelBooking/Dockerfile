@@ -13,7 +13,7 @@ WORKDIR /app
 COPY --from=build /app .
 
 # Sørger for at init_postgres.sql blir med inn i containeren
-COPY HotelBooking/Database/init_postgres.sql /Database/init_postgres.sql
+COPY ./HotelBooking/Database/init_postgres.sql /Database/init_postgres.sql
 
 # Render krever at vi lytter på $PORT
 ENV ASPNETCORE_URLS=http://+:$PORT
