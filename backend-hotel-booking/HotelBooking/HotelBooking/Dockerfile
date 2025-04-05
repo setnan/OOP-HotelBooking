@@ -17,7 +17,7 @@ WORKDIR /app
 
 # Kopier utbygd app og SQL-fil til runtime container
 COPY --from=build /app . 
-COPY ./init_postgres.sql /Database/init_postgres.sql
+COPY init_postgres.sql /Database/init_postgres.sql
 
 ENV ASPNETCORE_URLS=http://+:$PORT
 ENTRYPOINT ["dotnet", "HotelBooking.dll"]
