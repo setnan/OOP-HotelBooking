@@ -11,5 +11,5 @@ public class Catering
     public TimeSpan StartTime { get; set; }
     public TimeSpan EndTime { get; set; }
     public int ExpectedAttendees { get; set; }
-    public string DietaryNotes { get; set; }
+    public string DietaryNotes { get; set; } 
 }

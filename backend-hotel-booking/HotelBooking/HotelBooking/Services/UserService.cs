@@ -1,3 +1,4 @@
+using HotelBooking.Database;
 using HotelBooking.Models;
 
 namespace HotelBooking.Services;

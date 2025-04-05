@@ -1,4 +1,5 @@
-﻿using HotelBooking.Models;
+﻿using HotelBooking.Database;
+using HotelBooking.Models;
 using HotelBooking.Services;
 using OOP_HotelBooking.Services;
 

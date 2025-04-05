@@ -1,9 +1,8 @@
-﻿using HotelBooking.Models;
-using Dapper;
+﻿using Dapper;
+using HotelBooking.Models;
 using Npgsql;
-using Microsoft.Extensions.Configuration;
 
-namespace HotelBooking;
+namespace HotelBooking.Database;
 
 public class DatabaseConnection
 {

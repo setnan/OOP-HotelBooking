@@ -1,4 +1,5 @@
 ﻿using HotelBooking;
+using HotelBooking.Database;
 using HotelBooking.Models;
 
 public class EventService

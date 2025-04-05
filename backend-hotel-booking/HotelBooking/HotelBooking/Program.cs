@@ -1,24 +1,45 @@
-﻿using HotelBooking.Services;
-using HotelBooking.UI;
-using OOP_HotelBooking.Services;
 using HotelBooking.Database;
+using HotelBooking.Services;
+using HotelBooking;
+using OOP_HotelBooking.Services;
 
-namespace HotelBooking
+var builder = WebApplication.CreateBuilder(args);
+
+// Render krever at vi lytter på env-var PORT
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+
+// CORS for frontend (f.eks. hosted på Vercel/Netlify/Render)
+builder.Services.AddCors(options =>
 {
-    class Program
-    {
-        static void Main()
-        {
-            DatabaseStartup.InitializeAndConnect();
+    options.AddPolicy("AllowFrontend",
+        policy => policy.WithOrigins("https://booking.etnan.dev") // din frontend URL!
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
 
-            var db = DatabaseConnection.Instance;
-            db.Open();
+builder.Services.AddSingleton<DatabaseConnection>(_ =>
+{
+    var db = DatabaseConnection.Instance;
+    db.Open();
+    return db;
+});
 
-            var guestService = new GuestService(db);
-            var roomService = new RoomService(db);
-            var bookingService = new BookingService(db);
+builder.Services.AddSingleton<BookingService>();
+builder.Services.AddSingleton<GuestService>();
+builder.Services.AddSingleton<RoomService>();
+builder.Services.AddSingleton<ClientService>();
+builder.Services.AddSingleton<CateringService>();
+builder.Services.AddSingleton<EventService>();
 
-            MenuHandler.RunMainMenu(guestService, roomService, bookingService, db);
-        }
-    }
-}
+builder.Services.AddControllers();
+
+var app = builder.Build();
+
+DatabaseStartup.InitializeAndConnect();
+
+app.UseCors("AllowFrontend");
+app.UseAuthorization();
+app.MapControllers();
+
+app.Run();

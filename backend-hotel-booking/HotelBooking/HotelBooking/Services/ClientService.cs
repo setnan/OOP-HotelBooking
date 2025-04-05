@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using HotelBooking;
+using HotelBooking.Database;
 using HotelBooking.Models;
 
 public class ClientService
