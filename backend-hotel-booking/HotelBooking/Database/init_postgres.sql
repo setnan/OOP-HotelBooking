@@ -1,4 +1,4 @@
--- init.sql
+ -- init.sql
 
 CREATE TABLE User (
     UserId INT SERIAL PRIMARY KEY,
