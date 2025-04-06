@@ -23,11 +23,14 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-      });
+      const response = await fetch(
+        "https://hotelbooking-api-69s2.onrender.com/api/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.text();
@@ -38,11 +41,20 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      // Eksempel: data = { token: "...", role: "admin" }
-      localStorage.setItem("token", data.token);
+      // Lagrer brukerdata i localStorage
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("name", data.name);
+      localStorage.setItem("email", data.email);
       localStorage.setItem("role", data.role);
 
-      router.push("/dashboard");
+      // Naviger til admin eller receptionist dashboard basert på rolle
+      if (data.role === "Admin") {
+        router.push("/admin");
+      } else if (data.role === "Receptionist") {
+        router.push("/receptionist");
+      } else {
+        setError("Ukjent brukerrolle.");
+      }
     } catch (err) {
       setError("Klarte ikke koble til serveren.");
     } finally {
@@ -66,7 +78,7 @@ export default function LoginPage() {
           <form className={styles.form} onSubmit={handleLogin}>
             <input
               type="text"
-              placeholder="Brukernavn"
+              placeholder="Brukernavn (e-post)"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               required

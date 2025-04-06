@@ -1,4 +1,7 @@
-﻿using Npgsql;
+﻿// Dbinitializer er kun for lokaltesting,
+// nå som vi allerede har initialisert databasen på Render.com trengs egentlig ikke denne.
+
+using Npgsql;
 
 namespace HotelBooking.Database;
 
@@ -6,11 +9,11 @@ public static class DbInitializer
 {
     public static void Run(NpgsqlConnection connection)
     {
-        // Sjekk om databasen er allerede initialisert
+        // Sjekker om databasen allerede er initialisert (tabellen "User" finnes)
         using var checkCmd = new NpgsqlCommand("SELECT to_regclass('\"User\"');", connection);
-        var result = checkCmd.ExecuteScalar();
+        var result = checkCmd.ExecuteScalar()?.ToString();
 
-        if (result != DBNull.Value && result != null)
+        if (!string.IsNullOrEmpty(result))
         {
             Console.WriteLine("Database already initialized.");
             return;
@@ -18,12 +21,21 @@ public static class DbInitializer
 
         Console.WriteLine("Initializing database...");
 
-        // Finner riktig path til init_postgres.sql
+        // Bruker base directory fra runtime (Render eller lokal)
         var basePath = AppContext.BaseDirectory;
-        var sqlPath = Path.GetFullPath(Path.Combine(basePath, "..", "..", "Database", "init_postgres.sql"));
+
+        // Antas at init_postgres.sql ligger direkte i /app (ved deploy)
+        var sqlPath = Path.Combine(basePath, "init_postgres.sql");
+
+        if (!File.Exists(sqlPath))
+        {
+            Console.WriteLine($"Fant ikke SQL-fil: {sqlPath}");
+            throw new FileNotFoundException("init_postgres.sql ikke funnet", sqlPath);
+        }
+
         var sqlScript = File.ReadAllText(sqlPath);
 
-        // Kjører scriptet
+        // Kjører SQL-script
         using var initCmd = new NpgsqlCommand(sqlScript, connection);
         initCmd.ExecuteNonQuery();
 

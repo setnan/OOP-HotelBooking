@@ -54,8 +54,8 @@ FOREIGN KEY ("RoomId") REFERENCES "Room"("RoomId")
 );
 
 INSERT INTO "User" ("Name", "Email", "Password", "Role") VALUES
-('Alice Admin', 'alice@hotel.com', 'pass123', 'Admin'),
-('Bob Resepsjonist', 'bob@hotel.com', 'pass123', 'Receptionist');
+('Hugo Weaving', 'admin@hotel.com', 'pass123', 'Admin'),
+('Liv Tyler', 'reception@hotel.com', 'pass1234', 'Receptionist');
 
 INSERT INTO "Admin" ("AdminId", "EmployeeCode") VALUES (1, 'ADM001');
 INSERT INTO "Receptionist" ("ReceptionistId", "EmployeeCode") VALUES (2, 'REC001');
