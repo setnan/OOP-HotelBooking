@@ -13,9 +13,7 @@ public class UserSession
     public bool IsAdmin { get; set; }
     
     private UserSession() {}
-    
     public static UserSession Instance => _instance ??= new UserSession();
-
 
     public void Login(User user)
     {
