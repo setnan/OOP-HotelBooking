@@ -51,14 +51,77 @@ public class DatabaseConnection
         return _connection.QuerySingleOrDefault<User>(query, new { email = mail });
     }
 
-    public List<T> GetAll<T>(string tableName)
+    public List<T> GetAll<T>()
     {
-        var query = $"SELECT * FROM \"{tableName}\"";
+        var table = GetTableName<T>();
+        var query = $"SELECT * FROM {table}";
         return _connection.Query<T>(query).ToList();
     }
 
     public T? GetOne<T>(string sql, object parameters)
     {
         return _connection.QuerySingleOrDefault<T>(sql, parameters);
+    }
+    
+    public bool Insert<T>(T entity)
+    {
+        var table = typeof(T).Name;
+        var propertyNameList = new List<string>();
+
+        foreach (var property in typeof(T).GetProperties())
+        {
+            propertyNameList.Add(property.Name);
+        }
+
+        var propertyNameListFiltered = propertyNameList
+            .Where(name => name != $"{typeof(T).Name}Id")
+            .ToList();
+
+        var columns = string.Join(", ", propertyNameListFiltered);
+        var parameters = string.Join(", ", propertyNameListFiltered.Select(name => "@" + name));
+
+        var insertQuery = $"INSERT INTO {table} ({columns}) VALUES ({parameters})";
+
+        var rowsAffected = _connection.Execute(insertQuery, entity);
+        return rowsAffected > 0;
+    }
+    public bool Update<T>(T entity)
+    {
+        var table = GetTableName<T>();
+
+        var propertyNameListFiltered = GetPropertyNames<T>(true);
+
+        var setClause = string.Join(", ", propertyNameListFiltered.Select(name => $"{name} = @{name}"));
+        var updateQuery = $"UPDATE {table} SET {setClause} WHERE {table}Id = @{table}Id";
+
+        var rowsAffected = _connection.Execute(updateQuery, entity);
+        return rowsAffected > 0;
+    }
+
+    public bool Delete<T>(T entity)
+    {
+        var table = GetTableName<T>();
+        
+        var deleteQuery = $"DELETE FROM {table} WHERE {table}Id = @{table}Id";
+        var rowsAffected = _connection.Execute(deleteQuery, entity);
+        return rowsAffected > 0;
+    }
+
+    public static string GetTableName<T>()
+    {
+        return typeof(T).Name;
+    }
+
+    public static List<string> GetPropertyNames<T>(bool filtered = false)
+    {
+        var propertyNameList = typeof(T).GetProperties()
+            .Select(p => p.Name)
+            .ToList();
+
+        if (filtered)
+        {
+            return propertyNameList.Where(name => name != $"{typeof(T).Name}Id").ToList();
+        }
+        return propertyNameList;
     }
 }
