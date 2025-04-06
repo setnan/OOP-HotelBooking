@@ -9,7 +9,7 @@ namespace HotelBooking.Services;
 
 public class RoomService(DatabaseConnection db)
 {
-    public static bool AddRoom(Room ro
+    public static bool AddRoom(Room room)
     {
         return DatabaseConnection.Instance.Insert(room);
     }
