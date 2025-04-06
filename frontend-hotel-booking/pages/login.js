@@ -41,13 +41,20 @@ export default function LoginPage() {
 
       const data = await response.json();
 
-      // Lagre brukerdata i localStorage
+      // Lagrer brukerdata i localStorage
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("name", data.name);
       localStorage.setItem("email", data.email);
       localStorage.setItem("role", data.role);
 
-      router.push("/dashboard");
+      // Naviger til admin eller receptionist dashboard basert på rolle
+      if (data.role === "Admin") {
+        router.push("/admin");
+      } else if (data.role === "Receptionist") {
+        router.push("/receptionist");
+      } else {
+        setError("Ukjent brukerrolle.");
+      }
     } catch (err) {
       setError("Klarte ikke koble til serveren.");
     } finally {

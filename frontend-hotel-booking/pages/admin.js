@@ -39,7 +39,7 @@ export default function ReceptionistPage() {
   return (
     <PrivateRoute>
       <Head>
-        <title>Receptionist - Gokstad Hotel</title>
+        <title>Admin - Gokstad Hotel</title>
       </Head>
 
       <header className={styles.navbar}>
