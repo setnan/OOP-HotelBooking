@@ -1,4 +1,7 @@
-﻿using Npgsql;
+﻿// Dbinitializer er kun for lokaltesting,
+// nå som vi allerede har initialisert databasen på Render.com trengs egentlig ikke denne.
+
+using Npgsql;
 
 namespace HotelBooking.Database;
 
@@ -6,7 +9,7 @@ public static class DbInitializer
 {
     public static void Run(NpgsqlConnection connection)
     {
-        // Sjekk om databasen er allerede initialisert
+        // Sjekker om databasen er allerede initialisert
         using var checkCmd = new NpgsqlCommand("SELECT to_regclass('\"User\"');", connection);
         var result = checkCmd.ExecuteScalar();
 
@@ -20,7 +23,7 @@ public static class DbInitializer
 
         // Finner riktig path til init_postgres.sql
         var basePath = AppContext.BaseDirectory;
-        var sqlPath = Path.GetFullPath(Path.Combine(basePath, "..", "..", "Database", "init_postgres.sql"));
+        var sqlPath = Path.Combine(basePath, "init_postgres.sql");
         var sqlScript = File.ReadAllText(sqlPath);
 
         // Kjører scriptet
