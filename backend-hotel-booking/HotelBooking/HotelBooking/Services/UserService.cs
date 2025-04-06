@@ -25,13 +25,12 @@ public static class UserService
 
     public static List<User> GetAllUsers()
     {
-        return DatabaseConnection.Instance.GetAll<User>("User");
+        return DatabaseConnection.Instance.GetAll<User>();
     }
 
-    public static void AddUser(User user)
+    public static bool AddUser(User user)
     {
-        string insertQuery = @"INSERT INTO User (Name, Email, Password, Role)  VALUES (@Name, @Email, @Password, @Role)";
-        DatabaseConnection.Instance.ExecuteSql(insertQuery, user);
+        return DatabaseConnection.Instance.Insert(user);
     }
     
     public static User? GetUserFromEmail(string email)
