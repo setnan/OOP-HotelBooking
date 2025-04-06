@@ -36,3 +36,9 @@ Systemet består av:
 
 Her kommer mer info..
 
+Login info:
+admin@hotel.com
+pw: pass123
+
+reseptionist@hotel.com
+pw: pass1234

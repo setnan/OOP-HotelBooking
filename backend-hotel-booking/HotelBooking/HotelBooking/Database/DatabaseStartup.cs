@@ -17,6 +17,7 @@ public static class DatabaseStartup
         using var connection = new NpgsqlConnection(connectionString);
         connection.Open();
 
-        DbInitializer.Run(connection);
+        Console.WriteLine("Database connection established.");
+        // DbInitializer.Run(connection); // ikke nødvendig i produksjon
     }
 }
