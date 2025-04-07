@@ -1,4 +1,5 @@
-﻿using HotelBooking.Services;
+﻿using HotelBooking.Models;
+using HotelBooking.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBooking.Controllers;
@@ -27,7 +28,12 @@ public class UsersController : ControllerBase
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var success = UserService.DeleteUser(id);
+        User? user = UserService.GetUserById(id);
+        if (user == null)
+        {
+            return NotFound();
+        }
+        var success = UserService.DeleteUser(user);
         return success ? Ok() : NotFound();
     }
 }
