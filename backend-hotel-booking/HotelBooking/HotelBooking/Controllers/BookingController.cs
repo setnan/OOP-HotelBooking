@@ -1,6 +1,4 @@
-﻿using HotelBooking;
-using Microsoft.AspNetCore.Mvc;
-using HotelBooking.Models;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBooking.Controllers;
 
