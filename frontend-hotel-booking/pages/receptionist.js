@@ -14,12 +14,19 @@ export default function ReceptionistPage() {
   const { logout } = useAuth();
 
   useEffect(() => {
-    // Dummy data til backend er koblet på
-    setRooms([
-      { id: 1, name: "Rom 101" },
-      { id: 2, name: "Rom 202" },
-      { id: 3, name: "Rom 303" },
-    ]);
+    const fetchRooms = async () => {
+      try {
+        const response = await fetch(
+          "https://hotelbooking-api-69s2.onrender.com/api/room"
+        );
+        const data = await response.json();
+        setRooms(data);
+      } catch (error) {
+        console.error("Feil ved henting av rom:", error);
+      }
+    };
+
+    fetchRooms();
   }, []);
 
   const handleSubmit = (e) => {

@@ -4,37 +4,18 @@ import styles from "../styles/Home.module.css";
 import PrivateRoute from "../components/PrivateRoute";
 import { useAuth } from "../context/AuthContext";
 
-export default function ReceptionistPage() {
-  const [rooms, setRooms] = useState([]);
-  const [selectedRoomId, setSelectedRoomId] = useState("");
-  const [checkInDate, setCheckInDate] = useState("");
-  const [checkOutDate, setCheckOutDate] = useState("");
+export default function AdminPage() {
+  const { logout } = useAuth();
+  const [users, setUsers] = useState([]);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const { logout } = useAuth();
-
   useEffect(() => {
-    // Dummy data til backend er koblet på
-    setRooms([
-      { id: 1, name: "Rom 101" },
-      { id: 2, name: "Rom 202" },
-      { id: 3, name: "Rom 303" },
-    ]);
+    // Henter alle brukere fra backend
+    fetch("https://hotelbooking-api-69s2.onrender.com/api/users")
+      .then((res) => res.json())
+      .then(setUsers)
+      .catch((err) => console.error("Feil ved henting av brukere:", err));
   }, []);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    const selectedRoom = rooms.find((r) => r.id.toString() === selectedRoomId);
-
-    alert(
-      `Booking:
-      Navn: ${e.target[0].value} ${e.target[1].value}
-      Rom: ${selectedRoom?.name || selectedRoomId}
-      Fra: ${checkInDate}
-      Til: ${checkOutDate}`
-    );
-  };
 
   return (
     <PrivateRoute>
@@ -53,59 +34,31 @@ export default function ReceptionistPage() {
         {menuOpen && (
           <nav className={styles.sidebar}>
             <ul>
+              <li>Brukerstyring</li>
+              <li>Romadministrasjon</li>
               <li>Se alle bookinger</li>
-              <li>Romoversikt</li>
-              <li>Innstillinger</li>
               <li onClick={logout} style={{ cursor: "pointer", color: "#c00" }}>
                 Logg ut
               </li>
             </ul>
           </nav>
         )}
-
-        <input
-          type="text"
-          placeholder="Søk i databasen..."
-          className={styles.search}
-        />
       </header>
 
       <main className={styles.main}>
-        <h1>Book et Rom</h1>
-
-        <form className={styles.form} onSubmit={handleSubmit}>
-          <input type="text" placeholder="Navn" required />
-          <input type="text" placeholder="Etternavn" required />
-
-          <select
-            required
-            className={styles.select}
-            value={selectedRoomId}
-            onChange={(e) => setSelectedRoomId(e.target.value)}
-          >
-            <option value="">Velg et rom</option>
-            {rooms.map((room) => (
-              <option key={room.id} value={room.id}>
-                {room.name || `Rom ${room.id}`}
-              </option>
+        <h1>Adminpanel</h1>
+        <h2>Brukere</h2>
+        {users.length > 0 ? (
+          <ul>
+            {users.map((user) => (
+              <li key={user.userId}>
+                {user.name} ({user.role}) – {user.email}
+              </li>
             ))}
-          </select>
-
-          <input
-            type="date"
-            value={checkInDate}
-            onChange={(e) => setCheckInDate(e.target.value)}
-            required
-          />
-          <input
-            type="date"
-            value={checkOutDate}
-            onChange={(e) => setCheckOutDate(e.target.value)}
-            required
-          />
-
-          <button type="submit">Book</button>
-        </form>
+          </ul>
+        ) : (
+          <p>Ingen brukere funnet.</p>
+        )}
       </main>
     </PrivateRoute>
   );
