@@ -14,6 +14,16 @@ public class EventService(DatabaseConnection connection)
     {
         return DatabaseConnection.Instance.Update(thisevent);
     }
+
+    public static bool DeleteEvent(Event thisevent)
+    {
+        return DatabaseConnection.Instance.Delete(thisevent);
+    }
+
+    public static Event? GetEventById(int id)
+    {
+        return DatabaseConnection.Instance.GetOne<Event>("EventId", id);
+    }
     
     
 }

@@ -5,15 +5,9 @@ using HotelBooking.Models;
 
 namespace HotelBooking.Services;
 
-public class BookingService
+public class BookingService(DatabaseConnection _db)
 {
-    private readonly DatabaseConnection _db;
-
-    public BookingService(DatabaseConnection db)
-    {
-        _db = db;
-    }
-
+    
     public void CreateBooking(Booking booking)
     {
         string query = $@"

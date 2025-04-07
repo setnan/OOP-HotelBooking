@@ -13,6 +13,7 @@ public class DatabaseConnection
 
     private DatabaseConnection()
     {
+        
         var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
                                ?? throw new InvalidOperationException("Missing CONNECTION_STRING");
 

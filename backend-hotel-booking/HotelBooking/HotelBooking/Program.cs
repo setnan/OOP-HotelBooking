@@ -1,4 +1,4 @@
-using HotelBooking;
+﻿using HotelBooking;
 using HotelBooking.Database;
 using HotelBooking.Services;
 using OOP_HotelBooking.Services;
@@ -6,8 +6,8 @@ using OOP_HotelBooking.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Lytt til port satt av Render (fallback til 5000 lokalt)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
+// var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+// builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // CORS-policy for Vercel-produksjon og lokal utvikling
 builder.Services.AddCors(options =>
@@ -38,9 +38,16 @@ builder.Services.AddSingleton<ClientService>();
 builder.Services.AddSingleton<EventService>();
 
 builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 // Init database ved oppstart hvis nødvendig
 DatabaseStartup.InitializeAndConnect();
 
