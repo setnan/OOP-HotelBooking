@@ -36,6 +36,11 @@ public static class UserService
         return DatabaseConnection.Instance.GetOne<User>("Email",email);
     }
 
+    public static User? GetUserById(int id)
+    {
+        return DatabaseConnection.Instance.GetOne<User>("UserId", id);
+    }
+
     public static bool ValidatePassword(User user, string? password)
     {
         var userData = DatabaseConnection.Instance.GetOne<User>("UserId",  user.UserId);
@@ -65,8 +70,8 @@ public static class UserService
     
     public static User? GetUserFromName(string name)
     {
-        var query = @"SELECT * FROM ""User"" WHERE ""Name"" = @name";
-        return DatabaseConnection.Instance.GetOne<User>(query, new { name });
+        
+        return DatabaseConnection.Instance.GetOne<User>("Name",name);
     }
 
     
