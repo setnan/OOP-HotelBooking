@@ -1,5 +1,6 @@
 using HotelBooking.Database;
 using HotelBooking.Models;
+using HotelBooking.Utilities;
 
 namespace HotelBooking.Services;
 
@@ -10,19 +11,15 @@ public static class UserService
         return  user.Role == Role.Admin;
     }
 
-    public static void UpdateUserEmail(int userId, string email)
+    public static bool UpdateUser(User user, string json)
     {
-        var query = "UPDATE User SET Email = @email WHERE UserId = @userId";
-        
-        DatabaseConnection.Instance.ExecuteSql(query, new {email, userId});
+        if (user.ApplyUpdatesFromJson(json))
+        {
+            return DatabaseConnection.Instance.Update(user);
+        }
+        return false;
     }
-
-    public static void UpdateUserPassword(int userId, string password)
-    {
-        var query = "UPDATE User SET Password = @password WHERE UserId = @userId";
-        DatabaseConnection.Instance.ExecuteSql(query, new {password, userId});
-    }
-
+    
     public static List<User> GetAllUsers()
     {
         return DatabaseConnection.Instance.GetAll<User>();
@@ -35,48 +32,35 @@ public static class UserService
     
     public static User? GetUserFromEmail(string email)
     {
-        var query = @"SELECT * FROM User WHERE Email = @email";
-        return DatabaseConnection.Instance.GetOne<User>(query, new { email });
+        
+        return DatabaseConnection.Instance.GetOne<User>("Email",email);
     }
 
-    public static bool ValidatePassword(int userId, string? password)
+    public static bool ValidatePassword(User user, string? password)
     {
-        var validateQuery = @"SELECT * FROM User WHERE UserId = @userId";
-        var userData = DatabaseConnection.Instance.GetOne<User>(validateQuery, new { userId});
-        if (password != null && userData != null && !userData.Password.Equals(password))
+        var userData = DatabaseConnection.Instance.GetOne<User>("UserId",  user.UserId);
+        if (password != null && userData != null && userData.Password.Equals(password))
         {
-            return false;
-        }
-        return true;
-    }
-
-    public static bool ChangePassword(int userId, string oldPassword, string newPassword)
-    {
-        if (ValidatePassword(userId, oldPassword))
-        {
-            UpdateUserPassword(userId, newPassword);
             return true;
         }
         return false;
     }
 
-    public static User? GetUserById(int userId)
+    public static bool ChangePassword(User user, string oldPassword, string newPassword)
     {
-        var query = "SELECT * FROM User WHERE UserId = @userId";
-        return DatabaseConnection.Instance.GetOne<User>(query, new { userId });
+        var json = $"{{ \"Password\": \"{newPassword}\" }}";
+
+        if (ValidatePassword(user, oldPassword))
+        {
+            UpdateUser(user, json);
+            return true;
+        }
+        return false;
     }
     
-    public static bool DeleteUser(int userId)
+    public static bool DeleteUser(User user)
     {
-        var user =  GetUserById(userId);
-        if (user == null)
-        {
-            return false;
-        }
-        
-        var query = "DELETE FROM User WHERE UserId = @userId";
-        DatabaseConnection.Instance.ExecuteSql(query, new { userId });
-        return true;
+        return DatabaseConnection.Instance.Delete(user);
     }
     
 }

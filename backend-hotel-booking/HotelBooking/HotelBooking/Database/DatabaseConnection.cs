@@ -58,9 +58,14 @@ public class DatabaseConnection
         return _connection.Query<T>(query).ToList();
     }
 
-    public T? GetOne<T>(string sql, object parameters)
+    public T? GetOne<T>(string parameterName, object parameterValue)
     {
-        return _connection.QuerySingleOrDefault<T>(sql, parameters);
+        var table = GetTableName<T>();
+        var parameters = new  Dictionary<string, object>{ { parameterName, parameterValue }};
+        var (key, value) =  parameters.First();
+        
+        var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
+        return _connection.QuerySingleOrDefault<T>(query, parameters);
     }
     
     public bool Insert<T>(T entity)

@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using HotelBooking.Database;
 using HotelBooking.Models;
 using Newtonsoft.Json;
+using HotelBooking.Utilities;
 
 namespace HotelBooking.Services;
 
@@ -16,16 +17,12 @@ public class RoomService(DatabaseConnection db)
     
     public static bool UpdateRoom(Room room, string json)
     {
-        var updatedRoomData = JsonConvert.DeserializeObject<Room>(json);
-        foreach (var property in typeof(Room).GetProperties())
+        if (room.ApplyUpdatesFromJson(json))
         {
-            var newProperty = property.GetValue(updatedRoomData);
-            if (newProperty != null && !newProperty.Equals(property.GetValue(room)))
-            {
-                property.SetValue(room, newProperty);
-            }
+            return DatabaseConnection.Instance.Update(room);
         }
-        return DatabaseConnection.Instance.Update(room);
+
+        return false;
     }
 
     public static bool DeleteRoom(Room room)
