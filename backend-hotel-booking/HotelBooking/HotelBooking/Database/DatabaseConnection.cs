@@ -39,18 +39,8 @@ public class DatabaseConnection
         using var command = new NpgsqlCommand(query, _connection);
         command.ExecuteNonQuery();
     }
-
-    public void ExecuteSql(string sql, object parameters)
-    {
-        _connection.Execute(sql, parameters);
-    }
-
-    public object? ExecuteQueryRow(string mail)
-    {
-        const string query = "SELECT * FROM \"User\" WHERE \"Email\" = @email";
-        return _connection.QuerySingleOrDefault<User>(query, new { email = mail });
-    }
-
+    
+    
     public List<T> GetAll<T>()
     {
         var table = GetTableName<T>();
@@ -58,15 +48,17 @@ public class DatabaseConnection
         return _connection.Query<T>(query).ToList();
     }
 
+    
     public T? GetOne<T>(string parameterName, object parameterValue)
     {
         var table = GetTableName<T>();
         var parameters = new  Dictionary<string, object>{ { parameterName, parameterValue }};
         var (key, value) =  parameters.First();
         
-        var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
+        var query = $"SELECT * FROM {table} WHERE \"{key}\" = @{key}";
         return _connection.QuerySingleOrDefault<T>(query, parameters);
     }
+    
     
     public bool Insert<T>(T entity)
     {
@@ -79,8 +71,8 @@ public class DatabaseConnection
         }
 
         var propertyNameListFiltered = propertyNameList
-            .Where(name => name != $"{typeof(T).Name}Id")
-            .ToList();
+            .Where(name => name != $"{typeof(T).Name}Id").ToList();
+
 
         var columns = string.Join(", ", propertyNameListFiltered);
         var parameters = string.Join(", ", propertyNameListFiltered.Select(name => "@" + name));
@@ -90,33 +82,38 @@ public class DatabaseConnection
         var rowsAffected = _connection.Execute(insertQuery, entity);
         return rowsAffected > 0;
     }
+    
+    
     public bool Update<T>(T entity)
     {
         var table = GetTableName<T>();
 
         var propertyNameListFiltered = GetPropertyNames<T>(true);
 
-        var setClause = string.Join(", ", propertyNameListFiltered.Select(name => $"{name} = @{name}"));
+        var setClause = string.Join(", ", propertyNameListFiltered.Select(name => $"\"{name}\" = @{name}"));
         var updateQuery = $"UPDATE {table} SET {setClause} WHERE {table}Id = @{table}Id";
 
         var rowsAffected = _connection.Execute(updateQuery, entity);
         return rowsAffected > 0;
     }
 
+    
     public bool Delete<T>(T entity)
     {
         var table = GetTableName<T>();
         
-        var deleteQuery = $"DELETE FROM {table} WHERE {table}Id = @{table}Id";
+        var deleteQuery = $"DELETE FROM {table} WHERE \"{table}Id\" = @{table}Id";
         var rowsAffected = _connection.Execute(deleteQuery, entity);
         return rowsAffected > 0;
     }
 
+    
     public static string GetTableName<T>()
     {
-        return typeof(T).Name;
+        return $"\"{typeof(T).Name}\"";
     }
 
+    
     public static List<string> GetPropertyNames<T>(bool filtered = false)
     {
         var propertyNameList = typeof(T).GetProperties()
