@@ -2,28 +2,46 @@
 using HotelBooking;
 using HotelBooking.Database;
 using HotelBooking.Models;
+using HotelBooking.Utilities;
 
 namespace OOP_HotelBooking.Services;
 
-public class GuestService
+public class GuestService(DatabaseConnection connection)
 {
-    private readonly DatabaseConnection _db;
 
-    public GuestService(DatabaseConnection db)
+    public static bool AddGuest(Guest guest)
     {
-        _db = db;
+        return DatabaseConnection.Instance.Insert(guest);
     }
 
-    public List<Guest> GetAllGuests()
+    public static bool UpdateGuest(Guest guest, string json)
     {
-        string query = "SELECT * FROM Guest";
-
-        return _db.ExecuteQuery(query, reader => new Guest
+        if (guest.ApplyUpdatesFromJson(json))
         {
-            GuestId = reader.GetInt32("guest_id"),
-            Name = reader.GetString("name"),
-            ContactNumber = reader.GetString("contact_number"),
-            Email = reader.GetString("email")
-        });
+            return DatabaseConnection.Instance.Update(guest);
+        }
+        return false;
     }
+
+    public static bool DeteGuest(Guest guest)
+    {
+        return DatabaseConnection.Instance.Delete(guest);
+    }
+
+    public static Guest? GetGuestById(int id)
+    {
+        return DatabaseConnection.Instance.GetOne<Guest>("GuestId", id);
+    }
+
+    public static Guest? GetGuestByEmail(string email)
+    {
+        return DatabaseConnection.Instance.GetOne<Guest>("Email", email);
+    }
+
+    public static Guest? GetGuestByName(string name)
+    {
+        return DatabaseConnection.Instance.GetOne<Guest>("Name", name);
+    }
+    
+    
 }

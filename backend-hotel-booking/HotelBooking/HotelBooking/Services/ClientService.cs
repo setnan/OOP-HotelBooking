@@ -2,32 +2,52 @@
 using HotelBooking;
 using HotelBooking.Database;
 using HotelBooking.Models;
+using HotelBooking.Utilities;
 
-public class ClientService
+public class ClientService(DatabaseConnection instance)
 {
-    private readonly DatabaseConnection _db;
 
-    public ClientService(DatabaseConnection db)
+    
+    public static bool AddClient(Client client)
     {
-        _db = db;
+        return DatabaseConnection.Instance.Insert(client);
     }
 
-    public List<Client> GetAllClients()
+    
+    public static bool UpdateClient(Client client, string json)
     {
-        string query = "SELECT * FROM Client";
-        return _db.ExecuteQuery(query, reader => new Client
+        if (client.ApplyUpdatesFromJson(json))
         {
-            ClientId = reader.GetInt32("ClientId"),
-            Name = reader.GetString("Name"),
-            BillingAddress = reader.GetString("BillingAddress"),
-            ContactPerson = reader.GetString("ContactPerson"),
-            ContactNumber = reader.GetString("ContactNumber")
-        });
+            return DatabaseConnection.Instance.Update(client);
+        }
+        return false;
     }
 
-    public void AddClient(Client client)
+    
+    public static bool DeleteClient(Client client)
     {
-        string query = "INSERT INTO Client (Name, BillingAddress, ContactPerson, ContactNumber) VALUES (@Name, @BillingAddress, @ContactPerson, @ContactNumber)";
-        _db.ExecuteSql(query, client);
+        return DatabaseConnection.Instance.Delete(client);
+    }
+
+    
+    public static List<Client> GetAllClients()
+    {
+        return DatabaseConnection.Instance.GetAll<Client>();
+    }
+
+    
+    public static Client? GetClientById(int id)
+    {
+        return DatabaseConnection.Instance.GetOne<Client>("ClientId", id);
+    }
+
+    public static Client? GetClientByEmail(string email)
+    {
+        return DatabaseConnection.Instance.GetOne<Client>("Email", email);
+    }
+
+    public static Client? GetClientByName(string name)
+    {
+        return DatabaseConnection.Instance.GetOne<Client>("ClientName", name);
     }
 }

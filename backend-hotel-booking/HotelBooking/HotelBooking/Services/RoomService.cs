@@ -21,7 +21,7 @@ public class RoomService(DatabaseConnection db)
         {
             return DatabaseConnection.Instance.Update(room);
         }
-
+        
         return false;
     }
 
@@ -41,5 +41,22 @@ public class RoomService(DatabaseConnection db)
         var rooms = GetAllRooms();
         return rooms.Where(x => x.IsAvailable).ToList();
     }
+    
+    public static Room? GetRoomById(int id)
+    {
+        return DatabaseConnection.Instance.GetOne<Room>("RoomId", id);
+    }
+
+    public static Room? GetRoomByNumber(string number)
+    {
+        return DatabaseConnection.Instance.GetOne<Room>("RoomNumber", number);
+    }
+
+    public static List<Room> GetRoomsByHotelId(int id)
+    {
+        var rooms = GetAllRooms();
+        return rooms.Where(x => x.HotelId == id).ToList();
+    }
+    
     
 }

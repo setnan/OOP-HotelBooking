@@ -25,10 +25,12 @@ public static class UserService
         return DatabaseConnection.Instance.GetAll<User>();
     }
 
+    
     public static bool AddUser(User user)
     {
         return DatabaseConnection.Instance.Insert(user);
     }
+    
     
     public static User? GetUserFromEmail(string email)
     {
@@ -36,11 +38,13 @@ public static class UserService
         return DatabaseConnection.Instance.GetOne<User>("Email",email);
     }
 
+    
     public static User? GetUserById(int id)
     {
         return DatabaseConnection.Instance.GetOne<User>("UserId", id);
     }
 
+    
     public static bool ValidatePassword(User user, string? password)
     {
         var userData = DatabaseConnection.Instance.GetOne<User>("UserId",  user.UserId);
@@ -51,6 +55,7 @@ public static class UserService
         return false;
     }
 
+    
     public static bool ChangePassword(User user, string oldPassword, string newPassword)
     {
         var json = $"{{ \"Password\": \"{newPassword}\" }}";
@@ -63,16 +68,18 @@ public static class UserService
         return false;
     }
     
+    
     public static bool DeleteUser(User user)
     {
         return DatabaseConnection.Instance.Delete(user);
     }
+    
     
     public static User? GetUserFromName(string name)
     {
         
         return DatabaseConnection.Instance.GetOne<User>("Name",name);
     }
-
+    
     
 }

@@ -2,26 +2,18 @@
 using HotelBooking.Database;
 using HotelBooking.Models;
 
-public class EventService
+public class EventService(DatabaseConnection connection)
 {
-    private readonly DatabaseConnection _db;
-
-    public EventService(DatabaseConnection db)
+    
+    public static bool AddEvent(Event thisevent)
     {
-        _db = db;
+        return DatabaseConnection.Instance.Insert(thisevent);
     }
 
-    public void AddEvent(Event e)
+    public static bool UpdateEvent(Event thisevent)
     {
-        string insertEvent = @"
-            INSERT INTO Event (ClientId, StartDate, EndDate, StartTime, EndTime)
-            VALUES (@ClientId, @StartDate, @EndDate, @StartTime, @EndTime)";
-        _db.ExecuteSql(insertEvent, e);
+        return DatabaseConnection.Instance.Update(thisevent);
     }
-
-    public void LinkEventToRoom(int eventId, int roomId)
-    {
-        string query = "INSERT INTO EventRoom (EventId, RoomId) VALUES (@eventId, @roomId)";
-        _db.ExecuteSql(query, new { eventId, roomId });
-    }
+    
+    
 }
