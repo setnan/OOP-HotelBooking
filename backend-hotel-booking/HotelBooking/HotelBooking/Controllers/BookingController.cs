@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using HotelBooking.Models;
 
+namespace HotelBooking.Controllers;
+
 [ApiController]
 [Route("[controller]")]
 public class BookingController : ControllerBase
