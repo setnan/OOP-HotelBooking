@@ -11,7 +11,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     // Henter alle brukere fra backend
-    fetch("https://hotelbooking-api-69s2.onrender.com/api/users")
+    fetch("http://localhost:5127/api/users")
       .then((res) => res.json())
       .then(setUsers)
       .catch((err) => console.error("Feil ved henting av brukere:", err));

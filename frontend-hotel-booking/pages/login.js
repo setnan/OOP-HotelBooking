@@ -2,6 +2,7 @@ import { useState } from "react";
 import Head from "next/head";
 import styles from "../styles/Login.module.css";
 import { useRouter } from "next/router";
+import { api } from "../services/api";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -23,31 +24,20 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "https://hotelbooking-api-69s2.onrender.com/api/login",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password }),
-        }
-      );
+      const data = await api.post("/api/login", { username, password });
 
-      if (!response.ok) {
-        const errorData = await response.text();
-        setError(errorData || "Feil brukernavn eller passord");
-        setIsLoading(false);
-        return;
+      // Store the token first
+      if (data.token) {
+        localStorage.setItem("token", data.token);
       }
 
-      const data = await response.json();
-
-      // Lagrer brukerdata i localStorage
+      // Then store user data
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("name", data.name);
       localStorage.setItem("email", data.email);
       localStorage.setItem("role", data.role);
 
-      // Naviger til admin eller receptionist dashboard basert på rolle
+      // Navigate based on role
       if (data.role === "Admin") {
         router.push("/admin");
       } else if (data.role === "Receptionist") {

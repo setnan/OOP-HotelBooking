@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { useRouter } from 'next/router';
-import { useAuth } from '../context/AuthContext';
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../context/AuthContext";
 
 export default function PrivateRoute({ children }) {
   const router = useRouter();
@@ -8,13 +8,13 @@ export default function PrivateRoute({ children }) {
 
   useEffect(() => {
     if (!loading && !token) {
-      router.push('/login');
+      router.push("/login");
     }
   }, [loading, token, router]);
 
-  // Don't render anything while checking authentication
+  // Ikke vis noe mens vi sjekker om brukeren er logget inn
   if (loading) return null;
 
-  // Only render children if authenticated
+  // Bare render innholdet dersom brukeren er autentisert
   return token ? children : null;
 }
