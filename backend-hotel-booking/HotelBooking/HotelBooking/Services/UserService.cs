@@ -63,4 +63,11 @@ public static class UserService
         return DatabaseConnection.Instance.Delete(user);
     }
     
+    public static User? GetUserFromName(string name)
+    {
+        var query = @"SELECT * FROM ""User"" WHERE ""Name"" = @name";
+        return DatabaseConnection.Instance.GetOne<User>(query, new { name });
+    }
+
+    
 }

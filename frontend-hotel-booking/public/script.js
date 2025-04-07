@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const list = document.getElementById("bookingList");
 
   // Fetch bookings from backend
-  /*   fetch("https://your-backend-api-url/booking")
+  fetch("https://hotelbooking-api-69s2.onrender.com/api/booking")
     .then((res) => res.json())
     .then((bookings) => {
       bookings.forEach((b) => {
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", () => {
         li.textContent = `Room ${b.room.roomNumber} - Guest: ${b.guest.name} (${b.checkIn} to ${b.checkOut})`;
         list.appendChild(li);
       });
-    }); */
+    });
 
   // Submit form
   form.addEventListener("submit", async (e) => {
@@ -24,11 +24,14 @@ document.addEventListener("DOMContentLoaded", () => {
       checkOut: document.getElementById("checkOut").value,
     };
 
-    const res = await fetch("https://your-backend-api-url/booking", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(booking),
-    });
+    const res = await fetch(
+      "https://hotelbooking-api-69s2.onrender.com/api/login/booking",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(booking),
+      }
+    );
 
     if (res.ok) {
       alert("Booking registered!");
