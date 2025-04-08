@@ -1,34 +1,45 @@
 ﻿using Dumpify;
+using HotelBooking.Core.Database;
 using HotelBooking.Core.Services;
 using HotelBooking.Core.Models;
 
+Console.WriteLine("Get BY ID ");
+var client = ClientService.GetClientById(8);
+Console.WriteLine(client.Dump());
 
-List<User> users = UserService.GetAllUsers();
-foreach (var user in users)
+var newClient = new Client
 {
-    Console.WriteLine(user.Dump());
-}
-
-List<Room> availableRooms = RoomService.GetAvailableRooms(DateTime.Parse("2025-04-02"), DateTime.Parse("2025-04-04"));
-foreach (var room in availableRooms)
-{
-    Console.WriteLine(room.Dump());
-}
-
-var newBooking = new Booking
-{
-    GuestId = 1,
-    RoomId = 1,
-    CheckIn = DateTime.Parse("2025-04-02"),
-    CheckOut = DateTime.Parse("2025-04-04")
+    Name = "John Doe & co",
+    BillingAddress = "test@gmail.com",
+    ContactPerson = "John Doe",
+    ContactNumber = "456-123-456"
 };
-BookingService.AddBooking(newBooking);
-
-
-BookingService.AddBooking(newBooking);
-
-List<Room> availableRooms1 = RoomService.GetAvailableRooms(DateTime.Parse("2025-04-02"), DateTime.Parse("2025-04-04"));
-foreach (var room in availableRooms1)
+ClientService.AddClient(newClient);
+var clients = ClientService.GetAllClients();
+Console.WriteLine($"\nAdd Client");
+foreach (var clientel in clients)
 {
-    Console.WriteLine(room.Dump());
+    Console.WriteLine(clientel.Dump());
 }
+
+Console.WriteLine("\nCHECKPOINT!");
+var getClient = ClientService.GetClientById(11);
+
+if (getClient != null) getClient.Name = "John Doe & co & co";
+if (getClient != null) ClientService.UpdateClient(getClient);
+var getClients = ClientService.GetAllClients();
+Console.WriteLine($"\nUpdate Client");
+foreach (var newclient in getClients)
+{
+    Console.WriteLine(newclient.Dump());
+}
+
+ClientService.DeleteClient(getClient);
+
+var gottenClients = ClientService.GetAllClients();
+Console.WriteLine($"\nDelete Client");
+foreach (var newclientell in gottenClients)
+{
+    Console.WriteLine(newclientell.Dump());
+}
+
