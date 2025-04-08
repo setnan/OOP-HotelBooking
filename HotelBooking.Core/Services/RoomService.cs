@@ -1,4 +1,5 @@
-﻿using HotelBooking.Core.Database;
+﻿using Dapper;
+using HotelBooking.Core.Database;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Utilities;
 
@@ -37,10 +38,11 @@ public class RoomService(DatabaseConnection db)
     }
 
 
-    public static List<Room> GetAvailableRooms()
+    public static List<Room> GetAvailableRooms(DateTime? checkIn = null, DateTime? checkOut = null)
     {
-        var rooms = GetAllRooms();
-        return rooms.Where(x => x.IsAvailable).ToList();
+        var connection = DatabaseConnection.Instance.GetConnection();
+        var query = GetAvailableRoomQuery();
+        return connection.Query<Room>(query, new {checkIn, checkOut}).ToList();
     }
     
     public static Room? GetRoomById(int id)
@@ -68,5 +70,13 @@ public class RoomService(DatabaseConnection db)
     {
         room.IsAvailable = availability;
         return DatabaseConnection.Instance.Update(room);
+    }
+    private static string? GetAvailableRoomQuery()
+    {
+        return @"SELECT * 
+            FROM Room r
+            LEFT JOIN Booking b ON r.RoomId = b.RoomId
+                AND NOT (b.CheckIn >= @checkOut OR b.CheckOut <= @checkIn)
+            WHERE b.BookingId IS NULL;";
     }
 }
