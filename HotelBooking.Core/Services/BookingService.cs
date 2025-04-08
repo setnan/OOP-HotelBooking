@@ -41,9 +41,9 @@ public class BookingService
 
         var query = @"
                     SELECT * 
-                    FROM ""Booking"" b
-                    JOIN ""Guest"" g ON b.""GuestId"" = g.""GuestId""
-                    JOIN ""Room"" r ON b.""RoomId"" = r.""RoomId"";";
+                    FROM Booking b
+                    JOIN Guest g ON b.GuestId = g.GuestId
+                    JOIN Room r ON b.RoomId = r.RoomId;";
 
         var bookings = Enumerable.ToList(connection.Query<Booking, Guest, Room, Booking>(
             query,
@@ -56,6 +56,11 @@ public class BookingService
             splitOn: "GuestId,RoomId"
         ));
         return bookings;
+    }
+
+    public static Booking? GetBookingByRoomId(int roomId)
+    {
+        return DatabaseConnection.Instance.GetOne<Booking>("RoomId", roomId);
     }
     
     
