@@ -11,7 +11,7 @@ public class BookingService
     {
         if (DatabaseConnection.Instance.Insert(booking))
         {
-            var room = RoomService.GetRoomById(booking.Room.RoomId);
+            var room = RoomService.GetRoomById(booking.RoomId);
             return room != null && RoomService.UpdateRoomAvailability(room, false);
         }
         return false;
@@ -35,8 +35,8 @@ public class BookingService
         {
             return false;
         }
-        var oldRoom = RoomService.GetRoomById(oldBooking.Room.RoomId);
-        if (oldRoom == null || oldRoom.RoomId == booking.Room.RoomId)
+        var oldRoom = RoomService.GetRoomById(oldBooking.RoomId);
+        if (oldRoom == null || oldRoom.RoomId == booking.RoomId)
         {
             return DatabaseConnection.Instance.Update(booking);
         }
@@ -44,14 +44,14 @@ public class BookingService
         if (DatabaseConnection.Instance.Update(booking))
         {
             RoomService.UpdateRoomAvailability(oldRoom, true);
-            RoomService.UpdateRoomAvailability(booking.Room, false);
+            RoomService.UpdateRoomAvailability(booking.GetRoom(), false);
         }
         return true;
     }
 
     public static bool DeleteBooking(Booking booking)
     {
-        var room = RoomService.GetRoomById(booking.Room.RoomId);
+        var room = RoomService.GetRoomById(booking.RoomId);
         if (DatabaseConnection.Instance.Delete(booking))
         {
             return  room != null && RoomService.UpdateRoomAvailability(room, true);
@@ -68,45 +68,18 @@ public class BookingService
 
     public static List<Booking> GetAllBookings()
     {
-        var query = GetBookingMappingQuery();
-        var bookings = GetBookingMapping(query);
-        return bookings;
+        return DatabaseConnection.Instance.GetAll<Booking>();
     }
 
     public static List<Booking>? GetBookingsByRoomId(int roomId)
     {
-        var query = GetBookingMappingQuery() + $"WHERE b.RoomId = @RoomId";
-        return GetBookingMapping(query, new { RoomId = roomId });
+        return DatabaseConnection.Instance.GetAllWhere<Booking>("RoomId", roomId);
     }
 
     public static List<Booking>? GetBookingsByGuestId(int guestId)
     {
-        var query = GetBookingMappingQuery() + $"WHERE b.GuestId = @GuestId";
-        return GetBookingMapping(query, new {GuestId = guestId});
+        return DatabaseConnection.Instance.GetAllWhere<Booking>("GuestId", guestId);
     }
-
-    private static string GetBookingMappingQuery()
-    {
-        return @"
-            SELECT * 
-            FROM Booking b
-            JOIN Guest g ON b.GuestId = g.GuestId
-            JOIN Room r ON b.RoomId = r.RoomId;";
-    }
-
-    private static List<Booking> GetBookingMapping(string query, object? parameters = null)
-    {
-        var connection = DatabaseConnection.Instance.GetConnection();
-        return connection.Query<Booking, Guest, Room, Booking>(
-            query,
-            (booking, guest, room) =>
-            {
-                booking.Guest = guest;
-                booking.Room = room;
-                return booking;
-            },
-            splitOn: "GuestId,RoomId"
-        ).ToList();
-    }
+    
 
 }

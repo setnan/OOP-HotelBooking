@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using HotelBooking.Core.Models;
 using HotelBooking.Core.Utilities;
 using MySql.Data.MySqlClient;
 
@@ -33,6 +34,17 @@ public class DatabaseConnection
         var table = GetTableName<T>();
         var query = $"SELECT * FROM {table}";
         return _connection.Query<T>(query).ToList();
+    }
+
+
+    public List<T> GetAllWhere<T>(string parameterName, object parameterValue)
+    {
+        var table = GetTableName<T>();
+        var parameters = new  Dictionary<string, object>{ { parameterName, parameterValue }};
+        var (key, value) =  parameters.First();
+        
+        var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
+        return _connection.Query<T>(query, parameters).ToList();
     }
 
     
@@ -112,5 +124,16 @@ public class DatabaseConnection
             return propertyNameList.Where(name => name != $"{typeof(T).Name}Id").ToList();
         }
         return propertyNameList;
+    }
+    
+    public List<Room> GetAvailableRooms(DateTime checkIn, DateTime checkOut)
+    {
+        var query = @"SELECT * 
+                  FROM Room r
+                  LEFT JOIN Booking b ON r.RoomId = b.RoomId
+                  AND NOT (b.CheckIn >= @checkOut OR b.CheckOut <= @checkIn)
+                  WHERE b.BookingId IS NULL;";
+
+        return _connection.Query<Room>(query, new { checkIn, checkOut }).ToList();
     }
 }

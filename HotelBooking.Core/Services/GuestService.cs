@@ -28,7 +28,7 @@ public class GuestService(DatabaseConnection connection)
 
     public static Guest? GetGuestById(int id)
     {
-        return DatabaseConnection.Instance.GetOne<Guest>("GuestId", id);
+        return DatabaseConnection.Instance.GetOne<Guest>("Guest", id);
     }
 
     public static Guest? GetGuestByEmail(string email)
