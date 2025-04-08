@@ -13,18 +13,11 @@ public class Booking
     // Navigation properties for reading / mapping
     private Guest _guest;
     private Room _room;
-
-
+    
     public DateTime CheckIn { get; set; }
     public DateTime CheckOut { get; set; }
-    public Guest GetGuest()
-    {
-        return GuestService.GetGuestById(GuestId);
-    }
-
-    public Room GetRoom()
-    {
-        return RoomService.GetRoomById(RoomId);
-    }
+    
+    public Guest? GetGuest() => GuestService.GetGuestById(GuestId);
+    public Room? GetRoom() => RoomService.GetRoomById(RoomId);
 
 }
