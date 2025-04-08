@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using HotelBooking.Desktop.Models;
-using HotelBooking.Desktop.Services;
+using HotelBooking.Core.Models;
+using HotelBooking.Core.Services;
 
 namespace HotelBooking.Desktop.ViewModels;
 
