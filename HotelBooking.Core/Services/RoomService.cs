@@ -21,6 +21,11 @@ public class RoomService(DatabaseConnection db)
         return false;
     }
 
+    public static bool UpateRoom(Room room)
+    {
+        return DatabaseConnection.Instance.Update(room);
+    }
+
     public static bool DeleteRoom(Room room)
     {
         return DatabaseConnection.Instance.Delete(room);
