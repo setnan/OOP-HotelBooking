@@ -74,7 +74,7 @@ public static class UserService
     }
     
     
-    public static User? GetUserFromName(string name)
+    public static User? GetUserByName(string name)
     {
         
         return DatabaseConnection.Instance.GetOne<User>("Name",name);
