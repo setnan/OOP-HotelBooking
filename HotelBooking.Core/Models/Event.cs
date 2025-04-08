@@ -7,6 +7,7 @@ public class Event
     public int EventId { get; set; }
     
     //Navigation properties for reading / mapping
+    public string HotelId { get; set; }
     private List<EventClient> EventClients = new();
     private List<EventRoom> EventRooms = new();
     
