@@ -5,6 +5,7 @@ namespace HotelBooking.Core.Models;
 public class Event
 {
     public int EventId { get; set; }
+    public string Name { get; set; }
     
     //Navigation properties for reading / mapping
     public string HotelId { get; set; }
