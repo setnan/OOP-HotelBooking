@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="HotelBooking.AvaloniaApp.Views.BookingsView"
+             x:DataType="vm:BookingsViewModel">
+    <Grid RowDefinitions="Auto,*">
+        <StackPanel Grid.Row="0" Spacing="10">
+            <TextBlock Text="My Bookings"
+                     FontSize="24"
+                     FontWeight="Bold"
+                     Margin="0,0,0,20"
+                     Foreground="White"/>
+            
+            <!-- Loading indicator -->
+            <ProgressBar IsIndeterminate="True"
+                       IsVisible="{Binding IsLoading}"
+                       Height="2"
+                       Margin="0,0,0,10"/>
+        </StackPanel>
+
+        <!-- Bookings list -->
+        <ScrollViewer Grid.Row="1" Margin="0,10,0,0">
+            <ItemsControl ItemsSource="{Binding Bookings}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#2d2d2d"
+                                BorderBrush="#3d3d3d"
+                                BorderThickness="1"
+                                CornerRadius="8"
+                                Margin="0,0,0,10"
+                                Padding="15">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <StackPanel Grid.Column="0" Spacing="8">
+                                    <TextBlock Text="{Binding Room.RoomNumber}"
+                                             FontSize="18"
+                                             FontWeight="Bold"
+                                             Foreground="White"/>
+                                    <TextBlock Text="{Binding Room.Type}"
+                                             Foreground="LightGray"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <TextBlock Text="Check-in:"
+                                                 Foreground="LightGray"/>
+                                        <TextBlock Text="{Binding CheckIn, StringFormat='{}{0:dd MMM yyyy}'}"
+                                                 Foreground="White"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="5">
+                                        <TextBlock Text="Check-out:"
+                                                 Foreground="LightGray"/>
+                                        <TextBlock Text="{Binding CheckOut, StringFormat='{}{0:dd MMM yyyy}'}"
+                                                 Foreground="White"/>
+                                    </StackPanel>
+                                </StackPanel>
+                                <Button Grid.Column="1"
+                                        Content="Cancel"
+                                        Classes="accent"
+                                        VerticalAlignment="Top"/>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

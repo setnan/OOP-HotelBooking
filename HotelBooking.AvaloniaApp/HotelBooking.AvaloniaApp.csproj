@@ -30,4 +30,10 @@
     <ItemGroup>
       <ProjectReference Include="..\HotelBooking.Core\HotelBooking.Core.csproj" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\BookingViewaxaml.cs">
+        <DependentUpon>BookingView.axaml</DependentUpon>
+      </Compile>
+    </ItemGroup>
 </Project>
