@@ -9,7 +9,12 @@ public class BookingService
 {
     public static bool AddBooking(Booking booking)
     {
-        return DatabaseConnection.Instance.Insert(booking);
+        if (DatabaseConnection.Instance.Insert(booking))
+        {
+            var room = RoomService.GetRoomById(booking.Room.RoomId);
+            return room != null && RoomService.UpdateRoomAvailability(room, false);
+        }
+        return false;
     }
 
 
@@ -78,5 +83,5 @@ public class BookingService
             splitOn: "GuestId,RoomId"
         ).ToList();
     }
-    
+
 }
