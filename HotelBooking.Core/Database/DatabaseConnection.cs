@@ -27,24 +27,6 @@ public class DatabaseConnection
 
     public void Open() => _connection.Open();
     public void Close() => _connection.Close();
-
-    // public List<T> ExecuteQuery<T>(string query, Func<NpgsqlDataReader, T> map)
-    // {
-    //     var result = new List<T>();
-    //     using var command = new MySqlConnection(query, _connection);
-    //     using var reader = command.ExecuteReader();
-    //     while (reader.Read())
-    //     {
-    //         result.Add(map(reader));
-    //     }
-    //     return result;
-    // }
-    //
-    // public void ExecuteNonQuery(string query)
-    // {
-    //     using var command = new MySqlConnection(query, _connection);
-    //     command.ExecuteNonQuery();
-    // }
     
     
     public List<T> GetAll<T>()
