@@ -32,9 +32,8 @@ public static class UserService
     }
     
     
-    public static User? GetUserFromEmail(string email)
+    public static User? GetUserByEmail(string email)
     {
-        
         return DatabaseConnection.Instance.GetOne<User>("Email",email);
     }
 
