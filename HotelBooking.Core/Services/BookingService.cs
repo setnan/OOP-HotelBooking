@@ -73,13 +73,13 @@ public class BookingService
         return bookings;
     }
 
-    public static List<Booking>? GetBookingByRoomId(int roomId)
+    public static List<Booking>? GetBookingsByRoomId(int roomId)
     {
         var query = GetBookingMappingQuery() + $"WHERE b.RoomId = @RoomId";
         return GetBookingMapping(query, new { RoomId = roomId });
     }
 
-    public static List<Booking>? GetBookingByGuestId(int guestId)
+    public static List<Booking>? GetBookingsByGuestId(int guestId)
     {
         var query = GetBookingMappingQuery() + $"WHERE b.GuestId = @GuestId";
         return GetBookingMapping(query, new {GuestId = guestId});
