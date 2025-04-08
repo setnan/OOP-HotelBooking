@@ -16,8 +16,8 @@ public class LoginController : ControllerBase
         }
 
         // Pålogging via email eller brukervavn
-        var user = UserService.GetUserFromEmail(request.Username) 
-                   ?? UserService.GetUserFromName(request.Username);
+        var user = UserService.GetUserByEmail(request.Username) 
+                   ?? UserService.GetUserByName(request.Username);
 
         if (user == null || user.Password != request.Password)
         {
