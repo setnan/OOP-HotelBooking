@@ -1,14 +1,13 @@
-﻿using System.Configuration;
-using Dapper;
+﻿using Dapper;
 using HotelBooking.Core.Utilities;
 using MySql.Data.MySqlClient;
-using Npgsql;
+
 
 namespace HotelBooking.Core.Database;
 
 public class DatabaseConnection
 {
-    private string? connection_string = AppConfiguration.Configuration["ConnectionStrings:DefaultConnection"];
+    private readonly string? _connectionString = AppConfiguration.Configuration["ConnectionStrings:DefaultConnection"];
 
     private static DatabaseConnection? _instance;
     public static DatabaseConnection Instance => _instance ??= new DatabaseConnection();
@@ -17,7 +16,7 @@ public class DatabaseConnection
 
     private DatabaseConnection()
     {
-        _connection = new MySqlConnection(connection_string);
+        _connection = new MySqlConnection(_connectionString);
     }
 
     public MySqlConnection GetConnection()
@@ -33,7 +32,7 @@ public class DatabaseConnection
     {
         var table = GetTableName<T>();
         var query = $"SELECT * FROM {table}";
-        return Enumerable.ToList<T>(_connection.Query<T>(query));
+        return _connection.Query<T>(query).ToList();
     }
 
     
@@ -96,13 +95,13 @@ public class DatabaseConnection
     }
 
     
-    public static string GetTableName<T>()
+    private static string GetTableName<T>()
     {
         return typeof(T).Name;
     }
 
     
-    public static List<string> GetPropertyNames<T>(bool filtered = false)
+    private static List<string> GetPropertyNames<T>(bool filtered = false)
     {
         var propertyNameList = typeof(T).GetProperties()
             .Select(p => p.Name)
