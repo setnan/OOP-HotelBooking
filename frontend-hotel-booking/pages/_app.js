@@ -13,7 +13,7 @@ export default function MyApp({ Component, pageProps }) {
 
     const role =
       typeof window !== "undefined" ? localStorage.getItem("role") : null;
-
+    console.log("JAVEEEL");
     if (isProtected && !role) {
       router.push("/login");
     }

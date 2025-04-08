@@ -13,6 +13,8 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem("token");
     const storedRole = localStorage.getItem("role");
 
+    console.log("storedToken", storedToken);
+
     if (storedToken) {
       setToken(storedToken);
       setRole(storedRole);
