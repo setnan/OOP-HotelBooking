@@ -28,9 +28,35 @@ public class BookingService
         return false;
     }
 
+    public static bool UpdateBooking(Booking booking)
+    {
+        var oldBooking = GetBookingById(booking.BookingId);
+        if (oldBooking == null)
+        {
+            return false;
+        }
+        var oldRoom = RoomService.GetRoomById(oldBooking.Room.RoomId);
+        if (oldRoom == null || oldRoom.RoomId == booking.Room.RoomId)
+        {
+            return DatabaseConnection.Instance.Update(booking);
+        }
+
+        if (DatabaseConnection.Instance.Update(booking))
+        {
+            RoomService.UpdateRoomAvailability(oldRoom, true);
+            RoomService.UpdateRoomAvailability(booking.Room, false);
+        }
+        return true;
+    }
+
     public static bool DeleteBooking(Booking booking)
     {
-        return DatabaseConnection.Instance.Delete(booking);
+        var room = RoomService.GetRoomById(booking.Room.RoomId);
+        if (DatabaseConnection.Instance.Delete(booking))
+        {
+            return  room != null && RoomService.UpdateRoomAvailability(room, true);
+        }
+        return false;
     }
 
 
@@ -43,7 +69,6 @@ public class BookingService
     public static List<Booking> GetAllBookings()
     {
         var query = GetBookingMappingQuery();
-
         var bookings = GetBookingMapping(query);
         return bookings;
     }
