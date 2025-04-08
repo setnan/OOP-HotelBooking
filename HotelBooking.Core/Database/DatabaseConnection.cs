@@ -1,25 +1,26 @@
-﻿using Dapper;
+﻿using System.Configuration;
+using Dapper;
+using HotelBooking.Core.Utilities;
+using MySql.Data.MySqlClient;
 using Npgsql;
 
 namespace HotelBooking.Core.Database;
 
 public class DatabaseConnection
 {
+    private string? connection_string = AppConfiguration.Configuration["ConnectionStrings:DefaultConnection"];
+
     private static DatabaseConnection? _instance;
     public static DatabaseConnection Instance => _instance ??= new DatabaseConnection();
 
-    private readonly NpgsqlConnection _connection;
+    private readonly MySqlConnection _connection;
 
     private DatabaseConnection()
     {
-        
-        var connectionString = Environment.GetEnvironmentVariable("CONNECTION_STRING")
-                               ?? throw new InvalidOperationException("Missing CONNECTION_STRING");
-
-        _connection = new NpgsqlConnection(connectionString);
+        _connection = new MySqlConnection(connection_string);
     }
 
-    public NpgsqlConnection GetConnection()
+    public MySqlConnection GetConnection()
     {
         return _connection;
     }
@@ -27,23 +28,23 @@ public class DatabaseConnection
     public void Open() => _connection.Open();
     public void Close() => _connection.Close();
 
-    public List<T> ExecuteQuery<T>(string query, Func<NpgsqlDataReader, T> map)
-    {
-        var result = new List<T>();
-        using var command = new NpgsqlCommand(query, _connection);
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
-        {
-            result.Add(map(reader));
-        }
-        return result;
-    }
-
-    public void ExecuteNonQuery(string query)
-    {
-        using var command = new NpgsqlCommand(query, _connection);
-        command.ExecuteNonQuery();
-    }
+    // public List<T> ExecuteQuery<T>(string query, Func<NpgsqlDataReader, T> map)
+    // {
+    //     var result = new List<T>();
+    //     using var command = new MySqlConnection(query, _connection);
+    //     using var reader = command.ExecuteReader();
+    //     while (reader.Read())
+    //     {
+    //         result.Add(map(reader));
+    //     }
+    //     return result;
+    // }
+    //
+    // public void ExecuteNonQuery(string query)
+    // {
+    //     using var command = new MySqlConnection(query, _connection);
+    //     command.ExecuteNonQuery();
+    // }
     
     
     public List<T> GetAll<T>()
@@ -60,7 +61,7 @@ public class DatabaseConnection
         var parameters = new  Dictionary<string, object>{ { parameterName, parameterValue }};
         var (key, value) =  parameters.First();
         
-        var query = $"SELECT * FROM {table} WHERE \"{key}\" = @{key}";
+        var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
         return _connection.QuerySingleOrDefault<T>(query, parameters);
     }
     
@@ -95,7 +96,7 @@ public class DatabaseConnection
 
         var propertyNameListFiltered = GetPropertyNames<T>(true);
 
-        var setClause = string.Join(", ", propertyNameListFiltered.Select(name => $"\"{name}\" = @{name}"));
+        var setClause = string.Join(", ", propertyNameListFiltered.Select(name => $"{name} = @{name}"));
         var updateQuery = $"UPDATE {table} SET {setClause} WHERE {table}Id = @{table}Id";
 
         var rowsAffected = _connection.Execute(updateQuery, entity);
@@ -107,7 +108,7 @@ public class DatabaseConnection
     {
         var table = GetTableName<T>();
         
-        var deleteQuery = $"DELETE FROM {table} WHERE \"{table}Id\" = @{table}Id";
+        var deleteQuery = $"DELETE FROM {table} WHERE {table}Id = @{table}Id";
         var rowsAffected = _connection.Execute(deleteQuery, entity);
         return rowsAffected > 0;
     }
@@ -115,7 +116,7 @@ public class DatabaseConnection
     
     public static string GetTableName<T>()
     {
-        return $"\"{typeof(T).Name}\"";
+        return typeof(T).Name;
     }
 
     
