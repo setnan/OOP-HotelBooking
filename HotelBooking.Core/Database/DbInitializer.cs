@@ -1,19 +1,15 @@
-﻿// Dbinitializer er kun for lokaltesting,
-// nå som vi allerede har initialisert databasen på Render.com trengs egentlig ikke denne.
-
-using Npgsql;
+﻿using MySql.Data.MySqlClient;
 
 namespace HotelBooking.Core.Database;
 
 public static class DbInitializer
 {
-    public static void Run(NpgsqlConnection connection)
+    public static void Run(MySqlConnection connection)
     {
-        // Cast 'regclass' til 'text' for å unngå Npgsql-feil
-        using var checkCmd = new NpgsqlCommand("SELECT to_regclass('\"User\"')::text;", connection);
-        var result = checkCmd.ExecuteScalar() as string;
+        using var checkCmd = new MySqlCommand("SHOW TABLES LIKE 'User';", connection);
+        var result = checkCmd.ExecuteScalar();
 
-        if (!string.IsNullOrEmpty(result))
+        if (result != null)
         {
             Console.WriteLine("Database already initialized.");
             return;
@@ -22,17 +18,17 @@ public static class DbInitializer
         Console.WriteLine("Initializing database...");
 
         var basePath = AppContext.BaseDirectory;
-        var sqlPath = Path.Combine(basePath, "init_postgres.sql");
+        var sqlPath = Path.Combine(basePath, "init.sql");
 
         if (!File.Exists(sqlPath))
         {
-            Console.WriteLine($"Fant ikke SQL-fil: {sqlPath}");
-            throw new FileNotFoundException("init_postgres.sql ikke funnet", sqlPath);
+            Console.WriteLine($"SQL file not found: {sqlPath}");
+            throw new FileNotFoundException("init.sql not found", sqlPath);
         }
 
         var sqlScript = File.ReadAllText(sqlPath);
 
-        using var initCmd = new NpgsqlCommand(sqlScript, connection);
+        using var initCmd = new MySqlCommand(sqlScript, connection);
         initCmd.ExecuteNonQuery();
 
         Console.WriteLine("Database initialized successfully.");

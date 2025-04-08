@@ -1,0 +1,69 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HotelBooking.Desktop.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="700"
+             x:Class="HotelBooking.Desktop.Views.MainView"
+             x:DataType="vm:MainWindowViewModel">
+
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+
+        <DockPanel>
+            <!-- Top Bar -->
+            <Border DockPanel.Dock="Top" Height="40" Margin="0">
+                <StackPanel Orientation="Horizontal" 
+                          HorizontalAlignment="Center" 
+                          VerticalAlignment="Center"
+                          Spacing="10">
+                    <Image Source="/Assets/favicon.png" 
+                           Height="24" 
+                           Width="24"/>
+                    <TextBlock Text="Hotel Booking System" 
+                             VerticalAlignment="Center"
+                             Foreground="White"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Left Navigation Menu -->
+            <Border DockPanel.Dock="Left" 
+                    Width="200" 
+                    Background="#1e1e1e"
+                    BorderBrush="#333333" 
+                    BorderThickness="0,0,1,0">
+                <StackPanel Spacing="5" Margin="10">
+                    <Button Content="Dashboard" 
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding NavigateToDashboardCommand}"/>
+                    <Button Content="Available Rooms" 
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding NavigateToRoomsCommand}"/>
+                    <Button Content="Make Reservation" 
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding NavigateToReservationCommand}"/>
+                    <Button Content="My Bookings" 
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding NavigateToBookingsCommand}"/>
+                    <Button Content="Settings" 
+                            HorizontalAlignment="Stretch"
+                            Command="{Binding NavigateToSettingsCommand}"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Main Content Area -->
+            <Border Background="#2d2d2d" Margin="0">
+                <ContentControl Content="{Binding CurrentPage}"
+                              Margin="20"/>
+            </Border>
+        </DockPanel>
+    </Panel>
+</UserControl>

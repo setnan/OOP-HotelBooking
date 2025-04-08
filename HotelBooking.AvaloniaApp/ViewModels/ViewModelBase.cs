@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace HotelBooking.AvaloniaApp.ViewModels;
+namespace HotelBooking.Desktop.ViewModels;
 
 public class ViewModelBase : ObservableObject
 {
