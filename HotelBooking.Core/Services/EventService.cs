@@ -25,6 +25,15 @@ public class EventService(DatabaseConnection connection)
     {
         return DatabaseConnection.Instance.GetOne<Event>("EventId", id);
     }
-    
+
+    public static List<EventRoom>? GetRoomsByEventId(int eventId)
+    {
+        return DatabaseConnection.Instance.GetAllWhere<EventRoom>("EventId", eventId);
+    }
+
+    public static List<EventClient>? GetClientsByEventId(int eventId)
+    {
+        return DatabaseConnection.Instance.GetAllWhere<EventClient>("EventId", eventId);
+    }
     
 }
