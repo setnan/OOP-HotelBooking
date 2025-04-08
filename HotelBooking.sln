@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBooking", "HotelBooking\HotelBooking.csproj", "{865CE031-DB15-4096-BB6B-F17733271E2A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBooking.Core", "HotelBooking.Core\HotelBooking.Core.csproj", "{E87D7973-08B1-4C50-883D-7AB49E8B0406}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HotelBooking.AvaloniaApp", "HotelBooking.AvaloniaApp\HotelBooking.AvaloniaApp.csproj", "{2A274078-9EC8-400D-9B34-F11B1A4C5E67}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{865CE031-DB15-4096-BB6B-F17733271E2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{865CE031-DB15-4096-BB6B-F17733271E2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{865CE031-DB15-4096-BB6B-F17733271E2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{865CE031-DB15-4096-BB6B-F17733271E2A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E87D7973-08B1-4C50-883D-7AB49E8B0406}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E87D7973-08B1-4C50-883D-7AB49E8B0406}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E87D7973-08B1-4C50-883D-7AB49E8B0406}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E87D7973-08B1-4C50-883D-7AB49E8B0406}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A274078-9EC8-400D-9B34-F11B1A4C5E67}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A274078-9EC8-400D-9B34-F11B1A4C5E67}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A274078-9EC8-400D-9B34-F11B1A4C5E67}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A274078-9EC8-400D-9B34-F11B1A4C5E67}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
