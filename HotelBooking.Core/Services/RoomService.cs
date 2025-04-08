@@ -64,7 +64,7 @@ public class RoomService(DatabaseConnection db)
         return room.IsAvailable;
     }
     
-    public static bool UpdateRoomAvailability(Room room, bool availability = false)
+    public static bool UpdateRoomAvailability(Room room, bool availability)
     {
         room.IsAvailable = availability;
         return DatabaseConnection.Instance.Update(room);
