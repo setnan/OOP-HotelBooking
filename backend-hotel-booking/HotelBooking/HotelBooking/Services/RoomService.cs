@@ -57,6 +57,10 @@ public class RoomService(DatabaseConnection db)
         var rooms = GetAllRooms();
         return rooms.Where(x => x.HotelId == id).ToList();
     }
-    
+
+    public static bool IsRoomAvailable(Room room)
+    {
+        return room.IsAvailable;
+    }
     
 }

@@ -20,6 +20,11 @@ public class DatabaseConnection
         _connection = new NpgsqlConnection(connectionString);
     }
 
+    public NpgsqlConnection GetConnection()
+    {
+        return _connection;
+    }
+
     public void Open() => _connection.Open();
     public void Close() => _connection.Close();
 

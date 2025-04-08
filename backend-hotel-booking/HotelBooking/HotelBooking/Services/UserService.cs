@@ -80,6 +80,4 @@ public static class UserService
         
         return DatabaseConnection.Instance.GetOne<User>("Name",name);
     }
-    
-    
 }

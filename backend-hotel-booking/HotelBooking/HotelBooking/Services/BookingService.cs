@@ -1,64 +1,64 @@
 ﻿using System.Data;
+using Dapper;
 using HotelBooking;
 using HotelBooking.Database;
 using HotelBooking.Models;
+using HotelBooking.Utilities;
 
 namespace HotelBooking.Services;
 
-public class BookingService(DatabaseConnection _db)
+public static class BookingService
 {
-    
-    public void CreateBooking(Booking booking)
+    public static bool AddBooking(Booking booking)
     {
-        string query = $@"
-            INSERT INTO Booking (GuestId, RoomId, CheckIn, CheckOut)
-            VALUES ({booking.Guest.GuestId}, {booking.Room.RoomId}, 
-                    '{booking.CheckIn:yyyy-MM-dd}', '{booking.CheckOut:yyyy-MM-dd}');
-
-            UPDATE Room SET IsAvailable = 0 WHERE RoomId = {booking.Room.RoomId};
-        ";
-
-        _db.ExecuteNonQuery(query);
+        return DatabaseConnection.Instance.Insert(booking);
     }
-    public List<Booking> GetAllBookings()
-    {
-        string query = @"
-        SELECT 
-            b.BookingId,
-            b.CheckIn,
-            b.CheckOut,
-            g.GuestId,
-            g.name AS Name,
-            g.ContactNumber,
-            g.Email,
-            r.RoomId,
-            r.RoomNumber,
-            r.Type,
-            r.Price
-        FROM Booking b
-        JOIN Guest g ON b.GuestId = g.GuestId
-        JOIN Room r ON b.RoomId = r.RoomId";
 
-        return _db.ExecuteQuery(query, reader => new Booking
+
+    public static bool UpdateBooking(Booking booking, string json)
+    {
+        if (booking.ApplyUpdatesFromJson(json))
         {
-            BookingId = reader.GetInt32("BookingId"),
-            CheckIn = reader.GetDateTime("CheckIn"),
-            CheckOut = reader.GetDateTime("CheckOut"),
-            Guest = new Guest
-            {
-                GuestId = reader.GetInt32("GuestId"),
-                Name = reader.GetString("Name"),
-                ContactNumber = reader.GetString("ContactNumber"),
-                Email = reader.GetString("Email")
-            },
-            Room = new Room
-            {
-                RoomId = reader.GetInt32("RoomId"),
-                RoomNumber = reader.GetString("RoomNumber"),
-                Type = reader.GetString("Type"),
-                Price = reader.GetDecimal("Price")
-            }
-        });
+            return DatabaseConnection.Instance.Update(booking);
+        }
+
+        return false;
     }
 
+    public static bool DeleteBooking(Booking booking)
+    {
+        return DatabaseConnection.Instance.Delete(booking);
+    }
+
+
+    public static Booking? GetBookingById(int id)
+    {
+        return DatabaseConnection.Instance.GetOne<Booking>("BookingId", id);
+    }
+
+
+    public static List<Booking> GetAllBookings()
+    {
+        var connection = DatabaseConnection.Instance.GetConnection();
+
+        var query = @"
+                    SELECT * 
+                    FROM ""Booking"" b
+                    JOIN ""Guest"" g ON b.""GuestId"" = g.""GuestId""
+                    JOIN ""Room"" r ON b.""RoomId"" = r.""RoomId"";";
+
+        var bookings = connection.Query<Booking, Guest, Room, Booking>(
+            query,
+            (booking, guest, room) =>
+            {
+                booking.Guest = guest;
+                booking.Room = room;
+                return booking;
+            },
+            splitOn: "GuestId,RoomId"
+        ).ToList();
+        return bookings;
+    }
+    
+    
 }

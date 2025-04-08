@@ -4,6 +4,8 @@ using HotelBooking.Database;
 using HotelBooking.Models;
 using HotelBooking.Utilities;
 
+namespace HotelBooking.Services;
+
 public class ClientService(DatabaseConnection instance)
 {
 

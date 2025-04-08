@@ -4,7 +4,7 @@ using HotelBooking.Database;
 using HotelBooking.Models;
 using HotelBooking.Utilities;
 
-namespace OOP_HotelBooking.Services;
+namespace HotelBooking.Services;
 
 public class GuestService(DatabaseConnection connection)
 {
@@ -23,7 +23,7 @@ public class GuestService(DatabaseConnection connection)
         return false;
     }
 
-    public static bool DeteGuest(Guest guest)
+    public static bool DeleteGuest(Guest guest)
     {
         return DatabaseConnection.Instance.Delete(guest);
     }
@@ -42,6 +42,4 @@ public class GuestService(DatabaseConnection connection)
     {
         return DatabaseConnection.Instance.GetOne<Guest>("Name", name);
     }
-    
-    
 }
