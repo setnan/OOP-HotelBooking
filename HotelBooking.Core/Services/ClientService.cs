@@ -7,6 +7,10 @@ namespace HotelBooking.Core.Services;
 public class ClientService(DatabaseConnection instance)
 {
 
+    public static List<Client> GetAllClients()
+    {
+        return DatabaseConnection.Instance.GetAll<Client>();
+    }
     
     public static bool AddClient(Client client)
     {
@@ -24,30 +28,32 @@ public class ClientService(DatabaseConnection instance)
     }
 
     
+    public static bool UpdateClient(Client client)
+    {
+        return DatabaseConnection.Instance.Update(client);
+    }
+    
+    
     public static bool DeleteClient(Client client)
     {
         return DatabaseConnection.Instance.Delete(client);
     }
-
     
-    public static List<Client> GetAllClients()
-    {
-        return DatabaseConnection.Instance.GetAll<Client>();
-    }
-
     
     public static Client? GetClientById(int id)
     {
         return DatabaseConnection.Instance.GetOne<Client>("ClientId", id);
     }
 
-    public static Client? GetClientByEmail(string email)
+    
+    public static Client? GetClientByBillingAddress(string billingAddress)
     {
-        return DatabaseConnection.Instance.GetOne<Client>("Email", email);
+        return DatabaseConnection.Instance.GetOne<Client>("BillingAddress", billingAddress);
     }
 
+    
     public static Client? GetClientByName(string name)
     {
-        return DatabaseConnection.Instance.GetOne<Client>("ClientName", name);
+        return DatabaseConnection.Instance.GetOne<Client>("Name", name);
     }
 }
