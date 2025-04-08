@@ -81,6 +81,24 @@ CREATE TABLE Meal (
     FOREIGN KEY (RoomId) REFERENCES Room(RoomId)
 );
 
+CREATE TABLE EventClient (
+    EventId int,
+    ClientId int,
+
+    PRIMARY KEY (EventId, ClientId),
+    FOREIGN KEY (EventId) REFERENCES Event(EventId),
+    FOREIGN KEY (ClientId) REFERENCES Client(ClientId)
+);
+
+CREATE TABLE EventRoom (
+    EventId int,
+    RoomId int,
+
+    PRIMARY KEY (EventId, RoomId),
+    FOREIGN KEY (EventId) REFERENCES Event(EventId),
+    FOREIGN KEY (RoomId) REFERENCES Room(RoomId)
+);
+
 
 INSERT INTO User (Name, Email, Password, Role) VALUES
 ('Alice Admin', 'alice@hotel.com', 'pass123', 'Admin'),
