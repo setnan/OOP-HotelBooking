@@ -58,12 +58,14 @@ CREATE TABLE Client (
 
 CREATE TABLE Event (
     EventId INT AUTO_INCREMENT PRIMARY KEY,
+    HotelId INT,
     OrganiserId INT,
     RoomId INT,
     StartDate DATE,
     EndDate DATE,
     StartTime TIME,
     EndTime TIME,
+    FOREIGN KEY (HotelId) REFERENCES Hotel(HotelId),
     FOREIGN KEY (OrganiserId) REFERENCES Client(ClientId),
     FOREIGN KEY (RoomId) REFERENCES Room(RoomId)
 );
@@ -82,8 +84,8 @@ CREATE TABLE Meal (
 );
 
 CREATE TABLE EventClient (
-    EventId int,
-    ClientId int,
+    EventId INT,
+    ClientId INT,
 
     PRIMARY KEY (EventId, ClientId),
     FOREIGN KEY (EventId) REFERENCES Event(EventId),
@@ -91,8 +93,8 @@ CREATE TABLE EventClient (
 );
 
 CREATE TABLE EventRoom (
-    EventId int,
-    RoomId int,
+    EventId INT,
+    RoomId INT,
 
     PRIMARY KEY (EventId, RoomId),
     FOREIGN KEY (EventId) REFERENCES Event(EventId),
