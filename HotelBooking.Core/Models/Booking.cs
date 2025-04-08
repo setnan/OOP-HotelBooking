@@ -8,8 +8,4 @@ public class Booking
     public DateTime CheckIn { get; set; }
     public DateTime CheckOut { get; set; }
 
-    public string GetBookingDetails()
-    {
-        return $"{Guest?.Name} har booket rom {Room?.RoomNumber} fra {CheckIn:dd.MM} til {CheckOut:dd.MM}";
-    }
 }

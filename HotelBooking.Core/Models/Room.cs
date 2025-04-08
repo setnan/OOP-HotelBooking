@@ -8,9 +8,5 @@ public class Room
     public string Type { get; set; }
     public decimal Price { get; set; }
     public bool IsAvailable { get; set; }
-
-    public void Reserve()
-    {
-        IsAvailable = false;
-    }
+    
 }
