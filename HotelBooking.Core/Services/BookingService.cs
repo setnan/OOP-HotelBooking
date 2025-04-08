@@ -37,15 +37,37 @@ public class BookingService
 
     public static List<Booking> GetAllBookings()
     {
+        var query = GetBookingMappingQuery();
+
+        var bookings = GetBookingMapping(query);
+        return bookings;
+    }
+
+    public static List<Booking>? GetBookingByRoomId(int roomId)
+    {
+        var query = GetBookingMappingQuery() + $"WHERE b.RoomId = @RoomId";
+        return GetBookingMapping(query, new { RoomId = roomId });
+    }
+
+    public static List<Booking>? GetBookingByGuestId(int guestId)
+    {
+        var query = GetBookingMappingQuery() + $"WHERE b.GuestId = @GuestId";
+        return GetBookingMapping(query, new {GuestId = guestId});
+    }
+
+    private static string GetBookingMappingQuery()
+    {
+        return @"
+            SELECT * 
+            FROM Booking b
+            JOIN Guest g ON b.GuestId = g.GuestId
+            JOIN Room r ON b.RoomId = r.RoomId;";
+    }
+
+    private static List<Booking> GetBookingMapping(string query, object? parameters = null)
+    {
         var connection = DatabaseConnection.Instance.GetConnection();
-
-        var query = @"
-                    SELECT * 
-                    FROM Booking b
-                    JOIN Guest g ON b.GuestId = g.GuestId
-                    JOIN Room r ON b.RoomId = r.RoomId;";
-
-        var bookings = Enumerable.ToList(connection.Query<Booking, Guest, Room, Booking>(
+        return connection.Query<Booking, Guest, Room, Booking>(
             query,
             (booking, guest, room) =>
             {
@@ -54,14 +76,7 @@ public class BookingService
                 return booking;
             },
             splitOn: "GuestId,RoomId"
-        ));
-        return bookings;
+        ).ToList();
     }
-
-    public static Booking? GetBookingByRoomId(int roomId)
-    {
-        return DatabaseConnection.Instance.GetOne<Booking>("RoomId", roomId);
-    }
-    
     
 }
