@@ -77,5 +77,38 @@ public partial class BookingsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private Task RefreshData() => LoadDataAsync();
+    private async Task UpdateBookingAsync()
+    {
+        if (SelectedBooking == null)
+        {
+            ErrorMessage = "No booking selected to update.";
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            SuccessMessage = null;
+
+            var success = await bookingService.UpdateBookingAsync(SelectedBooking);
+            if (success)
+            {
+                SuccessMessage = "Booking updated successfully.";
+                await LoadDataAsync(); // Oppdater listen
+            }
+            else
+            {
+                ErrorMessage = "Failed to update booking.";
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error updating booking: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 }

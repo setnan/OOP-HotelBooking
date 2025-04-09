@@ -46,7 +46,6 @@ public partial class App : Application
             services.AddSingleton<EventService>();
             services.AddSingleton<BackupService>();
 
-
             // Wrappers
             services.AddScoped<UserServiceWrapper>();
             services.AddScoped<RoomServiceWrapper>();
@@ -54,10 +53,8 @@ public partial class App : Application
             services.AddScoped<ClientServiceWrapper>();
             services.AddScoped<GuestServiceWrapper>();
 
-
             // ViewModels
             services.AddTransient<MainWindowViewModel>();
-            services.AddTransient<LoginViewModel>();
             services.AddTransient<DashboardViewModel>();
             services.AddTransient<BookingsViewModel>();
             services.AddTransient<BookingViewModel>();
@@ -67,13 +64,26 @@ public partial class App : Application
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<BackupViewModel>();
 
-
             _serviceProvider = services.BuildServiceProvider();
 
-            desktop.MainWindow = new LoginWindow
+            // LoginWindow med "onLoginSuccess"-callback
+            var loginWindow = new LoginWindow();
+            var loginViewModel = new LoginViewModel(user =>
             {
-                DataContext = _serviceProvider.GetRequiredService<LoginViewModel>()
-            };
+                var mainWindow = new MainWindow
+                {
+                    DataContext = _serviceProvider!.GetRequiredService<MainWindowViewModel>()
+                };
+
+                desktop.MainWindow = mainWindow;
+                mainWindow.Show();
+
+                loginWindow.Close();
+            });
+
+            loginWindow.DataContext = loginViewModel;
+            desktop.MainWindow = loginWindow;
+            loginWindow.Show();
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -83,8 +93,8 @@ public partial class App : Application
     {
         if (Current is App app)
         {
-            return app._serviceProvider?.GetRequiredService<T>()
-                ?? throw new InvalidOperationException($"Service of type {typeof(T)} not found");
+            return app._serviceProvider!.GetRequiredService<T>();
+
         }
         throw new InvalidOperationException("Application not initialized");
     }

@@ -3,6 +3,9 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
+using HotelBooking.Core.Database;
+using HotelBooking.Core.Services;
+using HotelBooking.Core.Utilities;
 using HotelBooking.AvaloniaApp.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
@@ -30,13 +33,16 @@ public partial class MainWindowViewModel : ViewModelBase
     public RoomManagementViewModel RoomManagementViewModel { get; }
     public GuestViewModel GuestViewModel { get; }
     public BackupViewModel BackupViewModel { get; }
+    public ClientsViewModel ClientsViewModel { get; }
 
     public MainWindowViewModel()
     {
         userService = new UserServiceWrapper();
         roleService = RoleService.Instance;
         bookingService = new BookingServiceWrapper();
-        clientService = new ClientServiceWrapper();
+        clientService = new ClientServiceWrapper(
+            new ClientService(new DatabaseConnection(AppConfiguration.Configuration))
+        );
         guestService = new GuestServiceWrapper();
         roomService = new RoomServiceWrapper();
 
@@ -45,6 +51,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RoomManagementViewModel = new RoomManagementViewModel(roomService, bookingService);
         GuestViewModel = new GuestViewModel(guestService);
         BackupViewModel = new BackupViewModel();
+        ClientsViewModel = new ClientsViewModel(clientService);
 
         CurrentView = DashboardViewModel;
     }
@@ -65,6 +72,7 @@ public partial class MainWindowViewModel : ViewModelBase
             "rooms" => RoomManagementViewModel,
             "guests" => GuestViewModel,
             "backup" => BackupViewModel,
+            "clients" => ClientsViewModel,
             _ => DashboardViewModel
         };
     }
@@ -78,7 +86,6 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         catch (Exception)
         {
-            // If we can't get the user or role, default to non-admin
             isAdmin = false;
         }
     }

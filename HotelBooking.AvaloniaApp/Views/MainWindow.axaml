@@ -1,19 +1,31 @@
 <Window xmlns="https://github.com/avaloniaui"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
-        xmlns:views="using:HotelBooking.AvaloniaApp.Views"
+        xmlns:vm="clr-namespace:HotelBooking.AvaloniaApp.ViewModels"
+        xmlns:views="clr-namespace:HotelBooking.AvaloniaApp.Views"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d"
         x:Class="HotelBooking.AvaloniaApp.Views.MainWindow"
-        x:DataType="vm:LoginViewModel"
+        x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/favicon.png"
         Title="Hotel Booking System">
 
     <Design.DataContext>
-        <vm:LoginViewModel />
+        <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <views:LoginView />
+    <DockPanel>
+        <!-- Navigasjonsmeny -->
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Background="LightGray" Margin="5">
+            <Button Content="Dashboard" Command="{Binding NavigateToCommand}" CommandParameter="dashboard" Margin="5"/>
+            <Button Content="Bookinger" Command="{Binding NavigateToCommand}" CommandParameter="bookings" Margin="5"/>
+            <Button Content="Gjester" Command="{Binding NavigateToCommand}" CommandParameter="guests" Margin="5"/>
+            <Button Content="Rom" Command="{Binding NavigateToCommand}" CommandParameter="rooms" Margin="5"/>
+            <Button Content="Backup" Command="{Binding NavigateToCommand}" CommandParameter="backup" Margin="5"/>
+            <Button Content="Klienter" Command="{Binding NavigateToCommand}" CommandParameter="clients" Margin="5"/>
+        </StackPanel>
 
+        <!-- Hovedinnhold -->
+        <ContentControl Content="{Binding CurrentView}" Margin="10"/>
+    </DockPanel>
 </Window>

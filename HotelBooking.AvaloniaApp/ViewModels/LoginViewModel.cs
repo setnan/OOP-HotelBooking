@@ -10,10 +10,12 @@ namespace HotelBooking.AvaloniaApp.ViewModels;
 public partial class LoginViewModel : ViewModelBase
 {
     private readonly UserServiceWrapper userService;
+    private readonly Action<User> onLoginSuccess;
 
-    public LoginViewModel(UserServiceWrapper userService)
+    public LoginViewModel(Action<User> onLoginSuccess)
     {
-        this.userService = userService;
+        this.onLoginSuccess = onLoginSuccess;
+        this.userService = new UserServiceWrapper(); // Du kan også injecte hvis ønskelig
     }
 
     [ObservableProperty]
@@ -39,10 +41,10 @@ public partial class LoginViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = null;
 
-            var user = await userService.LoginAsync(Username, Password);
+            var user = await userService.AuthenticateAsync(Username, Password);
             if (user == null)
             {
-                ErrorMessage = "Invalid username or password";
+                ErrorMessage = "Ugyldig brukernavn eller passord";
                 return;
             }
 
@@ -50,12 +52,12 @@ public partial class LoginViewModel : ViewModelBase
             {
                 await userService.SaveCredentialsAsync(Username, Password);
             }
-
-            // Navigate to main view
+            
+            onLoginSuccess(user);
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Login failed: {ex.Message}";
+            ErrorMessage = $"Innlogging feilet: {ex.Message}";
         }
         finally
         {

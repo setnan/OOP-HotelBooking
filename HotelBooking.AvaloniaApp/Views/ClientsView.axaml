@@ -4,29 +4,49 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewmodels="clr-namespace:HotelBooking.AvaloniaApp.ViewModels"
              mc:Ignorable="d"
-             x:Class="HotelBooking.AvaloniaApp.Views.ClientsView">
+             x:Class="HotelBooking.AvaloniaApp.Views.ClientsView"
+             x:DataType="viewmodels:ClientsViewModel">
 
-    <UserControl.DataContext>
-        <viewmodels:ClientsViewModel />
-    </UserControl.DataContext>
+    <ScrollViewer>
+        <StackPanel Margin="20" Spacing="15">
+            <TextBlock Text="Klienter" FontSize="20" FontWeight="Bold"/>
 
-    <Grid RowDefinitions="Auto,*">
-        <TextBlock Text="Klienter" FontSize="20" Margin="10"/>
+            <!-- Meldinger -->
+            <TextBlock Text="{Binding SuccessMessage}" Foreground="Green" IsVisible="{Binding SuccessMessage}" />
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding ErrorMessage}" />
+            <ProgressBar IsVisible="{Binding IsLoading}" IsIndeterminate="True" Height="4" />
 
-        <DataGrid Items="{Binding Clients}" AutoGenerateColumns="False" Grid.Row="1" Margin="10"
-                  SelectedItem="{Binding SelectedClient}">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Navn" Binding="{Binding Name}" />
-                <DataGridTextColumn Header="Fakturaadresse" Binding="{Binding BillingAddress}" />
-                <DataGridTextColumn Header="Kontaktperson" Binding="{Binding ContactPerson}" />
-                <DataGridTextColumn Header="Telefon" Binding="{Binding ContactNumber}" />
-            </DataGrid.Columns>
-        </DataGrid>
+            <!-- Klientliste -->
+            <DataGrid ItemsSource="{Binding Clients}"
+                      SelectedItem="{Binding SelectedClient}"
+                      AutoGenerateColumns="False"
+                      Height="300">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Navn" Binding="{Binding Name}" />
+                    <DataGridTextColumn Header="Fakturaadresse" Binding="{Binding BillingAddress}" />
+                    <DataGridTextColumn Header="Kontaktperson" Binding="{Binding ContactPerson}" />
+                    <DataGridTextColumn Header="Telefon" Binding="{Binding ContactNumber}" />
+                </DataGrid.Columns>
+            </DataGrid>
 
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" Grid.Row="2">
-            <Button Content="Last inn" Command="{Binding RefreshCommand}" Margin="5"/>
-            <Button Content="Slett" Command="{Binding DeleteClientCommand}" Margin="5"
-                    IsEnabled="{Binding SelectedClient, Converter={StaticResource NullToBoolConverter}}"/>
+            <!-- Handlinger -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                <Button Content="Last inn" Command="{Binding RefreshCommand}" />
+                <Button Content="Slett" Command="{Binding DeleteClientCommand}" 
+                        IsEnabled="{Binding SelectedClient}" />
+            </StackPanel>
+
+            <Separator Margin="10"/>
+
+            <!-- Ny klient -->
+            <TextBlock Text="Legg til ny klient" FontSize="16" FontWeight="Bold"/>
+            <StackPanel Spacing="10">
+                <TextBox Watermark="Navn" Text="{Binding Name}" />
+                <TextBox Watermark="Fakturaadresse" Text="{Binding BillingAddress}" />
+                <TextBox Watermark="Kontaktperson" Text="{Binding ContactPerson}" />
+                <TextBox Watermark="Telefon" Text="{Binding ContactNumber}" />
+                <Button Content="Legg til klient" Command="{Binding AddClientCommand}" />
+            </StackPanel>
         </StackPanel>
-    </Grid>
+    </ScrollViewer>
 </UserControl>
