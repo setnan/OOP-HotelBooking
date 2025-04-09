@@ -9,8 +9,8 @@ public class Event
     
     //Navigation properties for reading / mapping
     public string HotelId { get; set; }
-    private List<EventClient> EventClients = new();
-    private List<EventRoom> EventRooms = new();
+    public List<EventClient> EventClients { get; private set; } = new();
+    public List<EventRoom> EventRooms { get; private set; } = new();
     
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
@@ -19,7 +19,26 @@ public class Event
 
 
     public List<EventClient>? GetEventClients() => EventService.GetClientsByEventId(EventId);
+    public void AddEventClient(EventClient client)
+    {
+        EventClients.Add(client);
+    }
+    public void AddAllEventClients(List<EventClient> clients)
+    {
+        EventClients = clients;
+    }
+    
     public List<EventRoom>? GetEventRooms() => EventService.GetRoomsByEventId(EventId);
+
+    public void AddEventRoom(EventRoom room)
+    {
+        EventRooms.Add(room);
+    }
+
+    public void AddAllEventRooms(List<EventRoom> rooms)
+    {
+        EventRooms = rooms;
+    }
 
     
 }
