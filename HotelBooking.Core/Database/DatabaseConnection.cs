@@ -11,31 +11,25 @@ namespace HotelBooking.Core.Database;
 
 public class DatabaseConnection
 {
-    private readonly string connectionString;
-    private readonly MySqlConnection connection;
+    private readonly string? _connectionString = AppConfiguration.Configuration["ConnectionStrings:DefaultConnection"];
+ 
+    private static DatabaseConnection? _instance;
+    public static DatabaseConnection Instance => _instance ??= new DatabaseConnection();
+    private readonly MySqlConnection _connection;
 
-    public DatabaseConnection(IConfiguration configuration)
+    private DatabaseConnection()
     {
-        connectionString = configuration.GetConnectionString("DefaultConnection") 
-            ?? throw new System.InvalidOperationException("Connection string 'DefaultConnection' not found.");
-        connection = new MySqlConnection(connectionString);
+        _connection = new MySqlConnection(_connectionString);
     }
-
-    public async Task OpenAsync()
-    {
-        await connection.OpenAsync();
-    }
-
-    public async Task CloseAsync()
-    {
-        await connection.CloseAsync();
-    }
+    
+    public void Open() => _connection.Open();
+    public void Close() => _connection.Close();
 
     public async Task<List<T>> GetAllAsync<T>()
     {
         var table = GetTableName<T>();
         var query = $"SELECT * FROM {table}";
-        return (await connection.QueryAsync<T>(query)).ToList();
+        return (await _connection.QueryAsync<T>(query)).ToList();
     }
 
     public async Task<List<T>> GetAllWhereAsync<T>(string parameterName, object parameterValue)
@@ -45,7 +39,7 @@ public class DatabaseConnection
         var (key, value) = parameters.First();
 
         var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
-        return (await connection.QueryAsync<T>(query, parameters)).ToList();
+        return (await _connection.QueryAsync<T>(query, parameters)).ToList();
     }
 
     public async Task<T?> GetOneAsync<T>(string parameterName, object parameterValue)
@@ -55,7 +49,7 @@ public class DatabaseConnection
         var (key, value) = parameters.First();
 
         var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
-        return await connection.QuerySingleOrDefaultAsync<T>(query, parameters);
+        return await _connection.QuerySingleOrDefaultAsync<T>(query, parameters);
     }
 
     public async Task<bool> InsertAsync<T>(T entity)
@@ -71,7 +65,7 @@ public class DatabaseConnection
 
         var insertQuery = $"INSERT INTO {table} ({columns}) VALUES ({parameters})";
 
-        var rowsAffected = await connection.ExecuteAsync(insertQuery, entity);
+        var rowsAffected = await _connection.ExecuteAsync(insertQuery, entity);
         return rowsAffected > 0;
     }
 
@@ -83,7 +77,7 @@ public class DatabaseConnection
         var setClause = string.Join(", ", propertyNameListFiltered.Select(name => $"{name} = @{name}"));
         var updateQuery = $"UPDATE {table} SET {setClause} WHERE {table}Id = @{table}Id";
 
-        var rowsAffected = await connection.ExecuteAsync(updateQuery, entity);
+        var rowsAffected = await _connection.ExecuteAsync(updateQuery, entity);
         return rowsAffected > 0;
     }
 
@@ -91,7 +85,7 @@ public class DatabaseConnection
     {
         var table = GetTableName<T>();
         var deleteQuery = $"DELETE FROM {table} WHERE {table}Id = @{table}Id";
-        var rowsAffected = await connection.ExecuteAsync(deleteQuery, entity);
+        var rowsAffected = await _connection.ExecuteAsync(deleteQuery, entity);
         return rowsAffected > 0;
     }
 
@@ -121,6 +115,6 @@ public class DatabaseConnection
                   AND NOT (b.CheckIn >= @checkOut OR b.CheckOut <= @checkIn)
                   WHERE b.BookingId IS NULL;";
 
-        return (await connection.QueryAsync<Room>(query, new { checkIn, checkOut })).ToList();
+        return (await _connection.QueryAsync<Room>(query, new { checkIn, checkOut })).ToList();
     }
 }
