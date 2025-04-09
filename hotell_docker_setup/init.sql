@@ -61,14 +61,13 @@ CREATE TABLE Event (
     HotelId INT,
     Name VARCHAR(100),
     OrganiserId INT,
-    RoomId INT,
     StartDate DATE,
     EndDate DATE,
     StartTime TIME,
     EndTime TIME,
     FOREIGN KEY (HotelId) REFERENCES Hotel(HotelId),
-    FOREIGN KEY (OrganiserId) REFERENCES Client(ClientId),
-    FOREIGN KEY (RoomId) REFERENCES Room(RoomId)
+    FOREIGN KEY (OrganiserId) REFERENCES Client(ClientId)
+
 );
 
 CREATE TABLE Meal (
