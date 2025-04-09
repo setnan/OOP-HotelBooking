@@ -17,7 +17,7 @@ public class Booking
     public DateTime CheckIn { get; set; }
     public DateTime CheckOut { get; set; }
     
-    public Guest? GetGuest() => GuestService.GetGuestById(GuestId);
-    public Room? GetRoom() => RoomService.GetRoomById(RoomId);
+    public async Task<Guest?> GetGuestAsync() => await GuestService.GetGuestByIdAsync(GuestId);
+    public async Task<Room?> GetRoomAsync() => await RoomService.GetRoomByIdAsync(RoomId);
 
 }
