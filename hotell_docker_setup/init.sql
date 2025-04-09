@@ -102,6 +102,9 @@ CREATE TABLE EventRoom (
     FOREIGN KEY (RoomId) REFERENCES Room(RoomId)
 );
 
+ALTER TABLE Event
+ADD CONSTRAINT unique_event UNIQUE (Name, StartDate);
+
 
 INSERT INTO User (Name, Email, Password, Role) VALUES
 ('Alice Admin', 'alice@hotel.com', 'pass123', 'Admin'),
