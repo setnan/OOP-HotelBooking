@@ -24,6 +24,8 @@ public class DatabaseConnection
     
     public void Open() => _connection.Open();
     public void Close() => _connection.Close();
+    
+    public MySqlConnection GetConnection() => _connection;
 
     public async Task<List<T>> GetAllAsync<T>()
     {
