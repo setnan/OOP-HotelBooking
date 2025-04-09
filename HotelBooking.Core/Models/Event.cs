@@ -18,7 +18,7 @@ public class Event
     public TimeSpan EndTime { get; set; }
 
 
-    public List<EventClient>? GetEventClients() => EventService.GetClientsByEventId(EventId);
+    public async Task<List<EventClient>?> GetEventClients() =>  await EventService.GetClientsByEventIdAsync(EventId);
     public void AddEventClient(EventClient client)
     {
         EventClients.Add(client);
@@ -28,7 +28,7 @@ public class Event
         EventClients = clients;
     }
     
-    public List<EventRoom>? GetEventRooms() => EventService.GetRoomsByEventId(EventId);
+    public async Task<List<EventRoom>?> GetEventRooms() => await EventService.GetRoomsByEventIdAsync(EventId);
 
     public void AddEventRoom(EventRoom room)
     {
