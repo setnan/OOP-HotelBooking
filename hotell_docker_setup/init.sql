@@ -110,7 +110,8 @@ INSERT INTO User (Name, Email, Password, Role) VALUES
 ('Bob Resepsjonist', 'bob@hotel.com', 'pass123', 'Receptionist');
 
 INSERT INTO Hotel (Name, Address) VALUES
-('Ocean View Hotel', 'Strandgata 42, Oslo');
+('Ocean View Hotel', 'Strandgata 42, Oslo'),
+('Mountain Retreat Hotel', 'Fjellveien 12, Bergen');
 
 INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES
 (1, '101', 'Single', 899.00, 1),
@@ -119,7 +120,12 @@ INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES
 (1, '202', 'Family', 1499.00, 1),
 (1, '301', 'Deluxe', 1599.00, 1),
 (1, '302', 'Presidential Suite', 2999.00, 1),
-(1, '401', 'Twin', 999.00, 1);
+(1, '401', 'Twin', 999.00, 1),
+(2, '101', 'Single', 799.00, 1),
+(2, '102', 'Double', 1199.00, 1),
+(2, '201', 'Suite', 2099.00, 1),
+(2, '202', 'Family', 1599.00, 1),
+(2, '301', 'Deluxe', 1799.00, 1);
 
 INSERT INTO Guest (Name, ContactNumber, Email) VALUES
 ('Anna Berg', '+4798765432', 'anna.berg92@gmail.com'),
@@ -208,4 +214,44 @@ INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, 
 (8, 4, '2025-12-24', '20:00:00', '21:00:00', 60, 'Traditional Norwegian food'),
 (9, 6, '2026-01-14', '13:00:00', '14:00:00', 25, 'Vegetarian only'),
 (10, 3, '2026-02-01', '12:30:00', '13:30:00', 12, '');
+
+-- Meals på nytt hotell i Bergen
+INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
+(1, 201, '2025-09-12', '12:00:00', '13:30:00', 40, 'Vegetarian friendly'),
+(2, 202, '2025-10-05', '18:00:00', '20:00:00', 60, 'Vegan and gluten-free options'),
+(3, 301, '2025-11-22', '08:00:00', '09:30:00', 25, 'No nuts, lactose-free milk'),
+(4, 102, '2026-01-15', '12:30:00', '14:00:00', 30, 'Kosher meals required'),
+(5, 101, '2026-02-20', '19:00:00', '21:00:00', 45, 'Halal, vegan dessert');
+
+-- Flere meals på Ocean View Hotel (Oslo)
+INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
+(6, 3, '2025-08-18', '13:00:00', '14:30:00', 35, 'Pescatarian options'),
+(7, 4, '2025-12-31', '20:00:00', '23:59:00', 80, 'Festive menu, includes traditional dishes'),
+(8, 5, '2026-03-17', '07:30:00', '09:00:00', 20, 'Gluten-free pastries'),
+(9, 6, '2026-04-25', '18:00:00', '20:30:00', 50, 'Low-carb options'),
+(10, 1, '2026-05-05', '12:00:00', '13:00:00', 15, 'Vegetarian only');
+
+INSERT INTO EventClient (EventId, ClientId) VALUES
+(1, 1),
+(1, 2),
+(2, 3),
+(2, 4),
+(3, 5),
+(4, 6),
+(4, 7),
+(5, 8),
+(6, 9),
+(7, 10);
+
+INSERT INTO EventRoom (EventId, RoomId) VALUES
+(1, 1),
+(1, 3),
+(2, 4),
+(2, 5),
+(3, 201),
+(3, 202),
+(4, 301),
+(5, 102),
+(6, 101),
+(7, 202);
 
