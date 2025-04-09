@@ -1,74 +1,65 @@
+using System;
 using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using HotelBooking.Desktop.Services;
-using HotelBooking.Desktop.Views;
+using HotelBooking.Core.Models;
+using HotelBooking.AvaloniaApp.Services;
 
-namespace HotelBooking.Desktop.ViewModels;
+namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {
-    private readonly DatabaseService _databaseService;
+    private readonly UserServiceWrapper userService;
 
-    [ObservableProperty]
-    private string _email = string.Empty;
-
-    [ObservableProperty]
-    private string _password = string.Empty;
-
-    [ObservableProperty]
-    private string _errorMessage = string.Empty;
-
-    public LoginViewModel()
+    public LoginViewModel(UserServiceWrapper userService)
     {
-        _databaseService = DatabaseService.Instance;
+        this.userService = userService;
     }
+
+    [ObservableProperty]
+    private string username = string.Empty;
+
+    [ObservableProperty]
+    private string password = string.Empty;
+
+    [ObservableProperty]
+    private bool rememberMe;
+
+    [ObservableProperty]
+    private bool isLoading;
+
+    [ObservableProperty]
+    private string? errorMessage;
 
     [RelayCommand]
     private async Task Login()
     {
-        ErrorMessage = string.Empty;
-
-        if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
+        try
         {
-            ErrorMessage = "Please enter both email and password";
-            return;
-        }
+            IsLoading = true;
+            ErrorMessage = null;
 
-        var user = await _databaseService.ValidateUserAsync(Email, Password);
-        if (user != null)
-        {
-            // Store the logged-in user for the session
-            App.CurrentUser = user;
-            
-            // Create new window with the main view
-            var mainWindow = new Window
+            var user = await userService.LoginAsync(Username, Password);
+            if (user == null)
             {
-                Width = 1200,
-                Height = 700,
-                WindowStartupLocation = WindowStartupLocation.CenterScreen,
-                Content = new MainView(),
-                DataContext = new MainWindowViewModel()
-            };
-
-            // Show the new window
-            mainWindow.Show();
-
-            // Close the login window
-            if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop &&
-                desktop.MainWindow != null)
-            {
-                var oldWindow = desktop.MainWindow;
-                desktop.MainWindow = mainWindow;
-                oldWindow.Close();
+                ErrorMessage = "Invalid username or password";
+                return;
             }
+
+            if (RememberMe)
+            {
+                await userService.SaveCredentialsAsync(Username, Password);
+            }
+
+            // Navigate to main view
         }
-        else
+        catch (Exception ex)
         {
-            ErrorMessage = "Invalid email or password";
+            ErrorMessage = $"Login failed: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
         }
     }
 }

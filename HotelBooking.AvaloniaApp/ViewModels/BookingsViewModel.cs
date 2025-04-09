@@ -1,33 +1,81 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
-using HotelBooking.Core.Services;
+using HotelBooking.AvaloniaApp.Services;
 
-namespace HotelBooking.Desktop.ViewModels;
+namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class BookingsViewModel : ViewModelBase
 {
-    private readonly DatabaseService _databaseService;
+    private readonly BookingServiceWrapper bookingService;
+    private readonly RoomServiceWrapper roomService;
+    private readonly GuestServiceWrapper guestService;
 
-    [ObservableProperty]
-    private ObservableCollection<Booking> _bookings = new();
-
-    [ObservableProperty]
-    private bool _isLoading;
-
-    public BookingsViewModel()
+    public BookingsViewModel(
+        BookingServiceWrapper bookingService,
+        RoomServiceWrapper roomService,
+        GuestServiceWrapper guestService)
     {
-        _databaseService = DatabaseService.Instance;
-        LoadBookingsAsync();
+        this.bookingService = bookingService;
+        this.roomService = roomService;
+        this.guestService = guestService;
+        LoadDataAsync();
     }
 
-    private async void LoadBookingsAsync()
+    [ObservableProperty]
+    private ObservableCollection<Booking> bookings = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Room> availableRooms = new();
+
+    [ObservableProperty]
+    private ObservableCollection<Guest> guests = new();
+
+    [ObservableProperty]
+    private Booking? selectedBooking;
+
+    [ObservableProperty]
+    private bool isLoading;
+
+    [ObservableProperty]
+    private string? errorMessage;
+
+    [ObservableProperty]
+    private string? successMessage;
+
+    private async Task LoadDataAsync()
     {
-        IsLoading = true;
-        // TODO: Replace with actual guest ID
-        var bookings = await _databaseService.GetBookingsAsync(1);
-        Bookings = new ObservableCollection<Booking>(bookings);
-        IsLoading = false;
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            SuccessMessage = null;
+
+            var bookingsTask = bookingService.GetAllBookingsAsync();
+            var roomsTask = roomService.GetAllRoomsAsync();
+            var guestsTask = guestService.GetAllGuestsAsync();
+
+            await Task.WhenAll(bookingsTask, roomsTask, guestsTask);
+
+            Bookings = new ObservableCollection<Booking>(await bookingsTask);
+            AvailableRooms = new ObservableCollection<Room>(await roomsTask);
+            Guests = new ObservableCollection<Guest>(await guestsTask);
+
+            SuccessMessage = "Data loaded successfully";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error loading data: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
+
+    [RelayCommand]
+    private Task RefreshData() => LoadDataAsync();
 }

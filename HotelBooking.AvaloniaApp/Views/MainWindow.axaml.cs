@@ -1,13 +1,12 @@
 using Avalonia.Controls;
-using HotelBooking.Desktop.ViewModels;
+using HotelBooking.AvaloniaApp.ViewModels;
 
-namespace HotelBooking.Desktop.Views;
+namespace HotelBooking.AvaloniaApp.Views;
 
 public partial class MainWindow : Window
 {
     public MainWindow()
     {
         InitializeComponent();
-        DataContext = new LoginViewModel();
     }
 }

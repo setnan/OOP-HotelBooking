@@ -1,0 +1,32 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:viewmodels="clr-namespace:HotelBooking.AvaloniaApp.ViewModels"
+             mc:Ignorable="d"
+             x:Class="HotelBooking.AvaloniaApp.Views.ClientsView">
+
+    <UserControl.DataContext>
+        <viewmodels:ClientsViewModel />
+    </UserControl.DataContext>
+
+    <Grid RowDefinitions="Auto,*">
+        <TextBlock Text="Klienter" FontSize="20" Margin="10"/>
+
+        <DataGrid Items="{Binding Clients}" AutoGenerateColumns="False" Grid.Row="1" Margin="10"
+                  SelectedItem="{Binding SelectedClient}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Navn" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Fakturaadresse" Binding="{Binding BillingAddress}" />
+                <DataGridTextColumn Header="Kontaktperson" Binding="{Binding ContactPerson}" />
+                <DataGridTextColumn Header="Telefon" Binding="{Binding ContactNumber}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="10" Grid.Row="2">
+            <Button Content="Last inn" Command="{Binding RefreshCommand}" Margin="5"/>
+            <Button Content="Slett" Command="{Binding DeleteClientCommand}" Margin="5"
+                    IsEnabled="{Binding SelectedClient, Converter={StaticResource NullToBoolConverter}}"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

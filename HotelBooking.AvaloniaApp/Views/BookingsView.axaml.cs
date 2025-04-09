@@ -1,6 +1,6 @@
 using Avalonia.Controls;
 
-namespace HotelBooking.Desktop.Views;
+namespace HotelBooking.AvaloniaApp.Views;
 
 public partial class BookingsView : UserControl
 {

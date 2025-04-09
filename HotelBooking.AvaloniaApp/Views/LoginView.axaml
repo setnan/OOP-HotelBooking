@@ -2,42 +2,118 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:HotelBooking.Desktop.ViewModels"
+             xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="HotelBooking.Desktop.Views.LoginView"
+             x:Class="HotelBooking.AvaloniaApp.Views.LoginView"
              x:DataType="vm:LoginViewModel">
-    <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto" 
-          HorizontalAlignment="Center" 
-          VerticalAlignment="Center" 
-          Width="300">
-        
-        <TextBlock Grid.Row="0" 
-                   Text="Hotel Booking Login" 
-                   HorizontalAlignment="Center" 
-                   FontSize="24" 
-                   Margin="0,0,0,20"/>
-        
-        <TextBox Grid.Row="1" 
-                 Watermark="Email"
-                 Text="{Binding Email}"
-                 Margin="0,0,0,10"/>
-        
-        <TextBox Grid.Row="2" 
-                 Watermark="Password"
-                 PasswordChar="*"
-                 Text="{Binding Password}"
-                 Margin="0,0,0,20"/>
-        
-        <Button Grid.Row="3" 
-                Content="Login"
-                HorizontalAlignment="Center"
-                Command="{Binding LoginCommand}"
-                Margin="0,0,0,10"/>
-        
-        <TextBlock Grid.Row="4" 
-                   Text="{Binding ErrorMessage}"
-                   Foreground="Red"
-                   TextWrapping="Wrap"
-                   HorizontalAlignment="Center"/>
-    </Grid>
+    
+    <Border Background="#1e1e1e"
+            CornerRadius="8"
+            Width="350"
+            Padding="30"
+            BoxShadow="0 4 8 0 #40000000">
+        <Grid RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" 
+              HorizontalAlignment="Stretch" 
+              VerticalAlignment="Center">
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" 
+                       Spacing="10"
+                       Margin="0,0,0,30">
+                <TextBlock Text="Welcome Back" 
+                         HorizontalAlignment="Center" 
+                         FontSize="28"
+                         FontWeight="Bold"
+                         Foreground="White"/>
+                <TextBlock Text="Sign in to continue"
+                         HorizontalAlignment="Center"
+                         FontSize="14"
+                         Foreground="Gray"/>
+            </StackPanel>
+
+            <!-- Error Message -->
+            <TextBlock Grid.Row="1" 
+                     Text="{Binding ErrorMessage}"
+                     IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     Foreground="#ff4444"
+                     TextWrapping="Wrap"
+                     HorizontalAlignment="Center"
+                     Margin="0,0,0,20"/>
+
+            <!-- Loading Indicator -->
+            <ProgressBar Grid.Row="2"
+                       IsIndeterminate="True"
+                       IsVisible="{Binding IsLoading}"
+                       Height="2"
+                       Margin="0,0,0,20"/>
+
+            <!-- Login Form -->
+            <StackPanel Grid.Row="3" 
+                      Spacing="15">
+                <TextBox Watermark="Username"
+                        Text="{Binding Username}"
+                        Classes="clearButton"
+                        VerticalContentAlignment="Center"
+                        Height="40"/>
+
+                <TextBox Watermark="Password"
+                        Text="{Binding Password}"
+                        PasswordChar="•"
+                        Classes="revealPasswordButton"
+                        VerticalContentAlignment="Center"
+                        Height="40"/>
+
+                <CheckBox Content="Remember me"
+                         IsChecked="{Binding RememberMe}"
+                         Foreground="LightGray"/>
+
+                <Button Content="Sign In"
+                        Command="{Binding LoginCommand}"
+                        HorizontalAlignment="Stretch"
+                        Height="40"
+                        Classes="accent"/>
+            </StackPanel>
+
+            <!-- Footer -->
+            <StackPanel Grid.Row="4"
+                      Margin="0,30,0,0"
+                      Spacing="10">
+                <TextBlock Text="Forgot your password?"
+                         HorizontalAlignment="Center"
+                         Foreground="Gray"/>
+                <TextBlock Text="Contact your administrator"
+                         HorizontalAlignment="Center"
+                         Foreground="Gray"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+
+    <UserControl.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#2d2d2d"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#3d3d3d"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+
+        <Style Selector="TextBox:focus">
+            <Setter Property="BorderBrush" Value="{DynamicResource SystemAccentColor}"/>
+        </Style>
+
+        <Style Selector="Button.accent">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+
+        <Style Selector="Button.accent:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}"/>
+        </Style>
+
+        <Style Selector="CheckBox">
+            <Setter Property="CornerRadius" Value="2"/>
+        </Style>
+    </UserControl.Styles>
 </UserControl>

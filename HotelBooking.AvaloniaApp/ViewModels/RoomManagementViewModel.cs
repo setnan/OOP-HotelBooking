@@ -8,12 +8,15 @@ using HotelBooking.AvaloniaApp.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
-public partial class RoomsViewModel : ViewModelBase
+public partial class RoomManagementViewModel : ViewModelBase
 {
     private readonly RoomServiceWrapper roomService;
 
-    [ObservableProperty]
-    private string title = "Rooms";
+    public RoomManagementViewModel(RoomServiceWrapper roomService)
+    {
+        this.roomService = roomService;
+        LoadDataAsync();
+    }
 
     [ObservableProperty]
     private ObservableCollection<Room> rooms = new();
@@ -30,12 +33,6 @@ public partial class RoomsViewModel : ViewModelBase
     [ObservableProperty]
     private string? successMessage;
 
-    public RoomsViewModel(RoomServiceWrapper roomService)
-    {
-        this.roomService = roomService;
-        LoadDataAsync();
-    }
-
     private async Task LoadDataAsync()
     {
         try
@@ -46,6 +43,8 @@ public partial class RoomsViewModel : ViewModelBase
 
             var roomsList = await roomService.GetAllRoomsAsync();
             Rooms = new ObservableCollection<Room>(roomsList);
+
+            SuccessMessage = "Rooms loaded successfully";
         }
         catch (Exception ex)
         {
@@ -58,28 +57,5 @@ public partial class RoomsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task UpdateRoom()
-    {
-        if (SelectedRoom == null) return;
-
-        try
-        {
-            IsLoading = true;
-            ErrorMessage = null;
-            SuccessMessage = null;
-
-            await roomService.UpdateRoomAsync(SelectedRoom);
-            await LoadDataAsync();
-
-            SuccessMessage = "Room updated successfully";
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Error updating room: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
+    private Task RefreshData() => LoadDataAsync();
 }

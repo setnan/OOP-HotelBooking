@@ -1,0 +1,178 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="HotelBooking.AvaloniaApp.Views.GuestView"
+             x:DataType="vm:GuestViewModel">
+
+    <Grid RowDefinitions="Auto,*" Margin="20">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
+            <StackPanel Grid.Column="0" Spacing="5">
+                <TextBlock Text="Guest Management"
+                         FontSize="24"
+                         FontWeight="Bold"/>
+                <TextBlock Text="Manage hotel guests and their preferences"
+                         Foreground="Gray"/>
+            </StackPanel>
+            
+            <Button Grid.Column="1"
+                    Command="{Binding RefreshCommand}"
+                    ToolTip.Tip="Refresh guest list">
+                <PathIcon Data="{StaticResource refresh_regular}"/>
+            </Button>
+        </Grid>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1" ColumnDefinitions="*,20,300">
+            <!-- Guest List -->
+            <Border Grid.Column="0"
+                    Background="#1e1e1e"
+                    CornerRadius="8"
+                    Padding="20">
+                
+                <Grid RowDefinitions="Auto,*">
+                    <TextBlock Text="Guest List"
+                             FontSize="18"
+                             FontWeight="SemiBold"
+                             Margin="0,0,0,10"/>
+                    
+                    <DataGrid Grid.Row="1"
+                             ItemsSource="{Binding Guests}"
+                             SelectedItem="{Binding SelectedGuest}"
+                             AutoGenerateColumns="False"
+                             IsReadOnly="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" 
+                                              Binding="{Binding Name}"/>
+                            <DataGridTextColumn Header="Contact" 
+                                              Binding="{Binding ContactNumber}"/>
+                            <DataGridTextColumn Header="Preferred Room" 
+                                              Binding="{Binding PreferredRoom.RoomNumber}"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <!-- Add/Edit Guest Form -->
+            <Border Grid.Column="2"
+                    Background="#1e1e1e"
+                    CornerRadius="8"
+                    Padding="20">
+                
+                <Grid RowDefinitions="Auto,Auto,*,Auto">
+                    <TextBlock Text="Add New Guest"
+                             FontSize="18"
+                             FontWeight="SemiBold"
+                             Margin="0,0,0,20"/>
+
+                    <!-- Form -->
+                    <StackPanel Grid.Row="1" Spacing="15">
+                        <TextBox Watermark="Guest Name"
+                                Text="{Binding NewGuestName}"/>
+                        
+                        <TextBox Watermark="Contact Number"
+                                Text="{Binding NewGuestContact}"/>
+                        
+                        <ComboBox ItemsSource="{Binding AvailableRooms}"
+                                SelectedItem="{Binding NewGuestPreferredRoom}"
+                                PlaceholderText="Preferred Room"
+                                HorizontalAlignment="Stretch">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding RoomNumber}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <Button Content="Add Guest"
+                                Command="{Binding AddGuestCommand}"
+                                HorizontalAlignment="Stretch"
+                                Classes="accent"/>
+                    </StackPanel>
+
+                    <!-- Selected Guest Actions -->
+                    <StackPanel Grid.Row="2" 
+                              Spacing="10"
+                              Margin="0,20,0,0"
+                              IsVisible="{Binding SelectedGuest, Converter={x:Static ObjectConverters.IsNotNull}}">
+                        
+                        <TextBlock Text="Selected Guest Actions"
+                                 FontSize="16"
+                                 FontWeight="SemiBold"/>
+                        
+                        <Button Content="Update Guest"
+                                Command="{Binding UpdateGuestCommand}"
+                                HorizontalAlignment="Stretch"
+                                Classes="accent"/>
+                        
+                        <Button Content="Delete Guest"
+                                Command="{Binding DeleteGuestCommand}"
+                                HorizontalAlignment="Stretch"
+                                Classes="danger"/>
+                    </StackPanel>
+
+                    <!-- Status Messages -->
+                    <StackPanel Grid.Row="3" 
+                              Spacing="10"
+                              Margin="0,20,0,0">
+                        
+                        <!-- Loading Indicator -->
+                        <ProgressBar IsIndeterminate="True"
+                                   IsVisible="{Binding IsLoading}"
+                                   Height="2"/>
+
+                        <!-- Error Message -->
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                 IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                 Foreground="#ff4444"
+                                 TextWrapping="Wrap"/>
+
+                        <!-- Success Message -->
+                        <TextBlock Text="{Binding SuccessMessage}"
+                                 IsVisible="{Binding SuccessMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                                 Foreground="#44ff44"
+                                 TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+
+    <UserControl.Styles>
+        <Style Selector="Button.accent">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColor}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+
+        <Style Selector="Button.accent:pointerover">
+            <Setter Property="Background" Value="{DynamicResource SystemAccentColorDark1}"/>
+        </Style>
+
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="#ff4444"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="16,8"/>
+        </Style>
+
+        <Style Selector="Button.danger:pointerover">
+            <Setter Property="Background" Value="#cc3333"/>
+        </Style>
+
+        <Style Selector="TextBox">
+            <Setter Property="Padding" Value="8"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="MaxDropDownHeight" Value="200"/>
+        </Style>
+    </UserControl.Styles>
+</UserControl>

@@ -1,7 +1,17 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace HotelBooking.Desktop.ViewModels;
+namespace HotelBooking.AvaloniaApp.ViewModels;
 
-public class ViewModelBase : ObservableObject
+public partial class ViewModelBase : ObservableObject
 {
+    protected static T GetService<T>()
+    {
+        if (App.Current is App app)
+        {
+            return app.GetService<T>();
+        }
+        throw new InvalidOperationException("Cannot get service. Application not initialized.");
+    }
 }

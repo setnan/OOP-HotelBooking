@@ -3,16 +3,242 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:HotelBooking.Desktop.ViewModels"
+             xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="HotelBooking.Desktop.Views.DashboardView"
+             x:Class="HotelBooking.AvaloniaApp.Views.DashboardView"
              x:DataType="vm:DashboardViewModel">
-    <StackPanel>
-        <TextBlock Text="{Binding WelcomeMessage}"
-                   FontSize="24"
-                   Margin="0,20,0,20"
-                   HorizontalAlignment="Center"/>
-        
-        <!-- Add more dashboard content here -->
-    </StackPanel>
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,20">
+            <TextBlock Text="{Binding WelcomeMessage}"
+                     FontSize="24"
+                     FontWeight="Bold"
+                     Foreground="White"/>
+            
+            <!-- Error message -->
+            <TextBlock Text="{Binding ErrorMessage}"
+                     IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                     Foreground="#ff4444"
+                     TextWrapping="Wrap"/>
+            
+            <!-- Loading indicator -->
+            <ProgressBar IsIndeterminate="True"
+                       IsVisible="{Binding IsLoading}"
+                       Height="2"
+                       Margin="0,0,0,10"/>
+
+            <!-- Refresh button -->
+            <Button Command="{Binding RefreshDashboardCommand}"
+                    Classes="accent">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <PathIcon Data="{StaticResource refresh_regular}"/>
+                    <TextBlock Text="Refresh"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+
+        <!-- Main Content -->
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Spacing="20">
+                <!-- Statistics Overview -->
+                <Border Classes="card">
+                    <Grid ColumnDefinitions="*,*,*,*">
+                        <!-- Check-ins -->
+                        <Border Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="Today's Check-ins"
+                                         Classes="subtitle"/>
+                                <TextBlock Text="{Binding TodayCheckIns}"
+                                         Classes="stat-value"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Check-outs -->
+                        <Border Grid.Column="1" Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="Today's Check-outs"
+                                         Classes="subtitle"/>
+                                <TextBlock Text="{Binding TodayCheckOuts}"
+                                         Classes="stat-value"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Available Rooms -->
+                        <Border Grid.Column="2" Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="Available Rooms"
+                                         Classes="subtitle"/>
+                                <TextBlock Text="{Binding AvailableRooms}"
+                                         Classes="stat-value"/>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Occupancy Rate -->
+                        <Border Grid.Column="3" Classes="stat">
+                            <StackPanel>
+                                <TextBlock Text="Occupancy Rate"
+                                         Classes="subtitle"/>
+                                <TextBlock Text="{Binding OccupancyRate, StringFormat='{}{0:P0}'}"
+                                         Classes="stat-value"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Today's Bookings -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Today's Bookings"
+                                 Classes="section-header"/>
+                        <ItemsControl ItemsSource="{Binding TodaysBookings}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-item">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <StackPanel Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="{Binding Guest.Name}"
+                                                         Classes="primary"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <TextBlock Text="{Binding Room.RoomNumber, StringFormat='Room {0}'}"
+                                                             Classes="secondary"/>
+                                                    <TextBlock Text="{Binding Status}"
+                                                             Classes="secondary"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" 
+                                                      Orientation="Horizontal" 
+                                                      Spacing="8">
+                                                <Button Command="{Binding DataContext.CheckInBookingCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        IsVisible="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=Confirmed}">
+                                                    Check In
+                                                </Button>
+                                                <Button Command="{Binding DataContext.CheckOutBookingCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}"
+                                                        IsVisible="{Binding Status, Converter={StaticResource StatusToVisibilityConverter}, ConverterParameter=CheckedIn}">
+                                                    Check Out
+                                                </Button>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Upcoming Bookings -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Upcoming Bookings"
+                                 Classes="section-header"/>
+                        <ItemsControl ItemsSource="{Binding UpcomingBookings}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-item">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Text="{Binding Guest.Name}"
+                                                     Classes="primary"/>
+                                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                                <TextBlock Text="{Binding Room.RoomNumber, StringFormat='Room {0}'}"
+                                                         Classes="secondary"/>
+                                                <TextBlock Text="{Binding CheckIn, StringFormat='{}{0:d}'}"
+                                                         Classes="secondary"/>
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+
+                <!-- Rooms Needing Attention -->
+                <Border Classes="card">
+                    <StackPanel>
+                        <TextBlock Text="Rooms Needing Attention"
+                                 Classes="section-header"/>
+                        <ItemsControl ItemsSource="{Binding RoomsNeedingAttention}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-item">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <StackPanel Grid.Column="0" Spacing="4">
+                                                <TextBlock Text="{Binding RoomNumber, StringFormat='Room {0}'}"
+                                                         Classes="primary"/>
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                                    <TextBlock Text="{Binding Type}"
+                                                             Classes="secondary"/>
+                                                    <TextBlock Text="{Binding Floor, StringFormat='Floor {0}'}"
+                                                             Classes="secondary"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                            <Button Grid.Column="1"
+                                                    Command="{Binding DataContext.MarkRoomCleanedCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    IsVisible="{Binding NeedsCleaning}">
+                                                Mark Cleaned
+                                            </Button>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+
+    <UserControl.Styles>
+        <Style Selector="Border.card">
+            <Setter Property="Background" Value="#2d2d2d"/>
+            <Setter Property="BorderBrush" Value="#3d3d3d"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Padding" Value="15"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+        </Style>
+
+        <Style Selector="Border.stat">
+            <Setter Property="Margin" Value="5"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Background" Value="#1e1e1e"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+
+        <Style Selector="Border.list-item">
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Margin" Value="0,0,0,5"/>
+            <Setter Property="Background" Value="#1e1e1e"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+
+        <Style Selector="TextBlock.section-header">
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="TextBlock.subtitle">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Foreground" Value="Gray"/>
+        </Style>
+
+        <Style Selector="TextBlock.stat-value">
+            <Setter Property="FontSize" Value="24"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="TextBlock.primary">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="TextBlock.secondary">
+            <Setter Property="Foreground" Value="LightGray"/>
+        </Style>
+    </UserControl.Styles>
 </UserControl>

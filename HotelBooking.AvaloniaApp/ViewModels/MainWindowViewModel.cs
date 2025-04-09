@@ -1,46 +1,96 @@
+using System;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HotelBooking.Core.Models;
+using HotelBooking.AvaloniaApp.Services;
 
-namespace HotelBooking.Desktop.ViewModels;
+namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    private readonly UserServiceWrapper userService;
+    private readonly RoleService roleService;
+    private readonly BookingServiceWrapper bookingService;
+    private readonly ClientServiceWrapper clientService;
+    private readonly GuestServiceWrapper guestService;
+    private readonly RoomServiceWrapper roomService;
+
     [ObservableProperty]
-    private ViewModelBase? _currentPage;
+    private ViewModelBase currentView;
+
+    [ObservableProperty]
+    private User? currentUser;
+
+    [ObservableProperty]
+    private bool isAdmin;
+
+    public DashboardViewModel DashboardViewModel { get; }
+    public BookingsViewModel BookingsViewModel { get; }
+    public RoomManagementViewModel RoomManagementViewModel { get; }
+    public GuestViewModel GuestViewModel { get; }
+    public BackupViewModel BackupViewModel { get; }
 
     public MainWindowViewModel()
     {
-        // Start with dashboard view
-        NavigateToDashboard();
+        userService = new UserServiceWrapper();
+        roleService = RoleService.Instance;
+        bookingService = new BookingServiceWrapper();
+        clientService = new ClientServiceWrapper();
+        guestService = new GuestServiceWrapper();
+        roomService = new RoomServiceWrapper();
+
+        DashboardViewModel = new DashboardViewModel(bookingService, roomService);
+        BookingsViewModel = new BookingsViewModel(bookingService, clientService, guestService, roomService);
+        RoomManagementViewModel = new RoomManagementViewModel(roomService, bookingService);
+        GuestViewModel = new GuestViewModel(guestService);
+        BackupViewModel = new BackupViewModel();
+
+        CurrentView = DashboardViewModel;
     }
 
     [RelayCommand]
-    private void NavigateToDashboard()
+    private void NavigateTo(string viewName)
     {
-        CurrentPage = new DashboardViewModel();
+        // Validate access to admin views
+        if (!isAdmin && (viewName == "rooms" || viewName == "backup"))
+        {
+            return;
+        }
+
+        CurrentView = viewName.ToLower() switch
+        {
+            "dashboard" => DashboardViewModel,
+            "bookings" => BookingsViewModel,
+            "rooms" => RoomManagementViewModel,
+            "guests" => GuestViewModel,
+            "backup" => BackupViewModel,
+            _ => DashboardViewModel
+        };
     }
 
-    [RelayCommand]
-    private void NavigateToRooms()
+    public async Task InitializeAsync()
     {
-        CurrentPage = new RoomsViewModel();
+        try
+        {
+            CurrentUser = await userService.GetCurrentUserAsync();
+            isAdmin = currentUser != null && userService.IsAdmin(currentUser);
+        }
+        catch (Exception)
+        {
+            // If we can't get the user or role, default to non-admin
+            isAdmin = false;
+        }
     }
 
-    [RelayCommand]
-    private void NavigateToReservation()
+    public void OnUserLoggedIn(User user)
     {
-        CurrentPage = new ReservationViewModel();
+        CurrentUser = user;
+        isAdmin = userService.IsAdmin(user);
     }
 
-    [RelayCommand]
-    private void NavigateToBookings()
+    public void Cleanup()
     {
-        CurrentPage = new BookingsViewModel();
-    }
-
-    [RelayCommand]
-    private void NavigateToSettings()
-    {
-        CurrentPage = new SettingsViewModel();
+        // Unsubscribe from events
     }
 }
