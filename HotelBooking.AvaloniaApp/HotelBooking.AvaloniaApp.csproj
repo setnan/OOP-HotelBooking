@@ -20,7 +20,7 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
         <PackageReference Include="Avalonia.Diagnostics" Version="11.2.1" Condition="'$(Configuration)' == 'Debug'"/>
-        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.2.25163.2" />
         <PackageReference Include="MySql.Data" Version="9.2.0" />
     </ItemGroup>
 

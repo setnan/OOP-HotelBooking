@@ -45,13 +45,7 @@ public partial class App : Application
             services.AddSingleton<GuestService>();
             services.AddSingleton<EventService>();
             services.AddSingleton<BackupService>();
-
-            // Wrappers
-            services.AddScoped<UserServiceWrapper>();
-            services.AddScoped<RoomServiceWrapper>();
-            services.AddScoped<BookingServiceWrapper>();
-            services.AddScoped<ClientServiceWrapper>();
-            services.AddScoped<GuestServiceWrapper>();
+            services.AddTransient<BookingsViewModel>();
 
             // ViewModels
             services.AddTransient<MainWindowViewModel>();
@@ -63,6 +57,7 @@ public partial class App : Application
             services.AddTransient<GuestViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<BackupViewModel>();
+            services.AddTransient<ClientViewModel>();
 
             _serviceProvider = services.BuildServiceProvider();
 

@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewmodels="clr-namespace:HotelBooking.AvaloniaApp.ViewModels"
              mc:Ignorable="d"
-             x:Class="HotelBooking.AvaloniaApp.Views.ClientsView"
-             x:DataType="viewmodels:ClientsViewModel">
+             x:Class="HotelBooking.AvaloniaApp.Views.ClientView"
+             x:DataType="viewmodels:ClientViewModel">
 
     <ScrollViewer>
         <StackPanel Margin="20" Spacing="15">
@@ -31,10 +31,11 @@
 
             <!-- Handlinger -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                <Button Content="Last inn" Command="{Binding RefreshCommand}" />
-                <Button Content="Slett" Command="{Binding DeleteClientCommand}" 
+                <Button Content="Last inn" Command="{Binding LoadClientsCommand}" />
+                <Button Content="Slett" Command="{Binding DeleteClientAsyncCommand}" 
                         IsEnabled="{Binding SelectedClient}" />
             </StackPanel>
+
 
             <Separator Margin="10"/>
 

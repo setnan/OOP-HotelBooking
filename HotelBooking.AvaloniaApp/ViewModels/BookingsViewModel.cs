@@ -5,25 +5,27 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
 using HotelBooking.AvaloniaApp.Services;
+using HotelBooking.Core.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class BookingsViewModel : ViewModelBase
 {
-    private readonly BookingServiceWrapper bookingService;
-    private readonly RoomServiceWrapper roomService;
-    private readonly GuestServiceWrapper guestService;
+    private readonly BookingService bookingService;
+    private readonly RoomService roomService;
+    private readonly GuestService guestService;
 
     public BookingsViewModel(
-        BookingServiceWrapper bookingService,
-        RoomServiceWrapper roomService,
-        GuestServiceWrapper guestService)
+        BookingService bookingService,
+        RoomService roomService,
+        GuestService guestService)
     {
         this.bookingService = bookingService;
         this.roomService = roomService;
         this.guestService = guestService;
         LoadDataAsync();
     }
+
 
     [ObservableProperty]
     private ObservableCollection<Booking> bookings = new();

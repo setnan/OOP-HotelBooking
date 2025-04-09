@@ -1,143 +1,101 @@
-﻿using System;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
-using HotelBooking.AvaloniaApp.Services;
+using HotelBooking.Core.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
-public partial class ClientsViewModel : ViewModelBase
+public partial class ClientViewModel : ObservableObject
 {
-    private readonly ClientServiceWrapper clientService;
+    private readonly ClientService _clientService;
 
-    public ClientsViewModel(ClientServiceWrapper clientService)
+    public ClientViewModel(ClientService clientService)
     {
-        this.clientService = clientService;
-        LoadClientsAsync();
+        _clientService = clientService;
+        LoadClientsCommand.Execute(null);
     }
 
-    [ObservableProperty]
-    private ObservableCollection<Client> clients = new();
+    [ObservableProperty] private ObservableCollection<Client> clients = new();
+    [ObservableProperty] private Client? selectedClient;
 
-    [ObservableProperty]
-    private Client? selectedClient;
+    [ObservableProperty] private string name = "";
+    [ObservableProperty] private string billingAddress = "";
+    [ObservableProperty] private string contactPerson = "";
+    [ObservableProperty] private string contactNumber = "";
 
-    [ObservableProperty]
-    private bool isLoading;
+    [ObservableProperty] private string? errorMessage;
+    [ObservableProperty] private string? successMessage;
+    [ObservableProperty] private bool isLoading;
 
-    [ObservableProperty]
-    private string? errorMessage;
-
-    [ObservableProperty]
-    private string? successMessage;
-
-    // Felter for ny klient
-    [ObservableProperty] private string name = string.Empty;
-    [ObservableProperty] private string billingAddress = string.Empty;
-    [ObservableProperty] private string contactPerson = string.Empty;
-    [ObservableProperty] private string contactNumber = string.Empty;
-
+    [RelayCommand]
     private async Task LoadClientsAsync()
     {
-        try
-        {
-            IsLoading = true;
-            ErrorMessage = null;
-            SuccessMessage = null;
+        IsLoading = true;
+        ErrorMessage = SuccessMessage = null;
 
-            var clientList = await clientService.GetAllClientsAsync();
-            Clients = new ObservableCollection<Client>(clientList);
+        var list = await _clientService.GetAllClientsAsync();
+        Clients = new ObservableCollection<Client>(list);
 
-            SuccessMessage = "Klienter lastet inn.";
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Feil ved lasting: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
+        IsLoading = false;
     }
 
     [RelayCommand]
-    private Task Refresh() => LoadClientsAsync();
-
-    [RelayCommand]
-    private async Task DeleteClient()
+    private async Task AddClientAsync()
     {
-        if (SelectedClient == null) return;
+        IsLoading = true;
+        ErrorMessage = SuccessMessage = null;
 
-        try
+        var newClient = new Client
         {
-            IsLoading = true;
-            var result = await clientService.DeleteClientAsync(SelectedClient);
-            if (result)
-            {
-                Clients.Remove(SelectedClient);
-                SuccessMessage = "Klient slettet.";
-            }
-            else
-            {
-                ErrorMessage = "Klarte ikke slette klient.";
-            }
-        }
-        catch (Exception ex)
+            Name = Name,
+            BillingAddress = BillingAddress,
+            ContactPerson = ContactPerson,
+            ContactNumber = ContactNumber
+        };
+
+        var success = await _clientService.AddClientAsync(newClient);
+        if (success)
         {
-            ErrorMessage = $"Feil ved sletting: {ex.Message}";
+            Clients.Add(newClient);
+            SuccessMessage = "Klient lagt til!";
+            ClearFields();
         }
-        finally
+        else
         {
-            IsLoading = false;
+            ErrorMessage = "Klarte ikke legge til klient.";
         }
+
+        IsLoading = false;
     }
 
     [RelayCommand]
-    private async Task AddClient()
+    private async Task DeleteClientAsync()
+
     {
-        try
-        {
-            IsLoading = true;
-            ErrorMessage = null;
-            SuccessMessage = null;
+        if (SelectedClient is null) return;
 
-            var client = new Client
-            {
-                Name = Name,
-                BillingAddress = BillingAddress,
-                ContactPerson = ContactPerson,
-                ContactNumber = ContactNumber
-            };
+        IsLoading = true;
+        ErrorMessage = SuccessMessage = null;
 
-            var result = await clientService.AddClientAsync(client);
-            if (result)
-            {
-                SuccessMessage = "Klient lagt til.";
-                await LoadClientsAsync();
-                ClearNewClientForm();
-            }
-            else
-            {
-                ErrorMessage = "Kunne ikke legge til klient.";
-            }
-        }
-        catch (Exception ex)
+        var success = await _clientService.DeleteClientAsync(SelectedClient);
+        if (success)
         {
-            ErrorMessage = $"Feil: {ex.Message}";
+            Clients.Remove(SelectedClient);
+            SelectedClient = null;
+            SuccessMessage = "Klient slettet.";
         }
-        finally
+        else
         {
-            IsLoading = false;
+            ErrorMessage = "Klarte ikke slette klient.";
         }
+
+        IsLoading = false;
     }
 
-    private void ClearNewClientForm()
+    private void ClearFields()
     {
-        Name = string.Empty;
-        BillingAddress = string.Empty;
-        ContactPerson = string.Empty;
-        ContactNumber = string.Empty;
+        Name = BillingAddress = ContactPerson = ContactNumber = "";
     }
 }
