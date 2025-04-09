@@ -77,5 +77,21 @@ public class EventService(DatabaseConnection connection)
     {
         return DatabaseConnection.Instance.GetAllWhere<EventClient>("EventId", eventId);
     }
-    
+
+    public static List<Event>? GetAllEvents()
+    {
+        return DatabaseConnection.Instance.GetAll<Event>();
+    }
+
+    public static List<Event>? GetEventsWithDetails()
+    {
+        var events = DatabaseConnection.Instance.GetAll<Event>();
+
+        foreach (var eventen in events)
+        {
+            eventen.AddAllEventClients(DatabaseConnection.Instance.GetAllWhere<EventClient>("EventId", eventen.EventId));
+            eventen.AddAllEventRooms(DatabaseConnection.Instance.GetAllWhere<EventRoom>("EventId", eventen.EventId));
+        }
+        return events;
+    }
 }
