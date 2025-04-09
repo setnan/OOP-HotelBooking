@@ -61,7 +61,7 @@ public static class UserService
 
         if (await ValidatePasswordAsync(user, oldPassword))
         {
-            UpdateUserAsync(user, json);
+            await UpdateUserAsync(user, json);
             return true;
         }
         return false;
