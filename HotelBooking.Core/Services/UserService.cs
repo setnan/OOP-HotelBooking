@@ -25,6 +25,11 @@ public class UserService
         }
         return false;
     }
+
+    public async Task<bool> UpdateUserAsync(User user)
+    {
+        return await _db.UpdateAsync(user);
+    }
     
     public async Task<List<User>> GetAllUsersAsync()
     {

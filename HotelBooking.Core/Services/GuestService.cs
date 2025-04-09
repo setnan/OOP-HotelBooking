@@ -27,6 +27,10 @@ public class GuestService
         }
         return false;
     }
+    public async Task<bool> UpdateGuestAsync(Guest guest)
+    {
+        return await _db.UpdateAsync(guest);
+    }
 
     public async Task<bool> DeleteGuestAsync(Guest guest)
     {
@@ -47,4 +51,10 @@ public class GuestService
     {
         return await _db.GetOneAsync<Guest>("Name", name);
     }
+
+    public async Task<List<Guest>> GetAllGuestsAsync()
+    {
+        return await _db.GetAllAsync<Guest>();
+    }
+    
 }
