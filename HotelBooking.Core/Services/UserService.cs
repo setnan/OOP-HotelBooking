@@ -11,42 +11,42 @@ public static class UserService
         return  user.Role == Role.Admin;
     }
 
-    public static bool UpdateUser(User user, string json)
+    public static async Task<bool> UpdateUserAsync(User user, string json)
     {
         if (user.ApplyUpdatesFromJson(json))
         {
-            return DatabaseConnection.Instance.Update(user);
+            return await DatabaseConnection.Instance.UpdateAsync(user);
         }
         return false;
     }
     
-    public static List<User> GetAllUsers()
+    public static async Task<List<User>> GetAllUsersAsync()
     {
-        return DatabaseConnection.Instance.GetAll<User>();
+        return await DatabaseConnection.Instance.GetAllAsync<User>();
     }
 
     
-    public static bool AddUser(User user)
+    public static async Task<bool> AddUserAsync(User user)
     {
-        return DatabaseConnection.Instance.Insert(user);
+        return await DatabaseConnection.Instance.InsertAsync(user);
     }
     
     
-    public static User? GetUserByEmail(string email)
+    public static async Task<User?> GetUserByEmailAsync(string email)
     {
-        return DatabaseConnection.Instance.GetOne<User>("Email",email);
-    }
-
-    
-    public static User? GetUserById(int id)
-    {
-        return DatabaseConnection.Instance.GetOne<User>("UserId", id);
+        return await DatabaseConnection.Instance.GetOneAsync<User>("Email",email);
     }
 
     
-    public static bool ValidatePassword(User user, string? password)
+    public static async Task<User?> GetUserByIdAsync(int id)
     {
-        var userData = DatabaseConnection.Instance.GetOne<User>("UserId",  user.UserId);
+        return await DatabaseConnection.Instance.GetOneAsync<User>("UserId", id);
+    }
+
+    
+    public static async Task<bool> ValidatePasswordAsync(User user, string? password)
+    {
+        var userData = await DatabaseConnection.Instance.GetOneAsync<User>("UserId",  user.UserId);
         if (password != null && userData != null && userData.Password.Equals(password))
         {
             return true;
@@ -55,28 +55,28 @@ public static class UserService
     }
 
     
-    public static bool ChangePassword(User user, string oldPassword, string newPassword)
+    public static async Task<bool> ChangePasswordAsync(User user, string oldPassword, string newPassword)
     {
         var json = $"{{ \"Password\": \"{newPassword}\" }}";
 
-        if (ValidatePassword(user, oldPassword))
+        if (await ValidatePasswordAsync(user, oldPassword))
         {
-            UpdateUser(user, json);
+            UpdateUserAsync(user, json);
             return true;
         }
         return false;
     }
     
     
-    public static bool DeleteUser(User user)
+    public static async Task<bool> DeleteUserAsync(User user)
     {
-        return DatabaseConnection.Instance.Delete(user);
+        return await DatabaseConnection.Instance.DeleteAsync(user);
     }
     
     
-    public static User? GetUserByName(string name)
+    public static async Task<User?> GetUserByNameAsync(string name)
     {
         
-        return DatabaseConnection.Instance.GetOne<User>("Name",name);
+        return await DatabaseConnection.Instance.GetOneAsync<User>("Name",name);
     }
 }
