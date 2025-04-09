@@ -4,49 +4,55 @@ using HotelBooking.Core.Utilities;
 
 namespace HotelBooking.Core.Services;
 
-public static class UserService
+public class UserService
 {
+    private readonly DatabaseConnection _db;
+
+    public UserService(DatabaseConnection db)
+    {
+        _db = db;
+    }
     public static bool IsAdmin(User user)
     {
         return  user.Role == Role.Admin;
     }
 
-    public static async Task<bool> UpdateUserAsync(User user, string json)
+    public async Task<bool> UpdateUserAsync(User user, string json)
     {
         if (user.ApplyUpdatesFromJson(json))
         {
-            return await DatabaseConnection.Instance.UpdateAsync(user);
+            return await _db.UpdateAsync(user);
         }
         return false;
     }
     
-    public static async Task<List<User>> GetAllUsersAsync()
+    public async Task<List<User>> GetAllUsersAsync()
     {
-        return await DatabaseConnection.Instance.GetAllAsync<User>();
+        return await _db.GetAllAsync<User>();
     }
 
     
-    public static async Task<bool> AddUserAsync(User user)
+    public async Task<bool> AddUserAsync(User user)
     {
-        return await DatabaseConnection.Instance.InsertAsync(user);
+        return await _db.InsertAsync(user);
     }
     
     
-    public static async Task<User?> GetUserByEmailAsync(string email)
+    public async Task<User?> GetUserByEmailAsync(string email)
     {
-        return await DatabaseConnection.Instance.GetOneAsync<User>("Email",email);
-    }
-
-    
-    public static async Task<User?> GetUserByIdAsync(int id)
-    {
-        return await DatabaseConnection.Instance.GetOneAsync<User>("UserId", id);
+        return await _db.GetOneAsync<User>("Email",email);
     }
 
     
-    public static async Task<bool> ValidatePasswordAsync(User user, string? password)
+    public async Task<User?> GetUserByIdAsync(int id)
     {
-        var userData = await DatabaseConnection.Instance.GetOneAsync<User>("UserId",  user.UserId);
+        return await _db.GetOneAsync<User>("UserId", id);
+    }
+
+    
+    public async Task<bool> ValidatePasswordAsync(User user, string? password)
+    {
+        var userData = await _db.GetOneAsync<User>("UserId",  user.UserId);
         if (password != null && userData != null && userData.Password.Equals(password))
         {
             return true;
@@ -55,7 +61,7 @@ public static class UserService
     }
 
     
-    public static async Task<bool> ChangePasswordAsync(User user, string oldPassword, string newPassword)
+    public async Task<bool> ChangePasswordAsync(User user, string oldPassword, string newPassword)
     {
         var json = $"{{ \"Password\": \"{newPassword}\" }}";
 
@@ -68,15 +74,15 @@ public static class UserService
     }
     
     
-    public static async Task<bool> DeleteUserAsync(User user)
+    public async Task<bool> DeleteUserAsync(User user)
     {
-        return await DatabaseConnection.Instance.DeleteAsync(user);
+        return await _db.DeleteAsync(user);
     }
     
     
-    public static async Task<User?> GetUserByNameAsync(string name)
+    public async Task<User?> GetUserByNameAsync(string name)
     {
         
-        return await DatabaseConnection.Instance.GetOneAsync<User>("Name",name);
+        return await _db.GetOneAsync<User>("Name",name);
     }
 }

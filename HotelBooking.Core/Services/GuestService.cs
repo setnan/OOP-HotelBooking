@@ -4,40 +4,47 @@ using HotelBooking.Core.Utilities;
 
 namespace HotelBooking.Core.Services;
 
-public class GuestService(DatabaseConnection connection)
+public class GuestService
 {
+    private readonly DatabaseConnection _db;
 
-    public static async Task<bool> AddGuestAsync(Guest guest)
+    public GuestService(DatabaseConnection db)
     {
-        return await DatabaseConnection.Instance.InsertAsync(guest);
+        _db = db;
     }
 
-    public static async Task<bool> UpdateGuestAsync(Guest guest, string json)
+
+    public async Task<bool> AddGuestAsync(Guest guest)
+    {
+        return await _db.InsertAsync(guest);
+    }
+
+    public async Task<bool> UpdateGuestAsync(Guest guest, string json)
     {
         if (guest.ApplyUpdatesFromJson(json))
         {
-            return await DatabaseConnection.Instance.UpdateAsync(guest);
+            return await _db.UpdateAsync(guest);
         }
         return false;
     }
 
-    public static async Task<bool> DeleteGuestAsync(Guest guest)
+    public async Task<bool> DeleteGuestAsync(Guest guest)
     {
-        return await DatabaseConnection.Instance.DeleteAsync(guest);
+        return await _db.DeleteAsync(guest);
     }
 
-    public static async Task<Guest?> GetGuestByIdAsync(int id)
+    public async Task<Guest?> GetGuestByIdAsync(int id)
     {
-        return await DatabaseConnection.Instance.GetOneAsync<Guest>("GuestId", id);
+        return await _db.GetOneAsync<Guest>("GuestId", id);
     }
 
-    public static async Task<Guest?> GetGuestByEmailAsync(string email)
+    public async Task<Guest?> GetGuestByEmailAsync(string email)
     {
-        return await DatabaseConnection.Instance.GetOneAsync<Guest>("Email", email);
+        return await _db.GetOneAsync<Guest>("Email", email);
     }
 
-    public static async Task<Guest?> GetGuestByNameAsync(string name)
+    public async Task<Guest?> GetGuestByNameAsync(string name)
     {
-        return await DatabaseConnection.Instance.GetOneAsync<Guest>("Name", name);
+        return await _db.GetOneAsync<Guest>("Name", name);
     }
 }

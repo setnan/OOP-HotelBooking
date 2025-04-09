@@ -4,56 +4,61 @@ using HotelBooking.Core.Utilities;
 
 namespace HotelBooking.Core.Services;
 
-public class ClientService(DatabaseConnection instance)
+public class ClientService
 {
-
-    public static Task<List<Client>> GetAllClientsAsync()
+    private readonly DatabaseConnection _db;
+    public ClientService(DatabaseConnection db)
     {
-        return DatabaseConnection.Instance.GetAllAsync<Client>();
+        _db = db;
     }
     
-    public static async Task<bool> AddClientAsync(Client client)
+    public async Task<List<Client>> GetAllClientsAsync()
     {
-        return await DatabaseConnection.Instance.InsertAsync(client);
+        return await _db.GetAllAsync<Client>();
+    }
+    
+    public async Task<bool> AddClientAsync(Client client)
+    {
+        return await _db.InsertAsync(client);
     }
 
     
-    public static async Task<bool> UpdateClientAsync(Client client, string json)
+    public async Task<bool> UpdateClientAsync(Client client, string json)
     {
         if (client.ApplyUpdatesFromJson(json))
         {
-            return await DatabaseConnection.Instance.UpdateAsync(client);
+            return await _db.UpdateAsync(client);
         }
         return false;
     }
 
     
-    public static async Task<bool> UpdateClientAsync(Client client)
+    public async Task<bool> UpdateClientAsync(Client client)
     {
-        return await DatabaseConnection.Instance.UpdateAsync(client);
+        return await _db.UpdateAsync(client);
     }
     
     
-    public static async Task<bool> DeleteClientAsync(Client client)
+    public async Task<bool> DeleteClientAsync(Client client)
     {
-        return await DatabaseConnection.Instance.DeleteAsync(client);
+        return await _db.DeleteAsync(client);
     }
     
     
-    public static async Task<Client?> GetClientByIdAsync(int id)
+    public async Task<Client?> GetClientByIdAsync(int id)
     {
-        return await DatabaseConnection.Instance.GetOneAsync<Client>("ClientId", id);
-    }
-
-    
-    public static async Task<Client?> GetClientByBillingAddressAsync(string billingAddress)
-    {
-        return await DatabaseConnection.Instance.GetOneAsync<Client>("BillingAddress", billingAddress);
+        return await _db.GetOneAsync<Client>("ClientId", id);
     }
 
     
-    public static async Task<Client?> GetClientByNameAsync(string name)
+    public async Task<Client?> GetClientByBillingAddressAsync(string billingAddress)
     {
-        return await DatabaseConnection.Instance.GetOneAsync<Client>("Name", name);
+        return await _db.GetOneAsync<Client>("BillingAddress", billingAddress);
+    }
+
+    
+    public async Task<Client?> GetClientByNameAsync(string name)
+    {
+        return await _db.GetOneAsync<Client>("Name", name);
     }
 }

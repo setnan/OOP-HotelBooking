@@ -7,79 +7,89 @@ namespace HotelBooking.Core.Services;
 
 public class BookingService
 {
-    public static async Task<bool> AddBookingAsync(Booking booking)
+    private readonly DatabaseConnection _db;
+    private readonly RoomService _roomService;
+
+
+    public BookingService(DatabaseConnection db, RoomService roomService)
     {
-        if (await DatabaseConnection.Instance.InsertAsync(booking))
+        _db = db;
+        _roomService = roomService;
+    }
+
+    public async Task<bool> AddBookingAsync(Booking booking)
+    {
+        if (await _db.InsertAsync(booking))
         {
-            var room = await RoomService.GetRoomByIdAsync(booking.RoomId);
-            return room != null && await RoomService.UpdateRoomAvailabilityAsync(room, false);
+            var room = await _roomService.GetRoomByIdAsync(booking.RoomId);
+            return room != null && await _roomService.UpdateRoomAvailabilityAsync(room, false);
         }
         return false;
     }
 
 
-    public static async Task<bool> UpdateBookingAsync(Booking booking, string json)
+    public async Task<bool> UpdateBookingAsync(Booking booking, string json)
     {
         if (booking.ApplyUpdatesFromJson(json))
         {
-            return await DatabaseConnection.Instance.UpdateAsync(booking);
+            return await _db.UpdateAsync(booking);
         }
 
         return false;
     }
 
-    public static async Task<bool> UpdateBookingAsync(Booking booking)
+    public async Task<bool> UpdateBookingAsync(Booking booking)
     {
         var oldBooking = await GetBookingByIdAsync(booking.BookingId);
         if (oldBooking == null)
         {
             return false;
         }
-        var oldRoom = await RoomService.GetRoomByIdAsync(oldBooking.RoomId);
+        var oldRoom = await _roomService.GetRoomByIdAsync(oldBooking.RoomId);
         if (oldRoom == null || oldRoom.RoomId == booking.RoomId)
         {
-            return await DatabaseConnection.Instance.UpdateAsync(booking);
+            return await _db.UpdateAsync(booking);
         }
 
-        if (await DatabaseConnection.Instance.UpdateAsync(booking))
+        if (await _db.UpdateAsync(booking))
         {
-            await RoomService.UpdateRoomAvailabilityAsync(oldRoom, true);
-            var room = await RoomService.GetRoomByIdAsync(oldBooking.RoomId);
-            await RoomService.UpdateRoomAvailabilityAsync(room, false);
+            await _roomService.UpdateRoomAvailabilityAsync(oldRoom, true);
+            var room = await _roomService.GetRoomByIdAsync(oldBooking.RoomId);
+            await _roomService.UpdateRoomAvailabilityAsync(room, false);
         }
         return true;
     }
 
-    public static async Task<bool> DeleteBookingAsync(Booking booking)
+    public async Task<bool> DeleteBookingAsync(Booking booking)
     {
-        var room = await RoomService.GetRoomByIdAsync(booking.RoomId);
-        if (await DatabaseConnection.Instance.DeleteAsync(booking))
+        var room = await _roomService.GetRoomByIdAsync(booking.RoomId);
+        if (await _db.DeleteAsync(booking))
         {
-            return  room != null && await RoomService.UpdateRoomAvailabilityAsync(room, true);
+            return  room != null && await _roomService.UpdateRoomAvailabilityAsync(room, true);
         }
         return false;
     }
 
 
-    public static async Task<Booking?> GetBookingByIdAsync(int id)
+    public async Task<Booking?> GetBookingByIdAsync(int id)
     {
-        return await DatabaseConnection.Instance.GetOneAsync<Booking>("BookingId", id);
+        return await _db.GetOneAsync<Booking>("BookingId", id);
     }
 
 
-    public static async Task<List<Booking>> GetAllBookingsAsync()
+    public async Task<List<Booking>> GetAllBookingsAsync()
     {
-        return await DatabaseConnection.Instance.GetAllAsync<Booking>();
+        return await _db.GetAllAsync<Booking>();
     }
 
-    public static async Task<List<Booking>> GetBookingsByRoomIdAsync(int roomId)
+    public async Task<List<Booking>> GetBookingsByRoomIdAsync(int roomId)
     {
-        return await DatabaseConnection.Instance.GetAllWhereAsync<Booking>("RoomId", roomId);
+        return await _db.GetAllWhereAsync<Booking>("RoomId", roomId);
     }
 
-    public static async Task<List<Booking>> GetBookingsByGuestIdAsync(int guestId)
+    public async Task<List<Booking>> GetBookingsByGuestIdAsync(int guestId)
     {
-        return await DatabaseConnection.Instance.GetAllWhereAsync<Booking>("GuestId", guestId);
+        return await _db.GetAllWhereAsync<Booking>("GuestId", guestId);
     }
     
 
