@@ -11,15 +11,12 @@ namespace HotelBooking.Core.Database;
 
 public class DatabaseConnection
 {
-    private readonly string? _connectionString = AppConfiguration.Configuration["ConnectionStrings:DefaultConnection"];
- 
-    private static DatabaseConnection? _instance;
-    public static DatabaseConnection Instance => _instance ??= new DatabaseConnection();
     private readonly MySqlConnection _connection;
 
-    private DatabaseConnection()
+    public DatabaseConnection(IConfiguration configuration)
     {
-        _connection = new MySqlConnection(_connectionString);
+        var connectionString = configuration["ConnectionStrings:DefaultConnection"];
+        _connection = new MySqlConnection(connectionString);
     }
     
     public void Open() => _connection.Open();
