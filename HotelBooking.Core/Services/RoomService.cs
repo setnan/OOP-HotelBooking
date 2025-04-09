@@ -7,59 +7,58 @@ namespace HotelBooking.Core.Services;
 
 public class RoomService(DatabaseConnection db)
 {
-    public static bool AddRoom(Room room)
+    public static async Task<bool> AddRoomAsync(Room room)
     {
-        return DatabaseConnection.Instance.Insert(room);
+        return await DatabaseConnection.Instance.InsertAsync(room);
     }
     
-    public static bool UpdateRoom(Room room, string json)
+    public static async Task<bool> UpdateRoomAsync(Room room, string json)
     {
         if (room.ApplyUpdatesFromJson(json))
         {
-            return DatabaseConnection.Instance.Update(room);
+            return await DatabaseConnection.Instance.UpdateAsync(room);
         }
         
         return false;
     }
 
-    public static bool UpateRoom(Room room)
+    public static async Task<bool> UpdateRoomAsync(Room room)
     {
-        return DatabaseConnection.Instance.Update(room);
+        return await DatabaseConnection.Instance.UpdateAsync(room);
     }
 
-    public static bool DeleteRoom(Room room)
+    public static async Task<bool> DeleteRoomAsync(Room room)
     {
-        return DatabaseConnection.Instance.Delete(room);
+        return await DatabaseConnection.Instance.DeleteAsync(room);
     }
 
-    public static List<Room> GetAllRooms()
+    public static async Task<List<Room>> GetAllRoomsAsync()
     {
-        return DatabaseConnection.Instance.GetAll<Room>();
+        return await DatabaseConnection.Instance.GetAllAsync<Room>();
     }
 
 
-    public static List<Room> GetAvailableRooms(DateTime? checkIn = null, DateTime? checkOut = null)
+    public static async Task<List<Room>> GetAvailableRoomsAsync(DateTime? checkIn = null, DateTime? checkOut = null)
     {
         var checkInReal = checkIn ?? DateTime.Now;
         var checkOutReal = checkOut ?? DateTime.Now.AddDays(1);
 
-        return DatabaseConnection.Instance.GetAvailableRooms(checkInReal, checkOutReal);
+        return await DatabaseConnection.Instance.GetAvailableRoomsAsync(checkInReal, checkOutReal);
     }
     
-    public static Room? GetRoomById(int id)
+    public static async Task<Room?> GetRoomByIdAsync(int id)
     {
-        return DatabaseConnection.Instance.GetOne<Room>("RoomId", id);
+        return await DatabaseConnection.Instance.GetOneAsync<Room>("RoomId", id);
     }
 
-    public static Room? GetRoomByNumber(string number)
+    public static async Task<Room?> GetRoomByNumberAsync(string number)
     {
-        return DatabaseConnection.Instance.GetOne<Room>("RoomNumber", number);
+        return await DatabaseConnection.Instance.GetOneAsync<Room>("RoomNumber", number);
     }
 
-    public static List<Room> GetRoomsByHotelId(int id)
+    public static async Task<List<Room>> GetRoomsByHotelIdAsync(int id)
     {
-        var rooms = GetAllRooms();
-        return rooms.Where(x => x.HotelId == id).ToList();
+        return await DatabaseConnection.Instance.GetAllWhereAsync<Room>("HotelId", id);
     }
 
     public static bool IsRoomAvailable(Room room)
@@ -67,10 +66,10 @@ public class RoomService(DatabaseConnection db)
         return room.IsAvailable;
     }
     
-    public static bool UpdateRoomAvailability(Room room, bool availability)
+    public static async Task<bool> UpdateRoomAvailabilityAsync(Room room, bool availability)
     {
         room.IsAvailable = availability;
-        return DatabaseConnection.Instance.Update(room);
+        return await DatabaseConnection.Instance.UpdateAsync(room);
     }
     
     
