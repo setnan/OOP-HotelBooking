@@ -4,93 +4,93 @@ using HotelBooking.Core.Models;
 
 namespace HotelBooking.Core.Services;
 
-public class EventService(DatabaseConnection connection)
+public class EventService
 {
     
-    public static bool AddEvent(Event thisevent)
+    public static async Task<bool> AddEventAsync(Event thisevent)
     {
-        return DatabaseConnection.Instance.Insert(thisevent);
+        return await DatabaseConnection.Instance.InsertAsync(thisevent);
     }
 
-    public static bool CreateEvent(Event thisevent, List<string> clientBillingAddress, List<string> roomNumbers)
+    public static async Task<bool> CreateEventAsync(Event thisevent, List<string> clientBillingAddress, List<string> roomNumbers)
     {
-        if (!AddEvent(thisevent)) return false;
-        var lastEvent = GetEventByNameAndDate(thisevent.Name, thisevent.StartDate);
+        if (!await AddEventAsync(thisevent)) return false;
+        var lastEvent = await GetEventByNameAndDateAsync(thisevent.Name, thisevent.StartDate);
         
         if (lastEvent == null) return false;
 
         foreach (var billingaddress in clientBillingAddress)
         {
-            Client? client = ClientService.GetClientByBillingAddress(billingaddress);
+            Client? client = await ClientService.GetClientByBillingAddressAsync(billingaddress);
             if (client == null) return false;
             EventClient newEventClient = new EventClient
             {
                 EventId = lastEvent.EventId,
                 ClientId = client.ClientId
             };
-            DatabaseConnection.Instance.Insert(newEventClient);
+            await DatabaseConnection.Instance.InsertAsync(newEventClient);
         }
 
         foreach (var roomNumber in roomNumbers)
         {
-            Room? room = RoomService.GetRoomByNumber(roomNumber);
+            Room? room = await RoomService.GetRoomByNumberAsync(roomNumber);
             if (room == null) return false;
             EventRoom newEventRoom = new EventRoom
             {
                 EventId = lastEvent.EventId,
                 RoomId = room.RoomId,
             };
-            DatabaseConnection.Instance.Insert(newEventRoom);
+            await DatabaseConnection.Instance.InsertAsync(newEventRoom);
         }
         
         return true;
     }
 
-    public static Event? GetEventByNameAndDate(string name, DateTime startDate)
+    public static async Task<Event?> GetEventByNameAndDateAsync(string name, DateTime startDate)
     {
         var connection = DatabaseConnection.Instance.GetConnection();
         var query = @"SELECT * FROM Event WHERE Name = @Name AND StartDate = @StartDate";
-        return connection.QuerySingleOrDefault<Event>(query, new { Name = name, StartDate = startDate });
+        return await connection.QuerySingleOrDefaultAsync<Event>(query, new { Name = name, StartDate = startDate });
     }
 
-    public static bool UpdateEvent(Event thisevent)
+    public static async Task<bool> UpdateEventAsync(Event thisevent)
     {
-        return DatabaseConnection.Instance.Update(thisevent);
+        return await DatabaseConnection.Instance.UpdateAsync(thisevent);
     }
 
-    public static bool DeleteEvent(Event thisevent)
+    public static async Task<bool> DeleteEventAsync(Event thisevent)
     {
-        return DatabaseConnection.Instance.Delete(thisevent);
+        return await DatabaseConnection.Instance.DeleteAsync(thisevent);
     }
 
-    public static Event? GetEventById(int id)
+    public static async Task<Event?> GetEventByIdAsync(int id)
     {
-        return DatabaseConnection.Instance.GetOne<Event>("EventId", id);
+        return await DatabaseConnection.Instance.GetOneAsync<Event>("EventId", id);
     }
 
-    public static List<EventRoom>? GetRoomsByEventId(int eventId)
+    public static async Task<List<EventRoom>?> GetRoomsByEventIdAsync(int eventId)
     {
-        return DatabaseConnection.Instance.GetAllWhere<EventRoom>("EventId", eventId);
+        return await DatabaseConnection.Instance.GetAllWhereAsync<EventRoom>("EventId", eventId);
     }
 
-    public static List<EventClient>? GetClientsByEventId(int eventId)
+    public static async Task<List<EventClient>?> GetClientsByEventIdAsync(int eventId)
     {
-        return DatabaseConnection.Instance.GetAllWhere<EventClient>("EventId", eventId);
+        return await DatabaseConnection.Instance.GetAllWhereAsync<EventClient>("EventId", eventId);
     }
 
-    public static List<Event>? GetAllEvents()
+    public static async Task<List<Event>?> GetAllEventsAsync()
     {
-        return DatabaseConnection.Instance.GetAll<Event>();
+        return await DatabaseConnection.Instance.GetAllAsync<Event>();
     }
 
-    public static List<Event>? GetEventsWithDetails()
+    public static async Task<List<Event>> GetEventsWithDetailsAsync()
     {
-        var events = DatabaseConnection.Instance.GetAll<Event>();
+        var events = await DatabaseConnection.Instance.GetAllAsync<Event>();
 
         foreach (var eventen in events)
         {
-            eventen.AddAllEventClients(DatabaseConnection.Instance.GetAllWhere<EventClient>("EventId", eventen.EventId));
-            eventen.AddAllEventRooms(DatabaseConnection.Instance.GetAllWhere<EventRoom>("EventId", eventen.EventId));
+            eventen.AddAllEventClients(await DatabaseConnection.Instance.GetAllWhereAsync<EventClient>("EventId", eventen.EventId));
+            eventen.AddAllEventRooms(await DatabaseConnection.Instance.GetAllWhereAsync<EventRoom>("EventId", eventen.EventId));
         }
         return events;
     }
