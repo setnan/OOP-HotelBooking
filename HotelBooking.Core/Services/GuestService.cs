@@ -7,37 +7,37 @@ namespace HotelBooking.Core.Services;
 public class GuestService(DatabaseConnection connection)
 {
 
-    public static bool AddGuest(Guest guest)
+    public static async Task<bool> AddGuestAsync(Guest guest)
     {
-        return DatabaseConnection.Instance.Insert(guest);
+        return await DatabaseConnection.Instance.InsertAsync(guest);
     }
 
-    public static bool UpdateGuest(Guest guest, string json)
+    public static async Task<bool> UpdateGuestAsync(Guest guest, string json)
     {
         if (guest.ApplyUpdatesFromJson(json))
         {
-            return DatabaseConnection.Instance.Update(guest);
+            return await DatabaseConnection.Instance.UpdateAsync(guest);
         }
         return false;
     }
 
-    public static bool DeleteGuest(Guest guest)
+    public static async Task<bool> DeleteGuestAsync(Guest guest)
     {
-        return DatabaseConnection.Instance.Delete(guest);
+        return await DatabaseConnection.Instance.DeleteAsync(guest);
     }
 
-    public static Guest? GetGuestById(int id)
+    public static async Task<Guest?> GetGuestByIdAsync(int id)
     {
-        return DatabaseConnection.Instance.GetOne<Guest>("Guest", id);
+        return await DatabaseConnection.Instance.GetOneAsync<Guest>("GuestId", id);
     }
 
-    public static Guest? GetGuestByEmail(string email)
+    public static async Task<Guest?> GetGuestByEmailAsync(string email)
     {
-        return DatabaseConnection.Instance.GetOne<Guest>("Email", email);
+        return await DatabaseConnection.Instance.GetOneAsync<Guest>("Email", email);
     }
 
-    public static Guest? GetGuestByName(string name)
+    public static async Task<Guest?> GetGuestByNameAsync(string name)
     {
-        return DatabaseConnection.Instance.GetOne<Guest>("Name", name);
+        return await DatabaseConnection.Instance.GetOneAsync<Guest>("Name", name);
     }
 }
