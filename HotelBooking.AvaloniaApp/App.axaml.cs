@@ -7,6 +7,7 @@ using HotelBooking.AvaloniaApp.Views;
 using Microsoft.Extensions.DependencyInjection;
 using HotelBooking.Core.Services;
 using HotelBooking.AvaloniaApp.Services;
+using HotelBooking.Core.Database;
 using Microsoft.Extensions.Configuration;
 
 namespace HotelBooking.AvaloniaApp;
@@ -32,6 +33,9 @@ public partial class App : Application
                 .Build();
 
             services.AddSingleton<IConfiguration>(configuration);
+            
+            // Database connection
+            services.AddSingleton<DatabaseConnection>();
 
             // Core services
             services.AddSingleton<UserSession>();
