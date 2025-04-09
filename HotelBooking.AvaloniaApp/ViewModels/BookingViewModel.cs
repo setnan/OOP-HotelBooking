@@ -110,8 +110,8 @@ public partial class BookingViewModel : ViewModelBase
 
             var booking = new Booking
             {
-                Room = SelectedRoom,
-                Guest = SelectedGuest,
+                RoomId = SelectedRoom.RoomId,
+                GuestId = SelectedGuest.GuestId,
                 CheckIn = CheckIn,
                 CheckOut = CheckOut
             };
