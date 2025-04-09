@@ -1,118 +1,105 @@
-﻿using Dapper;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Dapper;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Utilities;
+using Microsoft.Extensions.Configuration;
 using MySql.Data.MySqlClient;
-
 
 namespace HotelBooking.Core.Database;
 
 public class DatabaseConnection
 {
-    private readonly string? _connectionString = AppConfiguration.Configuration["ConnectionStrings:DefaultConnection"];
+    private readonly string connectionString;
+    private readonly MySqlConnection connection;
 
-    private static DatabaseConnection? _instance;
-    public static DatabaseConnection Instance => _instance ??= new DatabaseConnection();
-
-    private readonly MySqlConnection _connection;
-
-    private DatabaseConnection()
+    public DatabaseConnection(IConfiguration configuration)
     {
-        _connection = new MySqlConnection(_connectionString);
+        connectionString = configuration.GetConnectionString("DefaultConnection") 
+            ?? throw new System.InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        connection = new MySqlConnection(connectionString);
     }
 
-    public MySqlConnection GetConnection()
+    public async Task OpenAsync()
     {
-        return _connection;
+        await connection.OpenAsync();
     }
 
-    public void Open() => _connection.Open();
-    public void Close() => _connection.Close();
-    
-    
-    public List<T> GetAll<T>()
+    public async Task CloseAsync()
+    {
+        await connection.CloseAsync();
+    }
+
+    public async Task<List<T>> GetAllAsync<T>()
     {
         var table = GetTableName<T>();
         var query = $"SELECT * FROM {table}";
-        return _connection.Query<T>(query).ToList();
+        return (await connection.QueryAsync<T>(query)).ToList();
     }
 
-
-    public List<T> GetAllWhere<T>(string parameterName, object parameterValue)
+    public async Task<List<T>> GetAllWhereAsync<T>(string parameterName, object parameterValue)
     {
         var table = GetTableName<T>();
-        var parameters = new  Dictionary<string, object>{ { parameterName, parameterValue }};
-        var (key, value) =  parameters.First();
-        
+        var parameters = new Dictionary<string, object> { { parameterName, parameterValue } };
+        var (key, value) = parameters.First();
+
         var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
-        return _connection.Query<T>(query, parameters).ToList();
+        return (await connection.QueryAsync<T>(query, parameters)).ToList();
     }
 
-    
-    public T? GetOne<T>(string parameterName, object parameterValue)
+    public async Task<T?> GetOneAsync<T>(string parameterName, object parameterValue)
     {
         var table = GetTableName<T>();
-        var parameters = new  Dictionary<string, object>{ { parameterName, parameterValue }};
-        var (key, value) =  parameters.First();
-        
+        var parameters = new Dictionary<string, object> { { parameterName, parameterValue } };
+        var (key, value) = parameters.First();
+
         var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
-        return _connection.QuerySingleOrDefault<T>(query, parameters);
+        return await connection.QuerySingleOrDefaultAsync<T>(query, parameters);
     }
-    
-    
-    public bool Insert<T>(T entity)
+
+    public async Task<bool> InsertAsync<T>(T entity)
     {
         var table = typeof(T).Name;
-        var propertyNameList = new List<string>();
+        var propertyNameList = typeof(T).GetProperties()
+            .Select(p => p.Name)
+            .Where(name => name != $"{typeof(T).Name}Id")
+            .ToList();
 
-        foreach (var property in typeof(T).GetProperties())
-        {
-            propertyNameList.Add(property.Name);
-        }
-
-        var propertyNameListFiltered = propertyNameList
-            .Where(name => name != $"{typeof(T).Name}Id").ToList();
-
-
-        var columns = string.Join(", ", propertyNameListFiltered);
-        var parameters = string.Join(", ", propertyNameListFiltered.Select(name => "@" + name));
+        var columns = string.Join(", ", propertyNameList);
+        var parameters = string.Join(", ", propertyNameList.Select(name => "@" + name));
 
         var insertQuery = $"INSERT INTO {table} ({columns}) VALUES ({parameters})";
 
-        var rowsAffected = _connection.Execute(insertQuery, entity);
+        var rowsAffected = await connection.ExecuteAsync(insertQuery, entity);
         return rowsAffected > 0;
     }
-    
-    
-    public bool Update<T>(T entity)
+
+    public async Task<bool> UpdateAsync<T>(T entity)
     {
         var table = GetTableName<T>();
-
         var propertyNameListFiltered = GetPropertyNames<T>(true);
 
         var setClause = string.Join(", ", propertyNameListFiltered.Select(name => $"{name} = @{name}"));
         var updateQuery = $"UPDATE {table} SET {setClause} WHERE {table}Id = @{table}Id";
 
-        var rowsAffected = _connection.Execute(updateQuery, entity);
+        var rowsAffected = await connection.ExecuteAsync(updateQuery, entity);
         return rowsAffected > 0;
     }
 
-    
-    public bool Delete<T>(T entity)
+    public async Task<bool> DeleteAsync<T>(T entity)
     {
         var table = GetTableName<T>();
-        
         var deleteQuery = $"DELETE FROM {table} WHERE {table}Id = @{table}Id";
-        var rowsAffected = _connection.Execute(deleteQuery, entity);
+        var rowsAffected = await connection.ExecuteAsync(deleteQuery, entity);
         return rowsAffected > 0;
     }
 
-    
     private static string GetTableName<T>()
     {
         return typeof(T).Name;
     }
 
-    
     private static List<string> GetPropertyNames<T>(bool filtered = false)
     {
         var propertyNameList = typeof(T).GetProperties()
@@ -125,8 +112,8 @@ public class DatabaseConnection
         }
         return propertyNameList;
     }
-    
-    public List<Room> GetAvailableRooms(DateTime checkIn, DateTime checkOut)
+
+    public async Task<List<Room>> GetAvailableRoomsAsync(DateTime checkIn, DateTime checkOut)
     {
         var query = @"SELECT * 
                   FROM Room r
@@ -134,6 +121,6 @@ public class DatabaseConnection
                   AND NOT (b.CheckIn >= @checkOut OR b.CheckOut <= @checkIn)
                   WHERE b.BookingId IS NULL;";
 
-        return _connection.Query<Room>(query, new { checkIn, checkOut }).ToList();
+        return (await connection.QueryAsync<Room>(query, new { checkIn, checkOut })).ToList();
     }
 }
