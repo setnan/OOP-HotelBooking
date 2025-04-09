@@ -255,3 +255,33 @@ INSERT INTO EventRoom (EventId, RoomId) VALUES
 (6, 101),
 (7, 202);
 
+INSERT INTO Event (HotelId, Name, OrganiserId, StartDate, EndDate, StartTime, EndTime) VALUES
+(2, 'Bergen Tech Meetup', 3, '2025-11-05', '2025-11-05', '09:00:00', '17:00:00'),
+(2, 'Nordic Sustainability Conference', 4, '2026-02-10', '2026-02-12', '08:30:00', '16:30:00'),
+(2, 'Mountain Retreat Yoga', 5, '2026-03-20', '2026-03-22', '07:00:00', '15:00:00'),
+(2, 'Bergen Business Gala', 2, '2026-04-15', '2026-04-15', '18:00:00', '23:59:00'),
+(2, 'Outdoor Adventure Expo', 1, '2026-05-05', '2026-05-07', '10:00:00', '18:00:00');
+
+INSERT INTO EventClient (EventId, ClientId) VALUES
+(11, 3),
+(11, 4),
+(12, 5),
+(13, 6),
+(13, 7),
+(14, 2),
+(15, 1),
+(15, 8);
+
+
+INSERT INTO EventRoom (EventId, RoomId) VALUES
+(11, 201), -- Bergen rom
+(11, 202),
+(12, 301),
+(12, 102),
+(13, 101),
+(14, 202),
+(14, 301),
+(15, 101),
+(15, 202);
+
+
