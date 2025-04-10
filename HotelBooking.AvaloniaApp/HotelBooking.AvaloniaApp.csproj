@@ -6,7 +6,8 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-    </PropertyGroup>
+      <UserSecretsId>2b3bd540-d2d0-40c7-85c4-c08289ebcc8c</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
@@ -19,7 +20,7 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.2.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
-        <PackageReference Include="Avalonia.Diagnostics" Version="11.2.1" Condition="'$(Configuration)' == 'Debug'"/>
+        <PackageReference Include="Avalonia.Diagnostics" Version="11.2.1" Condition="'$(Configuration)' == 'Debug'" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.2.25163.2" />
         <PackageReference Include="MySql.Data" Version="9.2.0" />
     </ItemGroup>

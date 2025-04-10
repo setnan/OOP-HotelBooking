@@ -14,21 +14,23 @@ public partial class LoginWindow : Window
     {
         InitializeComponent();
 
-        _viewModel = App.Services?.GetService(typeof(LoginViewModel)) as LoginViewModel
-                     ?? throw new InvalidOperationException("Failed to resolve LoginViewModel");
-
+        _viewModel = App.GetService<LoginViewModel>();
         DataContext = _viewModel;
         _viewModel.LoginSuccessful += OnLoginSuccessful;
         
-        _viewModel.TryAutoLoginAsync();
+        Loaded += LoginWindow_Loaded;
+    }
+
+    private async void LoginWindow_Loaded(object? sender, global::Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        await _viewModel.TryAutoLoginAsync();
     }
 
     private void OnLoginSuccessful(object? sender, User user)
     {
-        var mainWindow = new MainWindow();
-
         if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var mainWindow = App.GetService<MainWindow>();
             desktop.MainWindow = mainWindow;
             mainWindow.Show();
             Close();

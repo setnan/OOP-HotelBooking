@@ -22,7 +22,11 @@ public partial class BookingsViewModel : ViewModelBase
         this.bookingService = bookingService;
         this.roomService = roomService;
         this.guestService = guestService;
-        LoadDataAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        await LoadDataAsync();
     }
 
     [ObservableProperty]

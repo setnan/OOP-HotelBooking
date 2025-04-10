@@ -15,7 +15,11 @@ public partial class RoomManagementViewModel : ViewModelBase
     public RoomManagementViewModel(RoomService roomService)
     {
         this.roomService = roomService;
-        LoadDataAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        await LoadDataAsync();
     }
 
     [ObservableProperty] private ObservableCollection<Room> rooms = new();

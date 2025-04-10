@@ -68,6 +68,18 @@ public partial class LoginViewModel : ViewModelBase
 
     public async Task TryAutoLoginAsync()
     {
-        // Her kan vi legge til "husket bruker automatisk login" senere
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            
+            // TODO: Implement auto-login logic here when ready
+            // For now, just simulate a delay
+            await Task.Delay(100);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 }

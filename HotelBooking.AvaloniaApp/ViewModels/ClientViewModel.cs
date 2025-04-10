@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -14,7 +14,11 @@ public partial class ClientViewModel : ViewModelBase
     public ClientViewModel(ClientService clientService)
     {
         _clientService = clientService;
-        LoadClientsCommand.Execute(null);
+    }
+
+    public async Task InitializeAsync()
+    {
+        await LoadClientsAsync();
     }
 
     [ObservableProperty] private ObservableCollection<Client> clients = new();
@@ -30,72 +34,144 @@ public partial class ClientViewModel : ViewModelBase
     [ObservableProperty] private bool isLoading;
 
     [RelayCommand]
+    private async Task LoadClients()
+    {
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            var loadedClients = await _clientService.GetAllAsync();
+            Clients = new ObservableCollection<Client>(loadedClients);
+        }
+        catch (System.Exception ex)
+        {
+            ErrorMessage = $"Error loading clients: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
     private async Task LoadClientsAsync()
     {
-        IsLoading = true;
-        ErrorMessage = SuccessMessage = null;
-
-        var list = await _clientService.GetAllAsync();
-        Clients = new ObservableCollection<Client>(list);
-
-        IsLoading = false;
+        await LoadClientsCommand.ExecuteAsync(null);
     }
 
     [RelayCommand]
-    private async Task AddClientAsync()
+    private async Task AddClient()
     {
-        IsLoading = true;
-        ErrorMessage = SuccessMessage = null;
-
-        var newClient = new Client
+        try
         {
-            Name = Name,
-            BillingAddress = BillingAddress,
-            ContactPerson = ContactPerson,
-            ContactNumber = ContactNumber
-        };
+            IsLoading = true;
+            ErrorMessage = null;
+            SuccessMessage = null;
 
-        var success = await _clientService.AddClientAsync(newClient);
-        if (success)
-        {
-            Clients.Add(newClient);
-            SuccessMessage = "Klient lagt til!";
-            ClearFields();
+            var client = new Client
+            {
+                Name = Name,
+                BillingAddress = BillingAddress,
+                ContactPerson = ContactPerson,
+                ContactNumber = ContactNumber
+            };
+
+            await _clientService.AddClientAsync(client);
+            await LoadClientsAsync();
+
+            // Clear form
+            Name = "";
+            BillingAddress = "";
+            ContactPerson = "";
+            ContactNumber = "";
+
+            SuccessMessage = "Client added successfully";
         }
-        else
+        catch (System.Exception ex)
         {
-            ErrorMessage = "Klarte ikke legge til klient.";
+            ErrorMessage = $"Error adding client: {ex.Message}";
         }
-
-        IsLoading = false;
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     [RelayCommand]
-    private async Task DeleteClientAsync()
-
+    private async Task UpdateClient()
     {
-        if (SelectedClient is null) return;
+        if (SelectedClient == null) return;
 
-        IsLoading = true;
-        ErrorMessage = SuccessMessage = null;
-
-        var success = await _clientService.DeleteClientAsync(SelectedClient);
-        if (success)
+        try
         {
-            Clients.Remove(SelectedClient);
-            SelectedClient = null;
-            SuccessMessage = "Klient slettet.";
+            IsLoading = true;
+            ErrorMessage = null;
+            SuccessMessage = null;
+
+            var client = new Client
+            {
+                ClientId = SelectedClient.ClientId,
+                Name = Name,
+                BillingAddress = BillingAddress,
+                ContactPerson = ContactPerson,
+                ContactNumber = ContactNumber
+            };
+
+            await _clientService.UpdateClientAsync(client);
+            await LoadClientsAsync();
+
+            SuccessMessage = "Client updated successfully";
+        }
+        catch (System.Exception ex)
+        {
+            ErrorMessage = $"Error updating client: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeleteClient()
+    {
+        if (SelectedClient == null) return;
+
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            SuccessMessage = null;
+
+            await _clientService.DeleteClientAsync(SelectedClient);
+            await LoadClientsAsync();
+
+            SuccessMessage = "Client deleted successfully";
+        }
+        catch (System.Exception ex)
+        {
+            ErrorMessage = $"Error deleting client: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    partial void OnSelectedClientChanged(Client? value)
+    {
+        if (value != null)
+        {
+            Name = value.Name;
+            BillingAddress = value.BillingAddress;
+            ContactPerson = value.ContactPerson;
+            ContactNumber = value.ContactNumber;
         }
         else
         {
-            ErrorMessage = "Klarte ikke slette klient.";
+            Name = "";
+            BillingAddress = "";
+            ContactPerson = "";
+            ContactNumber = "";
         }
-
-        IsLoading = false;
-    }
-
-    private void ClearFields()
-    {
-        Name = BillingAddress = ContactPerson = ContactNumber = "";
     }
 }

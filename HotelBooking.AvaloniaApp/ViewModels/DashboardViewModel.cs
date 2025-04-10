@@ -23,7 +23,11 @@ public partial class DashboardViewModel : ViewModelBase
         this.bookingService = bookingService;
         this.roomService = roomService;
         this.guestService = guestService;
-        LoadDashboardDataAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        await LoadDashboardDataAsync();
     }
 
     [ObservableProperty] private string welcomeMessage = "Welcome to Hotel Management";
@@ -46,24 +50,75 @@ public partial class DashboardViewModel : ViewModelBase
     [RelayCommand]
     private async Task CheckInBooking(Booking booking)
     {
-        booking.Status = BookingStatus.CheckedIn;
-        await bookingService.UpdateBookingAsync(booking);
-        await RefreshDashboard();
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            await Task.Run(async () =>
+            {
+                booking.Status = BookingStatus.CheckedIn;
+                await bookingService.UpdateBookingAsync(booking);
+            });
+            await RefreshDashboard();
+            SuccessMessage = "Booking checked in successfully";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error checking in: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     [RelayCommand]
     private async Task CheckOutBooking(Booking booking)
     {
-        booking.Status = BookingStatus.CheckedOut;
-        await bookingService.UpdateBookingAsync(booking);
-        await RefreshDashboard();
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            await Task.Run(async () =>
+            {
+                booking.Status = BookingStatus.CheckedOut;
+                await bookingService.UpdateBookingAsync(booking);
+            });
+            await RefreshDashboard();
+            SuccessMessage = "Booking checked out successfully";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error checking out: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
     
     [RelayCommand]
     private async Task MarkRoomCleaned(Room room)
     {
-        await roomService.UpdateRoomAvailabilityAsync(room, true);
-        await LoadDashboardDataAsync();
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = null;
+            await Task.Run(async () =>
+            {
+                await roomService.UpdateRoomAvailabilityAsync(room, true);
+            });
+            await LoadDashboardDataAsync();
+            SuccessMessage = "Room marked as cleaned";
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Error marking room as cleaned: {ex.Message}";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
     }
 
     private async Task LoadDashboardDataAsync()
@@ -74,23 +129,25 @@ public partial class DashboardViewModel : ViewModelBase
             ErrorMessage = null;
             SuccessMessage = null;
             
-            var allBookings = (await bookingService.GetAllAsync()).ToList();
-            var allRooms = (await roomService.GetAllAsync()).ToList();
-            var available = (await roomService.GetAvailableRoomsAsync()).ToList();
+            await Task.Run(async () =>
+            {
+                var allBookings = (await bookingService.GetAllAsync()).ToList();
+                var allRooms = (await roomService.GetAllAsync()).ToList();
+                var available = (await roomService.GetAvailableRoomsAsync()).ToList();
 
-            var today = DateTime.Today;
-            TodaysBookings = new ObservableCollection<Booking>(allBookings.Where(b => b.CheckIn.Date == today));
-            UpcomingBookings = new ObservableCollection<Booking>(allBookings.Where(b => b.CheckIn > today));
+                var today = DateTime.Today;
+                TodaysBookings = new ObservableCollection<Booking>(allBookings.Where(b => b.CheckIn.Date == today));
+                UpcomingBookings = new ObservableCollection<Booking>(allBookings.Where(b => b.CheckIn > today));
 
-            TodayCheckIns = TodaysBookings.Count;
-            TodayCheckOuts = allBookings.Count(b => b.CheckOut.Date == today);
-            AvailableRooms = available.Count();
-            var totalRooms = allRooms.Count();
-            OccupancyRate = totalRooms > 0 ? (double)(totalRooms - AvailableRooms) / totalRooms : 0;
+                TodayCheckIns = TodaysBookings.Count;
+                TodayCheckOuts = allBookings.Count(b => b.CheckOut.Date == today);
+                AvailableRooms = available.Count();
+                OccupancyRate = allRooms.Count > 0 ? (double)(allRooms.Count - available.Count) / allRooms.Count * 100 : 0;
 
-            RoomsNeedingAttention = new ObservableCollection<Room>(allRooms.Where(r => !r.IsAvailable));
+                RoomsNeedingAttention = new ObservableCollection<Room>(allRooms.Where(r => !r.IsAvailable));
+            });
 
-            SuccessMessage = "Dashboard loaded successfully";
+            SuccessMessage = "Dashboard data loaded successfully";
         }
         catch (Exception ex)
         {

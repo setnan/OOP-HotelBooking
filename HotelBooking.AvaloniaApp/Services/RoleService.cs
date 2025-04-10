@@ -4,12 +4,13 @@ namespace HotelBooking.AvaloniaApp.Services;
 
 public class RoleService
 {
-    private static RoleService? _instance;
-    public static RoleService Instance => _instance ??= new RoleService();
+    private static readonly Lazy<RoleService> _instance = new Lazy<RoleService>(() => new RoleService());
 
     private UserRole _currentRole = UserRole.Receptionist;
 
-    private RoleService() { }
+    private RoleService() { }  // Private constructor for singleton
+
+    public static RoleService Instance => _instance.Value;
 
     public UserRole CurrentRole
     {

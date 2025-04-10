@@ -18,7 +18,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly RoleService _roleService;
 
     [ObservableProperty]
-    private ViewModelBase currentView;
+    private ViewModelBase? currentView;
 
     [ObservableProperty]
     private User? currentUser;
@@ -55,14 +55,30 @@ public partial class MainWindowViewModel : ViewModelBase
         _guestService = guestService;
         _roomService = roomService;
 
-        DashboardViewModel = dashboardViewModel;
-        BookingsViewModel = bookingsViewModel;
-        RoomManagementViewModel = roomManagementViewModel;
-        GuestViewModel = guestViewModel;
-        ClientViewModel = clientViewModel;
+        DashboardViewModel = dashboardViewModel ?? throw new ArgumentNullException(nameof(dashboardViewModel));
+        BookingsViewModel = bookingsViewModel ?? throw new ArgumentNullException(nameof(bookingsViewModel));
+        RoomManagementViewModel = roomManagementViewModel ?? throw new ArgumentNullException(nameof(roomManagementViewModel));
+        GuestViewModel = guestViewModel ?? throw new ArgumentNullException(nameof(guestViewModel));
+        ClientViewModel = clientViewModel ?? throw new ArgumentNullException(nameof(clientViewModel));
 
+        // Initialize current user from session if exists
+        var session = UserSession.Instance;
+        if (session.IsLoggedIn && session.UserId.HasValue)
+        {
+            CurrentUser = new User
+            {
+                UserId = session.UserId.Value,
+                Name = session.Name ?? string.Empty,
+                Email = session.Email ?? string.Empty,
+                Role = session.IsAdmin ? Role.Admin : Role.Receptionist
+            };
+            IsAdmin = session.IsAdmin;
+        }
+
+        // Set initial view
         CurrentView = DashboardViewModel;
     }
+
     [RelayCommand]
     private void TogglePane()
     {
@@ -72,9 +88,16 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void NavigateTo(string viewName)
     {
-        if (!isAdmin && (viewName == "rooms" || viewName == "backup"))
+        if (string.IsNullOrEmpty(viewName)) return;
+
+        if (CurrentUser == null)
         {
-            return;
+            return; // Don't allow navigation if not logged in
+        }
+
+        if (!IsAdmin && (viewName == "rooms" || viewName == "backup"))
+        {
+            return; // Don't allow navigation to admin-only views
         }
 
         CurrentView = viewName.ToLower() switch
@@ -90,24 +113,37 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public async Task InitializeAsync()
     {
-        try
+        var session = UserSession.Instance;
+        if (session.IsLoggedIn && session.UserId.HasValue)
         {
-            isAdmin = UserSession.Instance.IsAdmin;
-        }
-        catch (Exception)
-        {
-            isAdmin = false;
+            CurrentUser = new User
+            {
+                UserId = session.UserId.Value,
+                Name = session.Name ?? string.Empty,
+                Email = session.Email ?? string.Empty,
+                Role = session.IsAdmin ? Role.Admin : Role.Receptionist
+            };
+            IsAdmin = session.IsAdmin;
+            
+            // Ensure CurrentView is set to a non-null value
+            if (CurrentView == null)
+            {
+                CurrentView = DashboardViewModel;
+            }
         }
     }
 
     public void OnUserLoggedIn(User user)
     {
         CurrentUser = user;
-        isAdmin = UserSession.Instance.IsAdmin;
+        IsAdmin = user.Role == Role.Admin;
+        CurrentView = DashboardViewModel ?? throw new InvalidOperationException("DashboardViewModel is not initialized");
     }
 
     public void Cleanup()
     {
-        
+        CurrentUser = null;
+        IsAdmin = false;
+        CurrentView = null;
     }
 }

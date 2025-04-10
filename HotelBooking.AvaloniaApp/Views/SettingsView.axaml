@@ -12,11 +12,11 @@
                  FontSize="24"
                  FontWeight="Bold"
                  Margin="0,0,0,20"
-                 Foreground="White"/>
+                 Foreground="black"/>
         
         <!-- Settings form will go here -->
         <TextBlock Text="Settings will be displayed here"
                  FontSize="18"
-                 Foreground="White"/>
+                 Foreground="Gray"/>
     </StackPanel>
 </UserControl>

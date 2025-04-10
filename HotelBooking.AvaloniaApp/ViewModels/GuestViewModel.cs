@@ -17,9 +17,12 @@ public partial class GuestViewModel : ViewModelBase
     {
         this.guestService = guestService;
         this.roomService = roomService;
-        LoadDataAsync();
     }
 
+    public async Task InitializeAsync()
+    {
+        await LoadDataAsync();
+    }
 
     [ObservableProperty]
     private ObservableCollection<Guest> guests = new();

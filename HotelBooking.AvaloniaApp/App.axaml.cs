@@ -31,11 +31,13 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            var services = new ServiceCollection();
+            IServiceCollection services = new ServiceCollection();
 
+            // Configuration
             var configuration = new ConfigurationBuilder()
-                .AddJsonFile("appsettings.json", optional: true)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables()
+                .AddUserSecrets<App>()
                 .Build();
 
             services.AddSingleton<IConfiguration>(configuration);
@@ -43,36 +45,36 @@ public partial class App : Application
             // Database connection
             services.AddSingleton<DatabaseConnection>();
 
-            // Core services
+            // Core services - order matters for dependencies
             services.AddSingleton<UserSession>();
             services.AddSingleton<UserService>();
-            services.AddSingleton<RoleService>();
+            services.AddSingleton<RoleService>(_ => RoleService.Instance);
+            services.AddSingleton<EventRoomService>();
+            services.AddSingleton<EventClientService>();
+            services.AddSingleton<ClientService>();
             services.AddSingleton<RoomService>();
             services.AddSingleton<BookingService>();
-            services.AddSingleton<ClientService>();
             services.AddSingleton<GuestService>();
-            services.AddSingleton<EventService>();
+            services.AddSingleton<EventService>();  // Moved to end since it depends on other services
 
             // ViewModels
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<DashboardViewModel>();
             services.AddTransient<BookingsViewModel>();
-            services.AddTransient<BookingViewModel>();
             services.AddTransient<RoomManagementViewModel>();
             services.AddTransient<RoomsViewModel>();
             services.AddTransient<SettingsViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<ClientViewModel>();
-            services.AddTransient<GuestViewModel>(provider =>
-                new GuestViewModel(
-                    provider.GetRequiredService<GuestService>(),
-                    provider.GetRequiredService<RoomService>()
-                )
-            );
+            services.AddTransient<GuestViewModel>();
+
+            // Views
+            services.AddTransient<MainWindow>();
+            services.AddTransient<LoginWindow>();
 
             Services = services.BuildServiceProvider();
 
-            var loginWindow = new LoginWindow();
+            var loginWindow = App.GetService<LoginWindow>();
             desktop.MainWindow = loginWindow;
             loginWindow.Show();
         }
@@ -82,6 +84,10 @@ public partial class App : Application
 
     public static T GetService<T>() where T : notnull
     {
+        if (Services == null)
+        {
+            throw new InvalidOperationException("Services have not been initialized");
+        }
         return Services.GetRequiredService<T>();
     }
 }

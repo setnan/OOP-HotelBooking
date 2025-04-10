@@ -20,5 +20,25 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
+        
+        <!-- Global Styles -->
+        <Style Selector="Button">
+            <Setter Property="Background" Value="#0078D4"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Padding" Value="10,5"/>
+            <Setter Property="CornerRadius" Value="4"/>
+        </Style>
+        
+        <Style Selector="Button:pointerover">
+            <Setter Property="Background" Value="#106EBE"/>
+        </Style>
+        
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="#323130"/>
+        </Style>
+        
+        <Style Selector="ContentControl">
+            <Setter Property="Background" Value="White"/>
+        </Style>
     </Application.Styles>
 </Application>
