@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
-using HotelBooking.AvaloniaApp.Services;
+using HotelBooking.Core.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class RoomsViewModel : ViewModelBase
 {
-    private readonly RoomServiceWrapper roomService;
+    private readonly RoomService roomService;
 
     [ObservableProperty]
     private string title = "Rooms";
@@ -30,10 +30,10 @@ public partial class RoomsViewModel : ViewModelBase
     [ObservableProperty]
     private string? successMessage;
 
-    public RoomsViewModel(RoomServiceWrapper roomService)
+    public RoomsViewModel(RoomService roomService)
     {
         this.roomService = roomService;
-        LoadDataAsync();
+        _ = LoadDataAsync(); // fyrer av i bakgrunnen uten å vente
     }
 
     private async Task LoadDataAsync()

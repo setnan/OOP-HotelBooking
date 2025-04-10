@@ -30,7 +30,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public BookingsViewModel BookingsViewModel { get; }
     public RoomManagementViewModel RoomManagementViewModel { get; }
     public GuestViewModel GuestViewModel { get; }
-    public BackupViewModel BackupViewModel { get; }
+    // public BackupViewModel BackupViewModel { get; }
     public ClientViewModel ClientViewModel { get; }
 
     public MainWindowViewModel(
@@ -44,7 +44,7 @@ public partial class MainWindowViewModel : ViewModelBase
         BookingsViewModel bookingsViewModel,
         RoomManagementViewModel roomManagementViewModel,
         GuestViewModel guestViewModel,
-        BackupViewModel backupViewModel,
+        // BackupViewModel backupViewModel,
         ClientViewModel clientViewModel)
     {
         _userService = userService;
@@ -58,7 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase
         BookingsViewModel = bookingsViewModel;
         RoomManagementViewModel = roomManagementViewModel;
         GuestViewModel = guestViewModel;
-        BackupViewModel = backupViewModel;
+        // BackupViewModel = backupViewModel;
         ClientViewModel = clientViewModel;
 
         CurrentView = DashboardViewModel;
@@ -78,7 +78,7 @@ public partial class MainWindowViewModel : ViewModelBase
             "bookings" => BookingsViewModel,
             "rooms" => RoomManagementViewModel,
             "guests" => GuestViewModel,
-            "backup" => BackupViewModel,
+            // "backup" => BackupViewModel,
             "clients" => ClientViewModel,
             _ => DashboardViewModel
         };

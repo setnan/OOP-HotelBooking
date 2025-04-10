@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -59,3 +60,4 @@ public partial class BackupViewModel : ViewModelBase
     [RelayCommand]
     private Task RefreshBackups() => LoadBackupsAsync();
 }
+*/

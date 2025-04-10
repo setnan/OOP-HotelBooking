@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
-using HotelBooking.Core.Services; // ← NB: direkte referanse til Core
+using HotelBooking.Core.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
@@ -94,7 +94,7 @@ public partial class BookingViewModel : ViewModelBase
                 CheckOut = CheckOut
             };
 
-            await bookingService.CreateBookingAsync(booking);
+            await bookingService.AddBookingAsync(booking);
             await LoadDataAsync();
 
             ResetNewBookingForm();
@@ -148,7 +148,7 @@ public partial class BookingViewModel : ViewModelBase
             ErrorMessage = null;
             SuccessMessage = null;
 
-            await bookingService.CancelBookingAsync(SelectedBooking.BookingId);
+            await bookingService.DeleteBookingAsync(SelectedBooking);
             await LoadDataAsync();
 
             SelectedBooking = null;

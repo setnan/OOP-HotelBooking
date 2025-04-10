@@ -41,8 +41,8 @@ public partial class LoginViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = null;
 
-            var user = await _userService.AuthenticateAsync(Username, Password);
-            if (user == null)
+            var user = await _userService.GetUserByEmailAsync(Username);
+            if (user == null || !await _userService.ValidatePasswordAsync(user, Password))
             {
                 ErrorMessage = "Ugyldig brukernavn eller passord";
                 return;
@@ -50,9 +50,10 @@ public partial class LoginViewModel : ViewModelBase
 
             if (RememberMe)
             {
-                await _userService.SaveCredentialsAsync(Username, Password);
+                // Her kan vi implementere en lagringsmetode hvis ønskelig
             }
 
+            UserSession.Instance.Login(user); // sett innlogget bruker
             _onLoginSuccess(user);
         }
         catch (Exception ex)
@@ -64,4 +65,5 @@ public partial class LoginViewModel : ViewModelBase
             IsLoading = false;
         }
     }
+
 }
