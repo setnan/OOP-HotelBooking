@@ -44,7 +44,7 @@ public partial class RoomsViewModel : ViewModelBase
             ErrorMessage = null;
             SuccessMessage = null;
 
-            var roomsList = await roomService.GetAllRoomsAsync();
+            var roomsList = await roomService.GetAllAsync();
             Rooms = new ObservableCollection<Room>(roomsList);
         }
         catch (Exception ex)

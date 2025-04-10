@@ -20,6 +20,7 @@ public partial class GuestViewModel : ViewModelBase
         LoadDataAsync();
     }
 
+
     [ObservableProperty]
     private ObservableCollection<Guest> guests = new();
 
