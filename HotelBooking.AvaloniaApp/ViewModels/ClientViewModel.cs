@@ -35,7 +35,7 @@ public partial class ClientViewModel : ViewModelBase
         IsLoading = true;
         ErrorMessage = SuccessMessage = null;
 
-        var list = await _clientService.GetAllClientsAsync();
+        var list = await _clientService.GetAllAsync();
         Clients = new ObservableCollection<Client>(list);
 
         IsLoading = false;

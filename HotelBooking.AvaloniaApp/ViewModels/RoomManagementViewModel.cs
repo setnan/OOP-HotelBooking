@@ -40,7 +40,7 @@ public partial class RoomManagementViewModel : ViewModelBase
             ErrorMessage = null;
             SuccessMessage = null;
 
-            var roomsList = await roomService.GetAllRoomsAsync();
+            var roomsList = await roomService.GetAllAsync();
             Rooms = new ObservableCollection<Room>(roomsList);
 
             SuccessMessage = "Rooms loaded successfully";

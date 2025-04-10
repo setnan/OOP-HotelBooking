@@ -25,21 +25,21 @@ public class DatabaseConnection
     
     public MySqlConnection GetConnection() => _connection;
 
-    public async Task<List<T>> GetAllAsync<T>()
+    public async Task<IEnumerable<T>> GetAllAsync<T>()
     {
         var table = GetTableName<T>();
         var query = $"SELECT * FROM {table}";
         return (await _connection.QueryAsync<T>(query)).ToList();
     }
 
-    public async Task<List<T>> GetAllWhereAsync<T>(string parameterName, object parameterValue)
+    public async Task<IEnumerable<T>> GetAllByColumnValueAsync<T>(string parameterName, object parameterValue)
     {
         var table = GetTableName<T>();
         var parameters = new Dictionary<string, object> { { parameterName, parameterValue } };
         var (key, value) = parameters.First();
 
         var query = $"SELECT * FROM {table} WHERE {key} = @{key}";
-        return (await _connection.QueryAsync<T>(query, parameters)).ToList();
+        return await _connection.QueryAsync<T>(query, parameters);
     }
 
     public async Task<T?> GetOneAsync<T>(string parameterName, object parameterValue)
@@ -107,7 +107,7 @@ public class DatabaseConnection
         return propertyNameList;
     }
 
-    public async Task<List<Room>> GetAvailableRoomsAsync(DateTime checkIn, DateTime checkOut)
+    public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime checkIn, DateTime checkOut)
     {
         var query = @"SELECT * 
                   FROM Room r

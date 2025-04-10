@@ -1,10 +1,11 @@
-﻿using HotelBooking.Core.Database;
+﻿using HotelBooking.Core.Backup;
+using HotelBooking.Core.Database;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Utilities;
 
 namespace HotelBooking.Core.Services;
 
-public class GuestService
+public class GuestService : IBackupService<Guest>
 {
     private readonly DatabaseConnection _db;
 
@@ -52,9 +53,21 @@ public class GuestService
         return await _db.GetOneAsync<Guest>("Name", name);
     }
 
-    public async Task<List<Guest>> GetAllGuestsAsync()
+    public async Task<IEnumerable<Guest>> GetAllAsync()
     {
         return await _db.GetAllAsync<Guest>();
     }
-    
+
+    public async Task<IEnumerable<Guest>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<Guest>();
+    }
+
+    public async Task InsertManyAsync(IEnumerable<Guest> items)
+    {
+        foreach (var item in items)
+        {
+            await _db.InsertAsync(item);
+        }
+    }
 }

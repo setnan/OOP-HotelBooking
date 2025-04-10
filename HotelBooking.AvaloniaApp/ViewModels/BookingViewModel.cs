@@ -48,9 +48,9 @@ public partial class BookingViewModel : ViewModelBase
             ErrorMessage = null;
             SuccessMessage = null;
 
-            var bookingsTask = bookingService.GetAllBookingsAsync();
-            var roomsTask = roomService.GetAllRoomsAsync();
-            var guestsTask = guestService.GetAllGuestsAsync();
+            var bookingsTask = bookingService.GetAllAsync();
+            var roomsTask = roomService.GetAllAsync();
+            var guestsTask = guestService.GetAllAsync();
 
             await Task.WhenAll(bookingsTask, roomsTask, guestsTask);
 

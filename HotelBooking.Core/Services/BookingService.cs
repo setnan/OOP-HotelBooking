@@ -1,15 +1,17 @@
 ﻿using Dapper;
+using HotelBooking.Core.Backup;
 using HotelBooking.Core.Database;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Utilities;
 
 namespace HotelBooking.Core.Services;
 
-public class BookingService
+public class BookingService : IBackupService<Booking>
 {
     private readonly DatabaseConnection _db;
     private readonly RoomService _roomService;
     private readonly GuestService _guestService;
+
 
     public BookingService(DatabaseConnection db, RoomService roomService, GuestService guestService)
     {
@@ -27,6 +29,7 @@ public class BookingService
         }
         return false;
     }
+
 
     public async Task<bool> UpdateBookingAsync(Booking booking, string json)
     {
@@ -70,6 +73,7 @@ public class BookingService
         return false;
     }
 
+
     public async Task<Booking?> GetBookingByIdAsync(int id)
     {
         var booking = await _db.GetOneAsync<Booking>("BookingId", id);
@@ -81,26 +85,40 @@ public class BookingService
         return booking;
     }
 
-    public async Task<List<Booking>> GetAllBookingsAsync()
-    {
-        var bookings = await _db.GetAllAsync<Booking>();
 
+    public async Task<IEnumerable<Booking>> GetAllAsync()
+    {
+        var bookings = (await _db.GetAllAsync<Booking>()).ToList();
+ 
         foreach (var booking in bookings)
         {
             booking.Room = await _roomService.GetRoomByIdAsync(booking.RoomId);
             booking.Guest = await _guestService.GetGuestByIdAsync(booking.GuestId);
         }
-
+ 
         return bookings;
     }
 
-    public async Task<List<Booking>> GetBookingsByRoomIdAsync(int roomId)
+    public async Task<IEnumerable<Booking>> GetAllForBackupAsync()
     {
-        return await _db.GetAllWhereAsync<Booking>("RoomId", roomId);
+        return await _db.GetAllAsync<Booking>();
     }
 
-    public async Task<List<Booking>> GetBookingsByGuestIdAsync(int guestId)
+    public async Task InsertManyAsync(IEnumerable<Booking> items)
     {
-        return await _db.GetAllWhereAsync<Booking>("GuestId", guestId);
+        foreach (var item in items)
+        {
+            await _db.InsertAsync(item);
+        }
     }
-} 
+
+    public async Task<IEnumerable<Booking>> GetBookingsByRoomIdAsync(int roomId)
+    {
+        return await _db.GetAllByColumnValueAsync<Booking>("RoomId", roomId);
+    }
+
+    public async Task<IEnumerable<Booking>> GetBookingsByGuestIdAsync(int guestId)
+    {
+        return await _db.GetAllByColumnValueAsync<Booking>("GuestId", guestId);
+    }
+}
