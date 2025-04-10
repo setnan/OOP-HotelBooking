@@ -124,7 +124,10 @@ public partial class GuestViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private Task RefreshData() => LoadDataAsync();
+    private async Task RefreshDataAsync()
+    {
+        await LoadDataAsync();
+    }
     
     [RelayCommand]
     private void TogglePane()
