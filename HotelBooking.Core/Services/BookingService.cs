@@ -9,12 +9,13 @@ public class BookingService
 {
     private readonly DatabaseConnection _db;
     private readonly RoomService _roomService;
+    private readonly GuestService _guestService;
 
-
-    public BookingService(DatabaseConnection db, RoomService roomService)
+    public BookingService(DatabaseConnection db, RoomService roomService, GuestService guestService)
     {
         _db = db;
         _roomService = roomService;
+        _guestService = guestService;
     }
 
     public async Task<bool> AddBookingAsync(Booking booking)
@@ -26,7 +27,6 @@ public class BookingService
         }
         return false;
     }
-
 
     public async Task<bool> UpdateBookingAsync(Booking booking, string json)
     {
@@ -70,16 +70,28 @@ public class BookingService
         return false;
     }
 
-
     public async Task<Booking?> GetBookingByIdAsync(int id)
     {
-        return await _db.GetOneAsync<Booking>("BookingId", id);
+        var booking = await _db.GetOneAsync<Booking>("BookingId", id);
+        if (booking != null)
+        {
+            booking.Room = await _roomService.GetRoomByIdAsync(booking.RoomId);
+            booking.Guest = await _guestService.GetGuestByIdAsync(booking.GuestId);
+        }
+        return booking;
     }
-
 
     public async Task<List<Booking>> GetAllBookingsAsync()
     {
-        return await _db.GetAllAsync<Booking>();
+        var bookings = await _db.GetAllAsync<Booking>();
+
+        foreach (var booking in bookings)
+        {
+            booking.Room = await _roomService.GetRoomByIdAsync(booking.RoomId);
+            booking.Guest = await _guestService.GetGuestByIdAsync(booking.GuestId);
+        }
+
+        return bookings;
     }
 
     public async Task<List<Booking>> GetBookingsByRoomIdAsync(int roomId)
@@ -91,6 +103,4 @@ public class BookingService
     {
         return await _db.GetAllWhereAsync<Booking>("GuestId", guestId);
     }
-    
-
-}
+} 

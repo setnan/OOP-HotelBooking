@@ -29,6 +29,8 @@ public partial class RoomManagementViewModel : ViewModelBase
 
     [ObservableProperty] private string? roomNumber;
     [ObservableProperty] private string? type;
+    [ObservableProperty] private decimal price;
+    [ObservableProperty] private bool isAvailable;
 
     private async Task LoadDataAsync()
     {
@@ -62,6 +64,13 @@ public partial class RoomManagementViewModel : ViewModelBase
         ResetRoomForm();
         IsNewRoomDialogOpen = true;
     }
+    
+    [RelayCommand]
+    private void CloseNewRoomDialog()
+    {
+        IsNewRoomDialogOpen = false;
+    }
+
 
     [RelayCommand]
     private async Task CreateRoom()
@@ -76,7 +85,8 @@ public partial class RoomManagementViewModel : ViewModelBase
             {
                 RoomNumber = RoomNumber ?? string.Empty,
                 Type = Type ?? string.Empty,
-                IsAvailable = true
+                Price = Price,
+                IsAvailable = IsAvailable
             };
 
             var result = await roomService.AddRoomAsync(room);
@@ -105,5 +115,7 @@ public partial class RoomManagementViewModel : ViewModelBase
     {
         RoomNumber = string.Empty;
         Type = string.Empty;
+        Price = 0;
+        IsAvailable = true;
     }
 }

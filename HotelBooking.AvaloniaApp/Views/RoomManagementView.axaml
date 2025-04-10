@@ -43,12 +43,10 @@
                   Margin="20"
                   IsReadOnly="True">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Room" Binding="{Binding RoomNumber}"/>
-                <DataGridTextColumn Header="Floor" Binding="{Binding Floor}"/>
+                <DataGridTextColumn Header="Room Number" Binding="{Binding RoomNumber}"/>
                 <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
-                <DataGridTextColumn Header="Beds" Binding="{Binding NumberOfBeds}"/>
-                <DataGridTextColumn Header="Quality" Binding="{Binding Quality}"/>
-                <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+                <DataGridTextColumn Header="Price" Binding="{Binding Price}"/>
+                <DataGridCheckBoxColumn Header="Available" Binding="{Binding IsAvailable}"/>
             </DataGrid.Columns>
         </DataGrid>
 
@@ -66,22 +64,16 @@
                     <TextBlock Text="New Room" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
                     <TextBlock Text="Room Number"/>
-                    <NumericUpDown Value="{Binding RoomNumber}" Minimum="1" Maximum="9999"/>
-
-                    <TextBlock Text="Floor"/>
-                    <NumericUpDown Value="{Binding Floor}" Minimum="0" Maximum="100"/>
+                    <TextBox Text="{Binding RoomNumber}" />
 
                     <TextBlock Text="Room Type"/>
                     <TextBox Text="{Binding Type}"/>
 
-                    <TextBlock Text="Number of Beds"/>
-                    <NumericUpDown Value="{Binding NumberOfBeds}" Minimum="1" Maximum="10"/>
+                    <TextBlock Text="Price"/>
+                    <NumericUpDown Value="{Binding Price}" Minimum="0" Maximum="10000"/>
 
-                    <TextBlock Text="Quality"/>
-                    <TextBox Text="{Binding Quality}"/>
-
-                    <TextBlock Text="Description"/>
-                    <TextBox Text="{Binding Description}" AcceptsReturn="True" Height="100"/>
+                    <TextBlock Text="Available"/>
+                    <CheckBox IsChecked="{Binding IsAvailable}"/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,10,0,0">
                         <Button Content="Cancel" Command="{Binding CloseNewRoomDialogCommand}"/>

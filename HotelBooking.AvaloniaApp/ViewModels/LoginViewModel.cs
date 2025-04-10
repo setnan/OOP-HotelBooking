@@ -10,12 +10,12 @@ namespace HotelBooking.AvaloniaApp.ViewModels;
 public partial class LoginViewModel : ViewModelBase
 {
     private readonly UserService _userService;
-    private readonly Action<User> _onLoginSuccess;
 
-    public LoginViewModel(UserService userService, Action<User> onLoginSuccess)
+    public event EventHandler<User>? LoginSuccessful;
+
+    public LoginViewModel(UserService userService)
     {
         _userService = userService;
-        _onLoginSuccess = onLoginSuccess;
     }
 
     [ObservableProperty]
@@ -50,11 +50,11 @@ public partial class LoginViewModel : ViewModelBase
 
             if (RememberMe)
             {
-                // Her kan vi implementere en lagringsmetode hvis ønskelig
+                // Her kan vi vurdere om vi vil implementer lagring etterhvert
             }
 
-            UserSession.Instance.Login(user); // sett innlogget bruker
-            _onLoginSuccess(user);
+            UserSession.Instance.Login(user);
+            LoginSuccessful?.Invoke(this, user);
         }
         catch (Exception ex)
         {
@@ -66,4 +66,8 @@ public partial class LoginViewModel : ViewModelBase
         }
     }
 
+    public async Task TryAutoLoginAsync()
+    {
+        // Her kan vi legge til "husket bruker automatisk login" senere
+    }
 }

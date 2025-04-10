@@ -7,6 +7,4 @@ public class Guest
     public string ContactNumber { get; set; }
     public string Email { get; set; }
     
-    public int PreferredRoomId { get; set; }
-    
 }

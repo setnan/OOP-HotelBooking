@@ -5,8 +5,8 @@
              xmlns:d="https://github.com/avaloniaui"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
-             x:Class="HotelBooking.AvaloniaApp.Views.BookingView"
-             x:DataType="vm:BookingViewModel"
+             x:Class="HotelBooking.AvaloniaApp.Views.BookingsView"
+             x:DataType="vm:BookingsViewModel"
              d:DesignWidth="800"
              d:DesignHeight="600">
 
@@ -38,7 +38,7 @@
                         Command="{Binding UpdateBookingCommand}"
                         IsEnabled="{Binding SelectedBooking, Converter={x:Static ObjectConverters.IsNotNull}}"/>
                 <Button Content="Cancel Booking"
-                        Command="{Binding CancelBookingCommand}"
+                        Command="{Binding DeleteBookingCommand}"
                         IsEnabled="{Binding SelectedBooking, Converter={x:Static ObjectConverters.IsNotNull}}"/>
             </StackPanel>
         </StackPanel>
@@ -93,15 +93,16 @@
                     </ComboBox>
 
                     <TextBlock Text="Check In"/>
-                    <DatePicker SelectedDate="{Binding CheckIn}"/>
+                    <DatePicker SelectedDate="{Binding SelectedBooking.CheckIn, Mode=TwoWay}"/>
 
                     <TextBlock Text="Check Out"/>
-                    <DatePicker SelectedDate="{Binding CheckOut}"/>
+                    <DatePicker SelectedDate="{Binding SelectedBooking.CheckOut, Mode=TwoWay}"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,10,0,0">
-                        <Button Content="Cancel" Command="{Binding CloseNewBookingDialogCommand}"/>
-                        <Button Content="Create" Command="{Binding CreateBookingCommand}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
+                        <Button Content="Cancel" Command="{Binding CloseNewBookingDialog}"/>
+                        <Button Content="Create" Command="{Binding CreateBooking}"/>
                     </StackPanel>
+
                 </StackPanel>
             </Border>
         </Grid>

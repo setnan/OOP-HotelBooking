@@ -32,7 +32,7 @@
             <!-- Handlinger -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
                 <Button Content="Last inn" Command="{Binding LoadClientsCommand}" />
-                <Button Content="Slett" Command="{Binding DeleteClientAsyncCommand}" 
+                <Button Content="Slett" Command="{Binding DeleteClientCommand}" 
                         IsEnabled="{Binding SelectedClient}" />
             </StackPanel>
 

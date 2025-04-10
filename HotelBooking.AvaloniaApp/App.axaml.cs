@@ -13,7 +13,7 @@ namespace HotelBooking.AvaloniaApp;
 
 public partial class App : Application
 {
-    public static IServiceProvider Services { get; private set; } = default!;
+    public static IServiceProvider? Services { get; private set; }
 
     public override void Initialize()
     {
@@ -32,7 +32,7 @@ public partial class App : Application
                 .Build();
 
             services.AddSingleton<IConfiguration>(configuration);
-            
+
             // Database connection
             services.AddSingleton<DatabaseConnection>();
 
@@ -43,8 +43,6 @@ public partial class App : Application
             services.AddSingleton<ClientService>();
             services.AddSingleton<GuestService>();
             services.AddSingleton<EventService>();
-            // services.AddSingleton<BackupService>();
-            services.AddTransient<BookingsViewModel>();
 
             // ViewModels
             services.AddTransient<MainWindowViewModel>();
@@ -53,29 +51,19 @@ public partial class App : Application
             services.AddTransient<BookingViewModel>();
             services.AddTransient<RoomManagementViewModel>();
             services.AddTransient<RoomsViewModel>();
-            services.AddTransient<GuestViewModel>();
             services.AddTransient<SettingsViewModel>();
-            // services.AddTransient<BackupViewModel>();
+            services.AddTransient<LoginViewModel>();
             services.AddTransient<ClientViewModel>();
+            services.AddTransient<GuestViewModel>(provider =>
+                new GuestViewModel(
+                    provider.GetRequiredService<GuestService>(),
+                    provider.GetRequiredService<RoomService>()
+                )
+            );
 
             Services = services.BuildServiceProvider();
 
-            // LoginWindow med "onLoginSuccess"-callback
             var loginWindow = new LoginWindow();
-            var loginViewModel = new LoginViewModel(user =>
-            {
-                var mainWindow = new MainWindow
-                {
-                    DataContext = Services.GetRequiredService<MainWindowViewModel>()
-                };
-
-                desktop.MainWindow = mainWindow;
-                mainWindow.Show();
-
-                loginWindow.Close();
-            });
-
-            loginWindow.DataContext = loginViewModel;
             desktop.MainWindow = loginWindow;
             loginWindow.Show();
         }

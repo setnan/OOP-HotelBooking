@@ -3,9 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d"
              x:Class="HotelBooking.AvaloniaApp.Views.GuestView"
-             x:DataType="vm:GuestViewModel">
+             x:DataType="vm:GuestViewModel"
+             d:DesignWidth="800"
+             d:DesignHeight="600">
 
     <Grid RowDefinitions="Auto,*" Margin="20">
         <!-- Header -->
@@ -14,12 +16,12 @@
                 <TextBlock Text="Guest Management"
                          FontSize="24"
                          FontWeight="Bold"/>
-                <TextBlock Text="Manage hotel guests and their preferences"
+                <TextBlock Text="Manage hotel guests"
                          Foreground="Gray"/>
             </StackPanel>
             
             <Button Grid.Column="1"
-                    Command="{Binding RefreshCommand}"
+                    Command="{Binding RefreshData}"
                     ToolTip.Tip="Refresh guest list">
                 <PathIcon Data="{StaticResource refresh_regular}"/>
             </Button>
@@ -49,8 +51,6 @@
                                               Binding="{Binding Name}"/>
                             <DataGridTextColumn Header="Contact" 
                                               Binding="{Binding ContactNumber}"/>
-                            <DataGridTextColumn Header="Preferred Room" 
-                                              Binding="{Binding PreferredRoom.RoomNumber}"/>
                         </DataGrid.Columns>
                     </DataGrid>
                 </Grid>
@@ -70,16 +70,13 @@
 
                     <!-- Form -->
                     <StackPanel Grid.Row="1" Spacing="15">
-                        <TextBox Watermark="Guest Name"
-                                Text="{Binding NewGuestName}"/>
-                        
-                        <TextBox Watermark="Contact Number"
-                                Text="{Binding NewGuestContact}"/>
-                        
+                        <TextBox Watermark="Guest Name" Text="{Binding NewGuestName}"/>
+                        <TextBox Watermark="Contact Number" Text="{Binding NewGuestContact}"/>
+
                         <ComboBox ItemsSource="{Binding AvailableRooms}"
-                                SelectedItem="{Binding NewGuestPreferredRoom}"
-                                PlaceholderText="Preferred Room"
-                                HorizontalAlignment="Stretch">
+                                  SelectedItem="{Binding SelectedRoom}"
+                                  PlaceholderText="Preferred Room"
+                                  HorizontalAlignment="Stretch">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding RoomNumber}"/>
