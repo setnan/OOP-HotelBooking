@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using HotelBooking.Core.Services;
 using HotelBooking.Core.Database;
 using Microsoft.Extensions.Configuration;
+using Dapper;
+using HotelBooking.Core.Utilities;
+using HotelBooking.Core.Models;
 
 namespace HotelBooking.AvaloniaApp;
 
@@ -22,6 +25,9 @@ public partial class App : Application
 
     public override void OnFrameworkInitializationCompleted()
     {
+        // Register enum handler for Dapper
+        SqlMapper.AddTypeHandler(new EnumAsStringTypeHandler<BookingStatus>());
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             var services = new ServiceCollection();
