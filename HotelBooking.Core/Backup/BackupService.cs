@@ -63,12 +63,14 @@ public class BackupService
         return json;
     }
 
-    public async Task<string> BackupDataAsync()
+    public async Task<string> BackupDataAsync(bool preRestore = false)
     {
+        await BackupDataAsync(true);
         var json = await GetAllForBackupAsync();
         
         var timestamp = DateTime.Now.ToString("dd-MM-yyyy_HH-mm-ss");
-        var fileName = $"Backup_{timestamp}.json";
+        var prefix = preRestore ? "PreRestoreBackup" : "Backup";
+        var fileName = $"{prefix}_{timestamp}.json";
         var filePath = GetFileForBackup(fileName);
         
         await File.WriteAllTextAsync(filePath, json);
