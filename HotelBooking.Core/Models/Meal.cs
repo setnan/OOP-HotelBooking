@@ -2,7 +2,7 @@
 
 namespace HotelBooking.Core.Models;
 
-public enum MealEnum
+public enum MealType
 {
     Breakfast,
     Lunch,
@@ -11,7 +11,8 @@ public enum MealEnum
 public class Meal
 {
     public int MealId { get; set; }
+    public int HotelId { get; set; }
     public string Name { get; set; }
     public DateTime Date  { get; set; }
-    public MealEnum MealType { get; set; }
+    public MealType MealType { get; set; }
 }
