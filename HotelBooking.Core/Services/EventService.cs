@@ -11,13 +11,19 @@ public class EventService : IBackupService<Event>
     private readonly RoomService _roomService;
     private readonly ClientService _clientService;
     private readonly EventClientService _eventClientService;
+    private readonly EventRoomService _eventRoomService;
 
-    public EventService(DatabaseConnection db, RoomService roomService, ClientService clientService,  EventClientService eventClientService)
+    public EventService(DatabaseConnection db, 
+        RoomService roomService, 
+        ClientService clientService, 
+        EventClientService eventClientService,  
+        EventRoomService eventRoomService)
     {
         _db = db;
         _roomService = roomService;
         _clientService = clientService;
         _eventClientService = eventClientService;
+        _eventRoomService = eventRoomService;
     }
     
     public async Task<bool> AddEventAsync(Event thisevent)
@@ -128,6 +134,21 @@ public class EventService : IBackupService<Event>
         }
         return clientEvents;
     }
+    
+    public async Task<IEnumerable<Room>> GetAllRoomsForEventAsync(int eventId)
+    {
+        var eventRooms = await _eventRoomService.GetAllByEventIdAsync(eventId);
+        List<Room> roomsForEvent = new List<Room>();
+
+        foreach (var eventRoom in eventRooms)
+        {
+            var currentRoom = await _db.GetOneAsync<Room>("RoomId", eventRoom.RoomId);
+            if (currentRoom != null) roomsForEvent.Add(currentRoom);
+        }
+
+        return roomsForEvent;
+    }
+
 
 
 }
