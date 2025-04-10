@@ -14,9 +14,10 @@ public class BackupService
     private readonly RoomService _roomService;
     private readonly BookingService _bookingService;
     private readonly EventService _eventService;
-    //private readonly MealService _mealService; -Will be added if time.
+    private readonly MealService _mealService; 
     private readonly EventClientService _eventClientService;
     private readonly EventRoomService _eventRoomService;
+    
 
     private readonly Dictionary<string, IBackupService<object>> _services;
     
@@ -27,7 +28,8 @@ public class BackupService
         BookingService bookingService,
         EventService eventService,
         EventClientService eventClientService,
-        EventRoomService eventRoomService)
+        EventRoomService eventRoomService,
+        MealService mealService)
     {
         _clientService = clientService;
         _guestService = guestService;
@@ -36,6 +38,7 @@ public class BackupService
         _eventService = eventService;
         _eventClientService = eventClientService;
         _eventRoomService = eventRoomService;
+        _mealService = mealService;
 
         _services = new Dictionary<string, IBackupService<object>>
         {
@@ -45,7 +48,9 @@ public class BackupService
             { "Bookings", (IBackupService<object>)_bookingService },
             { "Events", (IBackupService<object>)_eventService },
             { "EventClients", (IBackupService<object>)_eventClientService },
-            { "EventRooms", (IBackupService<object>)_eventRoomService }
+            { "EventRooms", (IBackupService<object>)_eventRoomService },
+            { "Meals", (IBackupService<object>)_mealService }
+            
         };
     }
 
