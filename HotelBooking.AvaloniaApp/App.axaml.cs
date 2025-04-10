@@ -65,6 +65,7 @@ public partial class App : Application
             services.AddTransient<RoomManagementView>();
             services.AddTransient<GuestView>();
             services.AddTransient<ClientView>();
+            services.AddTransient<EventView>();  // Added EventView
 
             // ViewModels
             services.AddTransient<MainWindowViewModel>();
@@ -74,6 +75,7 @@ public partial class App : Application
             services.AddTransient<RoomManagementViewModel>();
             services.AddTransient<GuestViewModel>();
             services.AddTransient<ClientViewModel>();
+            services.AddTransient<EventViewModel>();  // Added EventViewModel
 
             Services = services.BuildServiceProvider();
 
@@ -89,8 +91,15 @@ public partial class App : Application
     {
         if (Services == null)
         {
-            throw new InvalidOperationException("Services have not been initialized");
+            throw new InvalidOperationException("Services have not been initialized.");
         }
-        return Services.GetRequiredService<T>();
+
+        var service = Services.GetService<T>();
+        if (service == null)
+        {
+            throw new InvalidOperationException($"Service of type {typeof(T).Name} not found.");
+        }
+
+        return service;
     }
 }

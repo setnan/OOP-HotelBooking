@@ -30,8 +30,9 @@ public partial class MainWindow : Window
         await ViewModel.InitializeAsync();
         await ViewModel.DashboardViewModel.InitializeAsync();
         await ViewModel.BookingsViewModel.InitializeAsync();
-        await ViewModel.RoomManagementViewModel.InitializeAsync();
         await ViewModel.GuestViewModel.InitializeAsync();
         await ViewModel.ClientViewModel.InitializeAsync();
+        await ViewModel.RoomManagementViewModel.InitializeAsync();
+        await ViewModel.EventViewModel.InitializeAsync();
     }
 }

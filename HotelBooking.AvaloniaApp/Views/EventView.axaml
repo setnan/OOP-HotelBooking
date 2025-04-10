@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
+             xmlns:models="using:HotelBooking.Core.Models"
+             mc:Ignorable="d"
+             x:Class="HotelBooking.AvaloniaApp.Views.EventView"
+             x:DataType="vm:EventViewModel"
+             d:DesignWidth="800"
+             d:DesignHeight="600">
+    <Grid RowDefinitions="Auto,*" Margin="20">
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Spacing="10" Margin="0,10">
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <PathIcon Data="{StaticResource calendar_star_regular}" Width="32" Height="32"/>
+                <TextBlock Text="Events"
+                         FontSize="24"
+                         FontWeight="Bold"
+                         VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Form -->
+            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto" VerticalAlignment="Top" Margin="0,10">
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Watermark="Event Name" Margin="0,5"/>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Start Date:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <CalendarDatePicker Grid.Row="1" Grid.Column="1" SelectedDate="{Binding StartDate}" Watermark="Start Date" Margin="0,5"/>
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Start Time:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TimePicker Grid.Row="2" Grid.Column="1" SelectedTime="{Binding StartTime}" Margin="0,5"/>
+
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="End Date:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <CalendarDatePicker Grid.Row="3" Grid.Column="1" SelectedDate="{Binding EndDate}" Watermark="End Date" Margin="0,5"/>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="End Time:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <TimePicker Grid.Row="4" Grid.Column="1" SelectedTime="{Binding EndTime}" Margin="0,5"/>
+            </Grid>
+
+            <!-- Buttons -->
+            <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,10">
+                <Button Classes="accent" Command="{Binding AddEventCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource calendar_star_regular}"/>
+                        <TextBlock Text="Create Event"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding UpdateEventCommand}" 
+                        IsEnabled="{Binding SelectedEvent, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource calendar_star_regular}"/>
+                        <TextBlock Text="Update Event"/>
+                    </StackPanel>
+                </Button>
+                <Button Classes="danger" Command="{Binding RemoveEventCommand}"
+                        IsEnabled="{Binding SelectedEvent, Converter={x:Static ObjectConverters.IsNotNull}}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource delete_regular}"/>
+                        <TextBlock Text="Delete Event"/>
+                    </StackPanel>
+                </Button>
+                <Button Command="{Binding LoadEventsCommand}">
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <PathIcon Data="{StaticResource refresh_regular}"/>
+                        <TextBlock Text="Refresh"/>
+                    </StackPanel>
+                </Button>
+            </StackPanel>
+        </StackPanel>
+
+        <!-- Event List -->
+        <DataGrid Grid.Row="1" Margin="0,20,0,0"
+                  ItemsSource="{Binding Events}"
+                  SelectedItem="{Binding SelectedEvent}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat={}{0:d}}"/>
+                <DataGridTextColumn Header="Start Time" Binding="{Binding StartTime, StringFormat={}{0:hh\\:mm}}"/>
+                <DataGridTextColumn Header="End Date" Binding="{Binding EndDate, StringFormat={}{0:d}}"/>
+                <DataGridTextColumn Header="End Time" Binding="{Binding EndTime, StringFormat={}{0:hh\\:mm}}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

@@ -23,9 +23,16 @@
         <PackageReference Include="Avalonia.Diagnostics" Version="11.2.1" Condition="'$(Configuration)' == 'Debug'" />
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.2.25163.2" />
         <PackageReference Include="MySql.Data" Version="9.2.0" />
+        <PackageReference Include="ReactiveUI" Version="20.2.45" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\HotelBooking.Core\HotelBooking.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Views\EventView.axaml.cs">
+        <DependentUpon>EventView.axaml</DependentUpon>
+      </Compile>
     </ItemGroup>
 </Project>

@@ -81,6 +81,13 @@
                             HorizontalAlignment="Stretch"
                             Height="40"
                             Classes="nav"/>
+
+                    <Button Content="Hendelser"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="events"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Classes="nav"/>
                 </StackPanel>
             </Border>
 

@@ -14,6 +14,8 @@
         
         <!-- Icons -->
         <StreamGeometry x:Key="refresh_regular">M11.9951 3C7.57403 3 4 6.58526 4 11C4 15.4147 7.57403 19 11.9951 19C15.6894 19 18.8352 16.3804 19.7381 12.8909L19.9405 12H18.4429H17.4429L17.2891 12.5898C16.5705 15.2837 14.4804 17.25 11.9951 17.25C8.52714 17.25 5.75 14.4647 5.75 11C5.75 7.53526 8.52714 4.75 11.9951 4.75C13.3627 4.75 14.618 5.21685 15.6346 5.99949L13.25 8.38397H19.25V2.38397L17.0214 4.61252C15.6831 3.60193 13.9128 3 11.9951 3Z</StreamGeometry>
+        <StreamGeometry x:Key="calendar_star_regular">M14.5 11C14.7761 11 15 11.2239 15 11.5V12.5C15 12.7761 14.7761 13 14.5 13H13.5C13.2239 13 13 12.7761 13 12.5V11.5C13 11.2239 13.2239 11 13.5 11H14.5ZM18.5 11C18.7761 11 19 11.2239 19 11.5V12.5C19 12.7761 18.7761 13 18.5 13H17.5C17.2239 13 17 12.7761 17 12.5V11.5C17 11.2239 17.2239 11 17.5 11H18.5ZM10.5 15C10.7761 15 11 15.2239 11 15.5V16.5C11 16.7761 10.7761 17 10.5 17H9.5C9.22386 17 9 16.7761 9 16.5V15.5C9 15.2239 9.22386 15 9.5 15H10.5ZM6.5 15C6.77614 15 7 15.2239 7 15.5V16.5C7 16.7761 6.77614 17 6.5 17H5.5C5.22386 17 5 16.7761 5 16.5V15.5C5 15.2239 5.22386 15 5.5 15H6.5ZM10.5 11C10.7761 11 11 11.2239 11 11.5V12.5C11 12.7761 10.7761 13 10.5 13H9.5C9.22386 13 9 12.7761 9 12.5V11.5C9 11.2239 9.22386 11 9.5 11H10.5ZM6.5 11C6.77614 11 7 11.2239 7 11.5V12.5C7 12.7761 6.77614 13 6.5 13H5.5C5.22386 13 5 12.7761 5 12.5V11.5C5 11.2239 5.22386 11 5.5 11H6.5ZM21 6.5V16.5C21 17.8807 19.8807 19 18.5 19H5.5C4.11929 19 3 17.8807 3 16.5V6.5C3 5.11929 4.11929 4 5.5 4H6V3.5C6 3.22386 6.22386 3 6.5 3C6.77614 3 7 3.22386 7 3.5V4H17V3.5C17 3.22386 17.2239 3 17.5 3C17.7761 3 18 3.22386 18 3.5V4H18.5C19.8807 4 21 5.11929 21 6.5ZM5.5 5.5H18.5C19.0523 5.5 19.5 5.94772 19.5 6.5V8H4.5V6.5C4.5 5.94772 4.94772 5.5 5.5 5.5ZM4.5 9.5V16.5C4.5 17.0523 4.94772 17.5 5.5 17.5H18.5C19.0523 17.5 19.5 17.0523 19.5 16.5V9.5H4.5Z</StreamGeometry>
+        <StreamGeometry x:Key="delete_regular">M12 4c.5523 0 1 .44772 1 1h2.5c.2761 0 .5.22386.5.5v1c0 .27614-.2239.5-.5.5h-11c-.27614 0-.5-.22386-.5-.5v-1c0-.27614.22386-.5.5-.5H7c0-.55228.44772-1 1-1h4Zm-1.5 2h-3c-.27614 0-.5.22386-.5.5v10c0 .2761.22386.5.5.5h9c.2761 0 .5-.2239.5-.5v-10c0-.27614-.2239-.5-.5-.5h-3v.5c0 .27614-.2239.5-.5.5h-2c-.2761 0-.5-.22386-.5-.5v-.5Z</StreamGeometry>
     </Application.Resources>
 
     <Application.DataTemplates>
@@ -49,29 +51,49 @@
 
         <Style Selector="DataGrid">
             <Setter Property="Background" Value="#2d2d2d"/>
-            <Setter Property="Foreground" Value="White"/>
             <Setter Property="GridLinesVisibility" Value="All"/>
             <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="BorderBrush" Value="#3d3d3d"/>
+            <Setter Property="BorderBrush" Value="#454545"/>
+            <Setter Property="Foreground" Value="White"/>
         </Style>
 
         <Style Selector="DataGridRow">
-            <Setter Property="Background" Value="#2d2d2d"/>
+            <Setter Property="Background" Value="#3d3d3d"/>
         </Style>
 
         <Style Selector="DataGridRow:pointerover">
-            <Setter Property="Background" Value="#3d3d3d"/>
+            <Setter Property="Background" Value="#454545"/>
         </Style>
 
         <Style Selector="DataGridRow:selected">
-            <Setter Property="Background" Value="#0078D4"/>
+            <Setter Property="Background" Value="#7E429A"/>
         </Style>
 
-        <Style Selector="ComboBox">
+        <Style Selector="Button.navButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Width" Value="250"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="12"/>
+        </Style>
+
+        <Style Selector="Button.navButton:pointerover /template/ ContentPresenter">
             <Setter Property="Background" Value="#3d3d3d"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="CornerRadius" Value="4"/>
-            <Setter Property="Padding" Value="8"/>
+        </Style>
+
+        <Style Selector="Button.accent">
+            <Setter Property="Background" Value="#7E429A"/>
+        </Style>
+
+        <Style Selector="Button.accent:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#5C3070"/>
+        </Style>
+
+        <Style Selector="Button.danger">
+            <Setter Property="Background" Value="#9A4242"/>
+        </Style>
+
+        <Style Selector="Button.danger:pointerover /template/ ContentPresenter">
+            <Setter Property="Background" Value="#703030"/>
         </Style>
     </Application.Styles>
 </Application>
