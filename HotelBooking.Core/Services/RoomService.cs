@@ -9,10 +9,13 @@ namespace HotelBooking.Core.Services;
 public class RoomService : IBackupService<Room>
 {
     private readonly DatabaseConnection _db;
+    private readonly EventRoomService _eventRoomService;
 
-    public RoomService(DatabaseConnection db)
+    public RoomService(DatabaseConnection db,  
+        EventRoomService eventRoomService)
     {
         _db = db;
+        _eventRoomService = eventRoomService;
     }
 
     public async Task<bool> AddRoomAsync(Room room)
@@ -88,5 +91,18 @@ public class RoomService : IBackupService<Room>
         return await _db.UpdateAsync(room);
     }
     
-    
+    public async Task<IEnumerable<Event>> GetAllEventsForRoomAsync(int roomId)
+    {
+        var eventRooms = await _eventRoomService.GetAllByRoomIdAsync(roomId);
+        List<Event> eventsForRoom = new List<Event>();
+
+        foreach (var eventRoom in eventRooms)
+        {
+            var currentEvent = await _db.GetOneAsync<Event>("EventId", eventRoom.EventId);
+            if (currentEvent != null) eventsForRoom.Add(currentEvent);
+        }
+
+        return eventsForRoom;
+    }
+
 }
