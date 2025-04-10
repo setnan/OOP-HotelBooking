@@ -117,4 +117,22 @@ public class DatabaseConnection
 
         return (await _connection.QueryAsync<Room>(query, new { checkIn, checkOut })).ToList();
     }
+
+    public async Task DeleteAllAsync<T>()
+    {
+        var table = GetTableName<T>();
+        var query = $"DELETE FROM {table}";
+        await _connection.ExecuteAsync(query);
+    }
+/*
+var table = GetTableName<T>();
+var query = $"SELECT * FROM {table}";
+return (await _connection.QueryAsync<T>(query)).ToList();
+ * 
+var table = GetTableName<T>();
+var deleteQuery = $"DELETE FROM {table} WHERE {table}Id = @{table}Id";
+var rowsAffected = await _connection.ExecuteAsync(deleteQuery, entity);
+return rowsAffected > 0;
+ */
+
 }
