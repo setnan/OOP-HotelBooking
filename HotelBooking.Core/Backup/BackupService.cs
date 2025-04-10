@@ -1,7 +1,9 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Globalization;
+using System.Text.Json.Nodes;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Services;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace HotelBooking.Core.Backup;
 
@@ -64,17 +66,80 @@ public class BackupService
     public async Task<string> BackupDataAsync()
     {
         var json = await GetAllForBackupAsync();
+        
+        var timestamp = DateTime.Now.ToString("dd-MM-yyyy_HH-mm-ss");
+        var fileName = $"Backup_{timestamp}.json";
+        var filePath = GetFileForBackup(fileName);
+        
+        await File.WriteAllTextAsync(filePath, json);
+        return filePath;
+    }
+    
+    public async Task<string> RestoreDataAsync(string fileName)
+    {
+        var filePath = GetFileForBackup(fileName);
+        var json = await File.ReadAllTextAsync(filePath);
+        var backupData = JsonConvert.DeserializeObject<Dictionary<string, JArray>>(json);
+
+        var tasks = new List<Task>();
+
+        foreach (var entry in backupData)
+        {
+            var serviceName = entry.Key;
+            var dataArray = entry.Value;
+
+            if (_services.TryGetValue(serviceName, out var service))
+            {
+                var targetType = service.GetType().GenericTypeArguments[0];
+                var deserializedData = dataArray.ToObject(typeof(List<>).MakeGenericType(targetType));
+                dynamic dynamicService = service;
+                tasks.Add(dynamicService.InsertManyAsync((dynamic)deserializedData));
+            }
+        }
+
+        await Task.WhenAll(tasks);
+
+        return filePath;
+    }
+
+
+    private string GetFileForBackup(string? fileName = null)
+    {
         var backupFolder = Path.Combine(AppContext.BaseDirectory, "Backups");
         if (!Directory.Exists(backupFolder))
         {
             Directory.CreateDirectory(backupFolder);
         }
-        var timestamp = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-        var fileName = $"Backup_{timestamp}.json";
-        var filePath = Path.Combine(backupFolder, fileName);
-        
-        await File.WriteAllTextAsync(filePath, json);
-        return filePath;
+
+        if (fileName != null) return Path.Combine(backupFolder, fileName);
+        return backupFolder;
     }
+
+    private DateTime FileNameToSortableDateTime(string fileName)
+    {
+        var fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName); // "Backup_10-04-2025_16-45-20"
+        var parts = fileNameWithoutExtension.Split('_');
+        var datePart = parts[1]; // "10-04-2025"
+        var timePart = parts[2]; // "16-45-20"
+        var fullDateTimeString = $"{datePart}_{timePart}"; // "10-04-2025_16-45-20"
+        var dateTime = DateTime.ParseExact(fullDateTimeString, "dd-MM-yyyy_HH-mm-ss", CultureInfo.InvariantCulture);
+        return dateTime;
+    }
+
+    public  IEnumerable<string> GetAllBackupFilesSorted()
+    {
+        var backupFolder = GetFileForBackup();
+        List<(string fileName, DateTime date)> backupFiles = new List<(string fileName, DateTime date)>();
+        var files = Directory.GetFiles(backupFolder);
+        foreach (var file in files)
+        {
+            var fileDateTime = FileNameToSortableDateTime(file);
+            backupFiles.Add((file, fileDateTime));
+        }
+        
+        var sortedBackupFiles = backupFiles.OrderByDescending(x => x.date);
+        return sortedBackupFiles.Select(x => x.fileName);
+    }
+    
     
 }
