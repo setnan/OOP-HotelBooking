@@ -29,7 +29,7 @@
         <Grid ColumnDefinitions="*,Auto,*">
             <!-- Left Side - Hotel Image -->
             <Image Grid.Column="0"
-                   Source="/Assets/hotel.jpg"
+                   Source="/Assets/gokstad_hotel.png"
                    Stretch="UniformToFill"/>
 
             <!-- Middle - Separator -->

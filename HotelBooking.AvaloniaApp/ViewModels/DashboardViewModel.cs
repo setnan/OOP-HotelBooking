@@ -74,9 +74,15 @@ public partial class DashboardViewModel : ViewModelBase
             ErrorMessage = null;
             SuccessMessage = null;
 
+<<<<<<< Updated upstream
             var allBookings = (await bookingService.GetAllAsync()).ToList();
             var allRooms = (await roomService.GetAllAsync()).ToList();
             var available = (await roomService.GetAvailableRoomsAsync()).ToList();
+=======
+            var allBookings = await bookingService.GetAllAsync();
+            var allRooms = await roomService.GetAllAsync();
+            var available = await roomService.GetAvailableRoomsAsync();
+>>>>>>> Stashed changes
 
             var today = DateTime.Today;
             TodaysBookings = new ObservableCollection<Booking>(allBookings.Where(b => b.CheckIn.Date == today));
@@ -84,8 +90,9 @@ public partial class DashboardViewModel : ViewModelBase
 
             TodayCheckIns = TodaysBookings.Count;
             TodayCheckOuts = allBookings.Count(b => b.CheckOut.Date == today);
-            AvailableRooms = available.Count;
-            OccupancyRate = allRooms.Count > 0 ? (double)(allRooms.Count - AvailableRooms) / allRooms.Count : 0;
+            AvailableRooms = available.Count();
+            var totalRooms = allRooms.Count();
+            OccupancyRate = totalRooms > 0 ? (double)(totalRooms - AvailableRooms) / totalRooms : 0;
 
             RoomsNeedingAttention = new ObservableCollection<Room>(allRooms.Where(r => !r.IsAvailable));
 

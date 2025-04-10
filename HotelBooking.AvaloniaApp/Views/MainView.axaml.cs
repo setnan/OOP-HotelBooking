@@ -1,21 +1,11 @@
-public class MainView : Window
+using Avalonia.Controls;
+
+namespace HotelBooking.AvaloniaApp.Views;
+
+public partial class MainView : UserControl
 {
     public MainView()
     {
         InitializeComponent();
-        DataContext = new MainWindowViewModel(
-            new UserService(),
-            new RoleService(),
-            new BookingService(),
-            new ClientService(),
-            new GuestService(),
-            new RoomService(),
-            new DashboardViewModel(),
-            new BookingsViewModel(),
-            new RoomManagementViewModel(),
-            new GuestViewModel(),
-            new ClientViewModel()
-        );
-        ((MainWindowViewModel)DataContext).InitializeAsync();
     }
 }

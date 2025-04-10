@@ -9,6 +9,7 @@ using HotelBooking.Core.Services;
 using HotelBooking.Core.Database;
 using Microsoft.Extensions.Configuration;
 using Dapper;
+using HotelBooking.AvaloniaApp.Services;
 using HotelBooking.Core.Utilities;
 using HotelBooking.Core.Models;
 
@@ -44,6 +45,8 @@ public partial class App : Application
 
             // Core services
             services.AddSingleton<UserSession>();
+            services.AddSingleton<UserService>();
+            services.AddSingleton<RoleService>();
             services.AddSingleton<RoomService>();
             services.AddSingleton<BookingService>();
             services.AddSingleton<ClientService>();
