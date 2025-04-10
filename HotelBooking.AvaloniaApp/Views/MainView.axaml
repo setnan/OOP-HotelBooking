@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,7 +7,7 @@
              xmlns:views="using:HotelBooking.AvaloniaApp.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HotelBooking.AvaloniaApp.Views.MainView"
-             x:DataType="vm:MainViewModel">
+             x:DataType="vm:MainWindowViewModel">
     <Grid>
         <SplitView IsPaneOpen="{Binding IsPaneOpen}"
                    DisplayMode="CompactInline"

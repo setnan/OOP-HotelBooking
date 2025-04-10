@@ -9,6 +9,8 @@ public static class AppConfiguration
     static AppConfiguration()
     {
         Configuration = new ConfigurationBuilder()
+            .SetBasePath(Directory.GetCurrentDirectory())
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .AddUserSecrets<UserSecretsAnchor>()
             .Build();
     }

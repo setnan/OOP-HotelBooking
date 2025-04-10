@@ -25,12 +25,14 @@ public partial class MainWindowViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool isAdmin;
+    
+    [ObservableProperty]
+    private bool isPaneOpen;
 
     public DashboardViewModel DashboardViewModel { get; }
     public BookingsViewModel BookingsViewModel { get; }
     public RoomManagementViewModel RoomManagementViewModel { get; }
     public GuestViewModel GuestViewModel { get; }
-    // public BackupViewModel BackupViewModel { get; }
     public ClientViewModel ClientViewModel { get; }
 
     public MainWindowViewModel(
@@ -44,7 +46,6 @@ public partial class MainWindowViewModel : ViewModelBase
         BookingsViewModel bookingsViewModel,
         RoomManagementViewModel roomManagementViewModel,
         GuestViewModel guestViewModel,
-        // BackupViewModel backupViewModel,
         ClientViewModel clientViewModel)
     {
         _userService = userService;
@@ -58,10 +59,14 @@ public partial class MainWindowViewModel : ViewModelBase
         BookingsViewModel = bookingsViewModel;
         RoomManagementViewModel = roomManagementViewModel;
         GuestViewModel = guestViewModel;
-        // BackupViewModel = backupViewModel;
         ClientViewModel = clientViewModel;
 
         CurrentView = DashboardViewModel;
+    }
+    [RelayCommand]
+    private void TogglePane()
+    {
+        IsPaneOpen = !IsPaneOpen;
     }
 
     [RelayCommand]
@@ -78,7 +83,6 @@ public partial class MainWindowViewModel : ViewModelBase
             "bookings" => BookingsViewModel,
             "rooms" => RoomManagementViewModel,
             "guests" => GuestViewModel,
-            // "backup" => BackupViewModel,
             "clients" => ClientViewModel,
             _ => DashboardViewModel
         };
@@ -100,7 +104,6 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         CurrentUser = user;
         isAdmin = UserSession.Instance.IsAdmin;
-
     }
 
     public void Cleanup()

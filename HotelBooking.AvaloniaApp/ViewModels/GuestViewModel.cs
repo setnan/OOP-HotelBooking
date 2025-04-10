@@ -47,6 +47,9 @@ public partial class GuestViewModel : ViewModelBase
     [ObservableProperty]
     private Room? selectedRoom;
 
+    [ObservableProperty]
+    private bool isPaneOpen;
+
     [RelayCommand]
     private async Task AddGuest()
     {
@@ -118,6 +121,12 @@ public partial class GuestViewModel : ViewModelBase
 
     [RelayCommand]
     private Task RefreshData() => LoadDataAsync();
+    
+    [RelayCommand]
+    private void TogglePane()
+    {
+        IsPaneOpen = !IsPaneOpen;
+    }
     
     [RelayCommand]
     private async Task UpdateGuest()
