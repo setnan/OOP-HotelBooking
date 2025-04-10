@@ -52,9 +52,9 @@ public partial class App : Application
             services.AddSingleton<EventRoomService>();
             services.AddSingleton<EventClientService>();
             services.AddSingleton<ClientService>();
+            services.AddSingleton<GuestService>();
             services.AddSingleton<RoomService>();
             services.AddSingleton<BookingService>();
-            services.AddSingleton<GuestService>();
             services.AddSingleton<EventService>();  // Moved to end since it depends on other services
 
             // Views
