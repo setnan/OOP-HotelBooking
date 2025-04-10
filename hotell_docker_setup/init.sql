@@ -74,15 +74,11 @@ CREATE TABLE Event (
 
 CREATE TABLE Meal (
     MealId INT AUTO_INCREMENT PRIMARY KEY,
-    OrganiserId INT,
-    RoomId INT,
-    MealDate DATE,
-    StartTime TIME,
-    EndTime TIME,
-    Attendees INT,
-    DietaryNotes TEXT,
-    FOREIGN KEY (OrganiserId) REFERENCES Client(ClientId),
-    FOREIGN KEY (RoomId) REFERENCES Room(RoomId)
+    HotelId INT,
+    Name VARCHAR(100),
+    Date DATETIME,
+    MealType ENUM('Breakfast', 'Lunch', 'Dinner') NOT NULL,
+    FOREIGN KEY (HotelId) REFERENCES Hotel(HotelId)
 );
 
 CREATE TABLE EventClient (
@@ -115,8 +111,7 @@ INSERT INTO User (Name, Email, Password, Role) VALUES
 ('Admin', 'admin', 'admin', 'Admin');
 
 INSERT INTO Hotel (Name, Address) VALUES
-('Ocean View Hotel', 'Strandgata 42, Oslo'),
-('Mountain Retreat Hotel', 'Fjellveien 12, Bergen');
+('Ocean View Hotel', 'Strandgata 42, Oslo');
 
 INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES
 (1, '101', 'Single', 899.00, 1),
@@ -126,11 +121,11 @@ INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES
 (1, '301', 'Deluxe', 1599.00, 1),
 (1, '302', 'Presidential Suite', 2999.00, 1),
 (1, '401', 'Twin', 999.00, 1),
-(2, '101', 'Single', 799.00, 1),
-(2, '102', 'Double', 1199.00, 1),
-(2, '201', 'Suite', 2099.00, 1),
-(2, '202', 'Family', 1599.00, 1),
-(2, '301', 'Deluxe', 1799.00, 1);
+(1, '101', 'Single', 799.00, 1),
+(1, '102', 'Double', 1199.00, 1),
+(1, '201', 'Suite', 2099.00, 1),
+(1, '202', 'Family', 1599.00, 1),
+(1, '301', 'Deluxe', 1799.00, 1);
 
 INSERT INTO Guest (Name, ContactNumber, Email) VALUES
 ('Anna Berg', '+4798765432', 'anna.berg92@gmail.com'),
@@ -208,7 +203,12 @@ INSERT INTO Event (HotelId,Name, OrganiserId, StartDate, EndDate, StartTime, End
 (1, 'Event 9',9,  '2026-01-14', '2026-01-14', '12:00:00', '16:00:00'),
 (1, 'Event 10',10, '2026-02-01', '2026-02-01', '10:00:00', '14:00:00');
 
-INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
+INSERT INTO Meal (HotelId,Name, Date, MealType) VALUES
+(1,'Hotel Breakfast', '2025-04-11 08:00:00', 'Breakfast'),
+(1, 'Conference Lunch', '2025-04-11 12:00:00', 'Lunch'),
+(1, 'Gala Dinner', '2025-04-11 19:00:00', 'Dinner');
+
+/*INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
 (1, 3, '2025-05-10', '12:00:00', '13:00:00', 30, 'Vegetarian options needed'),
 (2, 4, '2025-06-15', '18:00:00', '20:00:00', 100, 'Gluten-free & vegan options'),
 (3, 5, '2025-07-02', '08:00:00', '09:00:00', 15, ''),
@@ -218,8 +218,9 @@ INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, 
 (7, 5, '2025-11-01', '17:00:00', '18:00:00', 50, 'Lactose-free dessert'),
 (8, 4, '2025-12-24', '20:00:00', '21:00:00', 60, 'Traditional Norwegian food'),
 (9, 6, '2026-01-14', '13:00:00', '14:00:00', 25, 'Vegetarian only'),
-(10, 3, '2026-02-01', '12:30:00', '13:30:00', 12, '');
+(10, 3, '2026-02-01', '12:30:00', '13:30:00', 12, '');*/
 
+/*
 -- Meals på nytt hotell i Bergen
 INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
 (1, 201, '2025-09-12', '12:00:00', '13:30:00', 40, 'Vegetarian friendly'),
@@ -228,13 +229,13 @@ INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, 
 (4, 102, '2026-01-15', '12:30:00', '14:00:00', 30, 'Kosher meals required'),
 (5, 101, '2026-02-20', '19:00:00', '21:00:00', 45, 'Halal, vegan dessert');
 
--- Flere meals på Ocean View Hotel (Oslo)
+
 INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
 (6, 3, '2025-08-18', '13:00:00', '14:30:00', 35, 'Pescatarian options'),
 (7, 4, '2025-12-31', '20:00:00', '23:59:00', 80, 'Festive menu, includes traditional dishes'),
 (8, 5, '2026-03-17', '07:30:00', '09:00:00', 20, 'Gluten-free pastries'),
 (9, 6, '2026-04-25', '18:00:00', '20:30:00', 50, 'Low-carb options'),
-(10, 1, '2026-05-05', '12:00:00', '13:00:00', 15, 'Vegetarian only');
+(10, 1, '2026-05-05', '12:00:00', '13:00:00', 15, 'Vegetarian only'); */
 
 INSERT INTO EventClient (EventId, ClientId) VALUES
 (1, 1),
@@ -261,11 +262,11 @@ INSERT INTO EventRoom (EventId, RoomId) VALUES
 (7, 202);
 
 INSERT INTO Event (HotelId, Name, OrganiserId, StartDate, EndDate, StartTime, EndTime) VALUES
-(2, 'Bergen Tech Meetup', 3, '2025-11-05', '2025-11-05', '09:00:00', '17:00:00'),
-(2, 'Nordic Sustainability Conference', 4, '2026-02-10', '2026-02-12', '08:30:00', '16:30:00'),
-(2, 'Mountain Retreat Yoga', 5, '2026-03-20', '2026-03-22', '07:00:00', '15:00:00'),
-(2, 'Bergen Business Gala', 2, '2026-04-15', '2026-04-15', '18:00:00', '23:59:00'),
-(2, 'Outdoor Adventure Expo', 1, '2026-05-05', '2026-05-07', '10:00:00', '18:00:00');
+(1, 'Bergen Tech Meetup', 3, '2025-11-05', '2025-11-05', '09:00:00', '17:00:00'),
+(1, 'Nordic Sustainability Conference', 4, '2026-02-10', '2026-02-12', '08:30:00', '16:30:00'),
+(1, 'Mountain Retreat Yoga', 5, '2026-03-20', '2026-03-22', '07:00:00', '15:00:00'),
+(1, 'Bergen Business Gala', 2, '2026-04-15', '2026-04-15', '18:00:00', '23:59:00'),
+(1, 'Outdoor Adventure Expo', 1, '2026-05-05', '2026-05-07', '10:00:00', '18:00:00');
 
 INSERT INTO EventClient (EventId, ClientId) VALUES
 (11, 3),
@@ -279,7 +280,7 @@ INSERT INTO EventClient (EventId, ClientId) VALUES
 
 
 INSERT INTO EventRoom (EventId, RoomId) VALUES
-(11, 201), -- Bergen rom
+(11, 201),
 (11, 202),
 (12, 301),
 (12, 102),
