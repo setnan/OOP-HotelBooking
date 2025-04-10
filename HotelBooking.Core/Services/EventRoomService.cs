@@ -19,6 +19,11 @@ public class EventRoomService : IBackupService<EventRoom>
         return await _db.GetAllAsync<EventRoom>();
     }
 
+    public async Task<IEnumerable<EventRoom>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<EventRoom>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<EventRoom> items)
     {
         foreach (var item in items)

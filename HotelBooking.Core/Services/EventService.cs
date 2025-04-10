@@ -102,6 +102,11 @@ public class EventService : IBackupService<Event>
         return await _db.GetAllAsync<Event>();
     }
 
+    public async Task<IEnumerable<Event>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<Event>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<Event> items)
     {
         foreach (var item in items)

@@ -48,6 +48,11 @@ public class RoomService : IBackupService<Room>
         return await _db.GetAllAsync<Room>();
     }
 
+    public async Task<IEnumerable<Room>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<Room>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<Room> items)
     {
         foreach (var item in items)

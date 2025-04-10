@@ -20,6 +20,11 @@ public class ClientService : IBackupService<Client>
         return await _db.GetAllAsync<Client>();
     }
 
+    public async Task<IEnumerable<Client>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<Client>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<Client> items)
     {
         foreach (var item in items)

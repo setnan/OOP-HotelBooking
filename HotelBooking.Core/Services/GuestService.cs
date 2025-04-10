@@ -58,6 +58,11 @@ public class GuestService : IBackupService<Guest>
         return await _db.GetAllAsync<Guest>();
     }
 
+    public async Task<IEnumerable<Guest>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<Guest>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<Guest> items)
     {
         foreach (var item in items)

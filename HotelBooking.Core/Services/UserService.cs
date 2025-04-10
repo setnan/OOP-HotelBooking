@@ -37,6 +37,11 @@ public class UserService : IBackupService<User>
         return await _db.GetAllAsync<User>();
     }
 
+    public async Task<IEnumerable<User>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<User>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<User> items)
     {
         foreach (var item in items)

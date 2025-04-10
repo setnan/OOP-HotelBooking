@@ -99,6 +99,11 @@ public class BookingService : IBackupService<Booking>
         return bookings;
     }
 
+    public async Task<IEnumerable<Booking>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<Booking>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<Booking> items)
     {
         foreach (var item in items)

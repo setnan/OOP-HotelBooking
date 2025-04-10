@@ -19,6 +19,11 @@ public class EventClientService : IBackupService<EventClient>
         return await _db.GetAllAsync<EventClient>();
     }
 
+    public async Task<IEnumerable<EventClient>> GetAllForBackupAsync()
+    {
+        return await _db.GetAllAsync<EventClient>();
+    }
+
     public async Task InsertManyAsync(IEnumerable<EventClient> items)
     {
         foreach (var item in items)
