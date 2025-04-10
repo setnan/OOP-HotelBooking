@@ -72,20 +72,32 @@ public partial class BookingsViewModel : ViewModelBase
         {
             IsLoading = true;
             ErrorMessage = null;
+            
+            
+            var brooms = await roomService.GetAllAsync();
+            var bguests = await guestService.GetAllAsync();
+            
+            var bbookings = await bookingService.GetAllAsync();
 
-            var bookingsTask = bookingService.GetAllAsync();
-            var roomsTask = roomService.GetAllAsync();
-            var guestsTask = guestService.GetAllAsync();
+            
+            AvailableRooms = new ObservableCollection<Room>(brooms);
+            Guests = new ObservableCollection<Guest>(bguests);
+            Bookings = new ObservableCollection<Booking>(bbookings);
 
-            await Task.WhenAll(bookingsTask, roomsTask, guestsTask);
 
-            Bookings = new ObservableCollection<Booking>(await bookingsTask);
-            AvailableRooms = new ObservableCollection<Room>(await roomsTask);
-            Guests = new ObservableCollection<Guest>(await guestsTask);
+            // var bookingsTask = bookingService.GetAllAsync();
+            // var roomsTask = roomService.GetAllAsync();
+            // var guestsTask = guestService.GetAllAsync();
+            //
+            // await Task.WhenAll(bookingsTask, roomsTask, guestsTask);
+            //
+            // Bookings = new ObservableCollection<Booking>(await bookingsTask);
+            // AvailableRooms = new ObservableCollection<Room>(await roomsTask);
+            // Guests = new ObservableCollection<Guest>(await guestsTask);
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Feil ved lasting av data: {ex.Message}";
+            ErrorMessage = $"Feil ved lasting av data: {ex.GetType().Name} {ex.Message}";
         }
         finally
         {
