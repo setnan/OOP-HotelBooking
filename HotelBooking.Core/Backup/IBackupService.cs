@@ -4,4 +4,6 @@ public interface IBackupService<T>
 {
     Task<IEnumerable<T>> GetAllForBackupAsync();
     Task InsertManyAsync(IEnumerable<T> items);
+
+    Task DeleteAllAsync();
 }

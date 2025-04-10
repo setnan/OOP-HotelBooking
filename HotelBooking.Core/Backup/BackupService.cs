@@ -97,9 +97,8 @@ public class BackupService
                 var deserializedData = dataArray.ToObject(typeof(List<>).MakeGenericType(targetType));
                 
                 dynamic dynamicService = service;
-                var oldData = await dynamicService.GetAllForBackupAsync();
                 
-                deleteTasks.Add(dynamicService.DeleteAllAsync(oldData));
+                deleteTasks.Add(dynamicService.DeleteAllAsync());
                 insertTasks.Add(dynamicService.InsertManyAsync((dynamic)deserializedData));
 
             }
