@@ -73,16 +73,10 @@ public partial class DashboardViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = null;
             SuccessMessage = null;
-
-<<<<<<< Updated upstream
+            
             var allBookings = (await bookingService.GetAllAsync()).ToList();
             var allRooms = (await roomService.GetAllAsync()).ToList();
             var available = (await roomService.GetAvailableRoomsAsync()).ToList();
-=======
-            var allBookings = await bookingService.GetAllAsync();
-            var allRooms = await roomService.GetAllAsync();
-            var available = await roomService.GetAvailableRoomsAsync();
->>>>>>> Stashed changes
 
             var today = DateTime.Today;
             TodaysBookings = new ObservableCollection<Booking>(allBookings.Where(b => b.CheckIn.Date == today));
