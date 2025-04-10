@@ -99,7 +99,7 @@ public partial class GuestViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = SuccessMessage = null;
             
-            var guestsList = await guestService.GetAllGuestsAsync();
+            var guestsList = await guestService.GetAllAsync();
             Guests = new ObservableCollection<Guest>(guestsList);
             
             var roomsList = await roomService.GetAvailableRoomsAsync();
