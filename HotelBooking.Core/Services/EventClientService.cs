@@ -32,6 +32,11 @@ public class EventClientService : IBackupService<EventClient>
         }
     }
 
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<EventClient>();
+    }
+
     public async Task<bool> AddAsync(EventClient item)
     {
        return await _db.InsertAsync(item);

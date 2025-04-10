@@ -115,6 +115,11 @@ public class EventService : IBackupService<Event>
         }
     }
 
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<Event>();
+    }
+
     public async Task<IEnumerable<Event>> GetEventsWithDetailsAsync()
     {
         var events = (await _db.GetAllAsync<Event>()).ToList();

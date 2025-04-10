@@ -70,4 +70,9 @@ public class GuestService : IBackupService<Guest>
             await _db.InsertAsync(item);
         }
     }
+
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<Guest>();
+    }
 }

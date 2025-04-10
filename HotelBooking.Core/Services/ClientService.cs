@@ -33,6 +33,11 @@ public class ClientService : IBackupService<Client>
         }
     }
 
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<Client>();
+    }
+
     public async Task<bool> AddClientAsync(Client client)
     {
         return await _db.InsertAsync(client);

@@ -32,6 +32,11 @@ public class EventRoomService : IBackupService<EventRoom>
         }
     }
 
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<EventRoom>();
+    }
+
     public async Task<bool> AddAsync(EventRoom item)
     {
         return await _db.InsertAsync(item);

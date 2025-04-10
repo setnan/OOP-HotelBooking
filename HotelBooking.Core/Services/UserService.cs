@@ -50,6 +50,11 @@ public class UserService : IBackupService<User>
         }
     }
 
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<Guest>();
+    }
+
 
     public async Task<bool> AddUserAsync(User user)
     {

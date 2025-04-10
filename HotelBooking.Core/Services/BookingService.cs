@@ -92,8 +92,8 @@ public class BookingService : IBackupService<Booking>
  
         foreach (var booking in bookings)
         {
-            booking.Room = await _roomService.GetRoomByIdAsync(booking.RoomId);
-            booking.Guest = await _guestService.GetGuestByIdAsync(booking.GuestId);
+            booking.Room = await _roomService.GetRoomByIdAsync(booking.RoomId) ?? new Room();
+            booking.Guest = await _guestService.GetGuestByIdAsync(booking.GuestId) ?? new Guest();
         }
  
         return bookings;
@@ -110,6 +110,11 @@ public class BookingService : IBackupService<Booking>
         {
             await _db.InsertAsync(item);
         }
+    }
+
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<Booking>();
     }
 
     public async Task<IEnumerable<Booking>> GetBookingsByRoomIdAsync(int roomId)

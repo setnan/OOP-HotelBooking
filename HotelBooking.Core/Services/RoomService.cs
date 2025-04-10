@@ -61,6 +61,11 @@ public class RoomService : IBackupService<Room>
         }
     }
 
+    public async Task DeleteAllAsync()
+    {
+        await _db.DeleteAllAsync<Guest>();
+    }
+
 
     public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime? checkIn = null, DateTime? checkOut = null)
     {
