@@ -3,8 +3,8 @@
              xmlns:local="using:HotelBooking.AvaloniaApp"
              xmlns:converters="using:HotelBooking.AvaloniaApp.Converters"
              x:Class="HotelBooking.AvaloniaApp.App"
-             RequestedThemeVariant="Default">
-             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+             RequestedThemeVariant="Dark">
+             <!-- "Dark" ThemeVariant follows system theme variant. "Default" or "Light" are other available options. -->
 
     <Application.Resources>
         <converters:RoleTextConverter x:Key="RoleTextConverter"/>
@@ -21,24 +21,54 @@
         <FluentTheme />
         <StyleInclude Source="avares://Avalonia.Controls.DataGrid/Themes/Fluent.xaml"/>
         
-        <!-- Global Styles -->
+        <!-- Common Styles -->
+        <Style Selector="TextBlock">
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
         <Style Selector="Button">
             <Setter Property="Background" Value="#0078D4"/>
             <Setter Property="Foreground" Value="White"/>
-            <Setter Property="Padding" Value="10,5"/>
             <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="15,8"/>
         </Style>
         
         <Style Selector="Button:pointerover">
             <Setter Property="Background" Value="#106EBE"/>
         </Style>
-        
-        <Style Selector="TextBlock">
-            <Setter Property="Foreground" Value="#323130"/>
+
+        <Style Selector="TextBox">
+            <Setter Property="Background" Value="#3d3d3d"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8"/>
         </Style>
-        
-        <Style Selector="ContentControl">
-            <Setter Property="Background" Value="White"/>
+
+        <Style Selector="DataGrid">
+            <Setter Property="Background" Value="#2d2d2d"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="GridLinesVisibility" Value="All"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#3d3d3d"/>
+        </Style>
+
+        <Style Selector="DataGridRow">
+            <Setter Property="Background" Value="#2d2d2d"/>
+        </Style>
+
+        <Style Selector="DataGridRow:pointerover">
+            <Setter Property="Background" Value="#3d3d3d"/>
+        </Style>
+
+        <Style Selector="DataGridRow:selected">
+            <Setter Property="Background" Value="#0078D4"/>
+        </Style>
+
+        <Style Selector="ComboBox">
+            <Setter Property="Background" Value="#3d3d3d"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Padding" Value="8"/>
         </Style>
     </Application.Styles>
 </Application>

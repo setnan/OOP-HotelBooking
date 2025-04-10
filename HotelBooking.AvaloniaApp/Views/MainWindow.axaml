@@ -8,24 +8,104 @@
         x:Class="HotelBooking.AvaloniaApp.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/favicon.png"
-        Title="Hotel Booking System">
+        Title="Hotel Management"
+        TransparencyLevelHint="AcrylicBlur"
+        Background="Transparent"
+        ExtendClientAreaToDecorationsHint="True"
+        WindowStartupLocation="CenterScreen"
+        Width="1200"
+        Height="800">
 
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <DockPanel>
-        <!-- Navigasjonsmeny -->
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Background="LightGray" Margin="5">
-            <Button Content="Dashboard" Command="{Binding NavigateToCommand}" CommandParameter="dashboard" Margin="5"/>
-            <Button Content="Bookinger" Command="{Binding NavigateToCommand}" CommandParameter="bookings" Margin="5"/>
-            <Button Content="Gjester" Command="{Binding NavigateToCommand}" CommandParameter="guests" Margin="5"/>
-            <Button Content="Rom" Command="{Binding NavigateToCommand}" CommandParameter="rooms" Margin="5"/>
-            <Button Content="Backup" Command="{Binding NavigateToCommand}" CommandParameter="backup" Margin="5"/>
-            <Button Content="Klienter" Command="{Binding NavigateToCommand}" CommandParameter="clients" Margin="5"/>
-        </StackPanel>
+    <Panel>
+        <!-- Background with blur -->
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
 
-        <!-- Hovedinnhold -->
-        <ContentControl Content="{Binding CurrentView}" Margin="10"/>
-    </DockPanel>
+        <!-- Main Content -->
+        <DockPanel Margin="0,30,0,0">
+            <!-- Navigation Menu -->
+            <Border DockPanel.Dock="Left" 
+                    Background="#1a1a1a" 
+                    Width="200" 
+                    Padding="10">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="Hotel Management"
+                             FontSize="20"
+                             FontWeight="Bold"
+                             Foreground="White"
+                             HorizontalAlignment="Center"
+                             Margin="0,0,0,20"/>
+
+                    <Button Content="Dashboard"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="dashboard"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Classes="nav"/>
+
+                    <Button Content="Bookinger"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="bookings"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Classes="nav"/>
+
+                    <Button Content="Gjester"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="guests"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Classes="nav"/>
+
+                    <Button Content="Rom"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="rooms"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Classes="nav"/>
+
+                    <Button Content="Klienter"
+                            Command="{Binding NavigateToCommand}"
+                            CommandParameter="clients"
+                            HorizontalAlignment="Stretch"
+                            Height="40"
+                            Classes="nav"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Content Area -->
+            <Border Background="#2d2d2d" 
+                    Margin="0"
+                    Padding="20">
+                <ContentControl Content="{Binding CurrentView}"/>
+            </Border>
+        </DockPanel>
+    </Panel>
+
+    <Window.Styles>
+        <Style Selector="Button.nav">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        </Style>
+        <Style Selector="Button.nav:pointerover">
+            <Setter Property="Background" Value="#3d3d3d"/>
+        </Style>
+        <Style Selector="Button.nav:pressed">
+            <Setter Property="Background" Value="#4d4d4d"/>
+        </Style>
+    </Window.Styles>
 </Window>
