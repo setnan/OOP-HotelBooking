@@ -6,7 +6,7 @@ public class Event
 {
     public int EventId { get; set; }
     public string Name { get; set; }
-    public string HotelId { get; set; }
+    public int HotelId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public TimeSpan StartTime { get; set; }
