@@ -81,7 +81,8 @@ public class BackupService
         var json = await File.ReadAllTextAsync(filePath);
         var backupData = JsonConvert.DeserializeObject<Dictionary<string, JArray>>(json);
 
-        var tasks = new List<Task>();
+        var insertTasks = new List<Task>();
+        var deleteTasks = new List<Task>();
 
         foreach (var entry in backupData)
         {
@@ -92,12 +93,18 @@ public class BackupService
             {
                 var targetType = service.GetType().GenericTypeArguments[0];
                 var deserializedData = dataArray.ToObject(typeof(List<>).MakeGenericType(targetType));
+                
                 dynamic dynamicService = service;
-                tasks.Add(dynamicService.InsertManyAsync((dynamic)deserializedData));
+                var oldData = await dynamicService.GetAllForBackupAsync();
+                
+                deleteTasks.Add(dynamicService.DeleteAllAsync(oldData));
+                insertTasks.Add(dynamicService.InsertManyAsync((dynamic)deserializedData));
+
             }
         }
-
-        await Task.WhenAll(tasks);
+        
+        await Task.WhenAll(deleteTasks);
+        await Task.WhenAll(insertTasks);
 
         return filePath;
     }
