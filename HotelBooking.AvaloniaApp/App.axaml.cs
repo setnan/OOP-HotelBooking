@@ -57,20 +57,23 @@ public partial class App : Application
             services.AddSingleton<GuestService>();
             services.AddSingleton<EventService>();  // Moved to end since it depends on other services
 
-            // ViewModels
-            services.AddTransient<MainWindowViewModel>();
-            services.AddTransient<DashboardViewModel>();
-            services.AddTransient<BookingsViewModel>();
-            services.AddTransient<RoomManagementViewModel>();
-            services.AddTransient<RoomsViewModel>();
-            services.AddTransient<SettingsViewModel>();
-            services.AddTransient<LoginViewModel>();
-            services.AddTransient<ClientViewModel>();
-            services.AddTransient<GuestViewModel>();
-
             // Views
             services.AddTransient<MainWindow>();
             services.AddTransient<LoginWindow>();
+            services.AddTransient<BookingsView>();
+            services.AddTransient<DashboardView>();
+            services.AddTransient<RoomManagementView>();
+            services.AddTransient<GuestView>();
+            services.AddTransient<ClientView>();
+
+            // ViewModels
+            services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<LoginViewModel>();
+            services.AddTransient<DashboardViewModel>();
+            services.AddTransient<BookingsViewModel>();
+            services.AddTransient<RoomManagementViewModel>();
+            services.AddTransient<GuestViewModel>();
+            services.AddTransient<ClientViewModel>();
 
             Services = services.BuildServiceProvider();
 

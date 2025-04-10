@@ -2,7 +2,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
              xmlns:models="using:HotelBooking.Core.Models"
-             xmlns:d="https://github.com/avaloniaui"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d"
              x:Class="HotelBooking.AvaloniaApp.Views.BookingsView"
@@ -13,7 +13,7 @@
     <Grid RowDefinitions="Auto,*,Auto">
         <!-- Header -->
         <StackPanel Margin="20">
-            <TextBlock Text="Bookings"
+            <TextBlock Text="Bookinger"
                        FontSize="24"
                        FontWeight="Bold"
                        Margin="0,0,0,10"/>
@@ -32,12 +32,12 @@
                          Margin="0,10,0,10"/>
 
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <Button Content="New Booking"
+                <Button Content="Ny Booking"
                         Command="{Binding ShowNewBookingDialogCommand}"/>
-                <Button Content="Update Booking"
+                <Button Content="Oppdater Booking"
                         Command="{Binding UpdateBookingCommand}"
                         IsEnabled="{Binding SelectedBooking, Converter={x:Static ObjectConverters.IsNotNull}}"/>
-                <Button Content="Cancel Booking"
+                <Button Content="Kanseller Booking"
                         Command="{Binding DeleteBookingCommand}"
                         IsEnabled="{Binding SelectedBooking, Converter={x:Static ObjectConverters.IsNotNull}}"/>
             </StackPanel>
@@ -52,29 +52,31 @@
                   IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="ID" Binding="{Binding BookingId}"/>
-                <DataGridTextColumn Header="Guest" Binding="{Binding Guest.Name}"/>
-                <DataGridTextColumn Header="Room" Binding="{Binding Room.RoomNumber}"/>
-                <DataGridTextColumn Header="Check In" Binding="{Binding CheckIn, StringFormat={}{0:dd.MM.yyyy}}"/>
-                <DataGridTextColumn Header="Check Out" Binding="{Binding CheckOut, StringFormat={}{0:dd.MM.yyyy}}"/>
+                <DataGridTextColumn Header="Gjest" Binding="{Binding Guest.Name}"/>
+                <DataGridTextColumn Header="Rom" Binding="{Binding Room.RoomNumber}"/>
+                <DataGridTextColumn Header="Innsjekking" Binding="{Binding CheckIn, StringFormat={}{0:dd.MM.yyyy}}"/>
+                <DataGridTextColumn Header="Utsjekking" Binding="{Binding CheckOut, StringFormat={}{0:dd.MM.yyyy}}"/>
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}"/>
             </DataGrid.Columns>
         </DataGrid>
 
         <!-- New Booking Dialog -->
-        <Grid Grid.Row="2"
-              IsVisible="{Binding IsNewBookingDialogOpen}"
-              Background="#80000000">
-            <Border Background="White"
+        <Grid Grid.Row="0" Grid.RowSpan="3"
+              IsVisible="{Binding IsNewBookingDialogOpen}">
+            <Border Background="#80000000"/>
+            <Border Background="#2d2d2d"
                     Padding="20"
                     Width="400"
                     CornerRadius="10"
                     VerticalAlignment="Center"
                     HorizontalAlignment="Center">
                 <StackPanel Spacing="10">
-                    <TextBlock Text="New Booking" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+                    <TextBlock Text="Ny Booking" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
-                    <TextBlock Text="Guest"/>
+                    <TextBlock Text="Gjest"/>
                     <ComboBox ItemsSource="{Binding Guests}"
-                              SelectedItem="{Binding SelectedGuest}">
+                              SelectedItem="{Binding SelectedGuest}"
+                              HorizontalAlignment="Stretch">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding Name}"/>
@@ -82,9 +84,10 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
-                    <TextBlock Text="Room"/>
+                    <TextBlock Text="Rom"/>
                     <ComboBox ItemsSource="{Binding AvailableRooms}"
-                              SelectedItem="{Binding SelectedRoom}">
+                              SelectedItem="{Binding SelectedRoom}"
+                              HorizontalAlignment="Stretch">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <TextBlock Text="{Binding RoomNumber}"/>
@@ -92,17 +95,18 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
-                    <TextBlock Text="Check In"/>
-                    <DatePicker SelectedDate="{Binding SelectedBooking.CheckIn, Mode=TwoWay}"/>
+                    <TextBlock Text="Innsjekking"/>
+                    <DatePicker SelectedDate="{Binding NewBooking.CheckIn}"
+                              HorizontalAlignment="Stretch"/>
 
-                    <TextBlock Text="Check Out"/>
-                    <DatePicker SelectedDate="{Binding SelectedBooking.CheckOut, Mode=TwoWay}"/>
+                    <TextBlock Text="Utsjekking"/>
+                    <DatePicker SelectedDate="{Binding NewBooking.CheckOut}"
+                              HorizontalAlignment="Stretch"/>
 
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10">
-                        <Button Content="Cancel" Command="{Binding CloseNewBookingDialog}"/>
-                        <Button Content="Create" Command="{Binding CreateBooking}"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,10,0,0">
+                        <Button Content="Avbryt" Command="{Binding CancelNewBookingCommand}"/>
+                        <Button Content="Lagre" Command="{Binding SaveNewBookingCommand}"/>
                     </StackPanel>
-
                 </StackPanel>
             </Border>
         </Grid>

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -42,6 +43,9 @@ public partial class BookingsViewModel : ViewModelBase
     private Booking? selectedBooking;
 
     [ObservableProperty]
+    private Booking? newBooking;
+
+    [ObservableProperty]
     private bool isLoading;
 
     [ObservableProperty]
@@ -76,12 +80,10 @@ public partial class BookingsViewModel : ViewModelBase
             Bookings = new ObservableCollection<Booking>(await bookingsTask);
             AvailableRooms = new ObservableCollection<Room>(await roomsTask);
             Guests = new ObservableCollection<Guest>(await guestsTask);
-
-            SuccessMessage = "Data loaded successfully";
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error loading data: {ex.Message}";
+            ErrorMessage = $"Feil ved lasting av data: {ex.Message}";
         }
         finally
         {
@@ -90,23 +92,51 @@ public partial class BookingsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void CloseNewBookingDialog()
+    private void CancelNewBooking()
     {
         IsNewBookingDialogOpen = false;
+        NewBooking = null;
+        SelectedRoom = null;
+        SelectedGuest = null;
+        ErrorMessage = null;
     }
 
     [RelayCommand]
     private void ShowNewBookingDialog()
     {
-        IsNewBookingDialogOpen = true;
-    }
-    
-    [RelayCommand]
-    private async Task CreateBooking()
-    {
-        if (SelectedGuest == null || SelectedRoom == null)
+        NewBooking = new Booking
         {
-            ErrorMessage = "Please select both a guest and a room.";
+            CheckIn = DateTime.Today,
+            CheckOut = DateTime.Today.AddDays(1)
+        };
+        IsNewBookingDialogOpen = true;
+        ErrorMessage = null;
+    }
+
+    [RelayCommand]
+    private async Task SaveNewBooking()
+    {
+        if (SelectedGuest == null)
+        {
+            ErrorMessage = "Vennligst velg en gjest";
+            return;
+        }
+
+        if (SelectedRoom == null)
+        {
+            ErrorMessage = "Vennligst velg et rom";
+            return;
+        }
+
+        if (NewBooking == null)
+        {
+            ErrorMessage = "Ugyldig booking data";
+            return;
+        }
+
+        if (NewBooking.CheckIn >= NewBooking.CheckOut)
+        {
+            ErrorMessage = "Utsjekking må være etter innsjekking";
             return;
         }
 
@@ -114,31 +144,29 @@ public partial class BookingsViewModel : ViewModelBase
         {
             IsLoading = true;
             ErrorMessage = null;
-            SuccessMessage = null;
 
-            var newBooking = new Booking
-            {
-                GuestId = SelectedGuest.GuestId,
-                RoomId = SelectedRoom.RoomId,
-                CheckIn = DateTime.Today,
-                CheckOut = DateTime.Today.AddDays(1)
-            };
+            NewBooking.Guest = SelectedGuest;
+            NewBooking.Room = SelectedRoom;
+            NewBooking.Status = BookingStatus.Confirmed;
 
-            var success = await bookingService.AddBookingAsync(newBooking);
+            var success = await bookingService.AddBookingAsync(NewBooking);
             if (success)
             {
-                SuccessMessage = "Booking created successfully.";
                 await LoadDataAsync();
-                CloseNewBookingDialog();
+                SuccessMessage = "Booking opprettet";
+                IsNewBookingDialogOpen = false;
+                NewBooking = null;
+                SelectedRoom = null;
+                SelectedGuest = null;
             }
             else
             {
-                ErrorMessage = "Failed to create booking.";
+                ErrorMessage = "Kunne ikke opprette booking";
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error creating booking: {ex.Message}";
+            ErrorMessage = $"Feil ved oppretting av booking: {ex.Message}";
         }
         finally
         {
@@ -147,11 +175,11 @@ public partial class BookingsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task UpdateBookingAsync()
+    private async Task UpdateBooking()
     {
         if (SelectedBooking == null)
         {
-            ErrorMessage = "No booking selected to update.";
+            ErrorMessage = "Ingen booking valgt";
             return;
         }
 
@@ -159,22 +187,21 @@ public partial class BookingsViewModel : ViewModelBase
         {
             IsLoading = true;
             ErrorMessage = null;
-            SuccessMessage = null;
 
             var success = await bookingService.UpdateBookingAsync(SelectedBooking);
             if (success)
             {
-                SuccessMessage = "Booking updated successfully.";
                 await LoadDataAsync();
+                SuccessMessage = "Booking oppdatert";
             }
             else
             {
-                ErrorMessage = "Failed to update booking.";
+                ErrorMessage = "Kunne ikke oppdatere booking";
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error updating booking: {ex.Message}";
+            ErrorMessage = $"Feil ved oppdatering av booking: {ex.Message}";
         }
         finally
         {
@@ -182,13 +209,12 @@ public partial class BookingsViewModel : ViewModelBase
         }
     }
 
-    // New DeleteBookingAsync method for deleting a booking
     [RelayCommand]
-    private async Task DeleteBookingAsync()
+    private async Task DeleteBooking()
     {
         if (SelectedBooking == null)
         {
-            ErrorMessage = "No booking selected to delete.";
+            ErrorMessage = "Ingen booking valgt";
             return;
         }
 
@@ -196,97 +222,22 @@ public partial class BookingsViewModel : ViewModelBase
         {
             IsLoading = true;
             ErrorMessage = null;
-            SuccessMessage = null;
 
             var success = await bookingService.DeleteBookingAsync(SelectedBooking);
             if (success)
             {
-                SuccessMessage = "Booking deleted successfully.";
                 await LoadDataAsync();
+                SuccessMessage = "Booking kansellert";
+                SelectedBooking = null;
             }
             else
             {
-                ErrorMessage = "Failed to delete booking.";
+                ErrorMessage = "Kunne ikke kansellere booking";
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Error deleting booking: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    // New methods to update CheckIn and CheckOut dates
-    [RelayCommand]
-    private async Task UpdateCheckInDateAsync()
-    {
-        if (SelectedBooking == null)
-        {
-            ErrorMessage = "No booking selected to update.";
-            return;
-        }
-
-        try
-        {
-            IsLoading = true;
-            ErrorMessage = null;
-            SuccessMessage = null;
-
-            SelectedBooking.CheckIn = DateTime.Today;  // You can replace this with a selected date
-            var success = await bookingService.UpdateBookingAsync(SelectedBooking);
-            if (success)
-            {
-                SuccessMessage = "Check-in date updated successfully.";
-                await LoadDataAsync();
-            }
-            else
-            {
-                ErrorMessage = "Failed to update check-in date.";
-            }
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Error updating check-in date: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task UpdateCheckOutDateAsync()
-    {
-        if (SelectedBooking == null)
-        {
-            ErrorMessage = "No booking selected to update.";
-            return;
-        }
-
-        try
-        {
-            IsLoading = true;
-            ErrorMessage = null;
-            SuccessMessage = null;
-
-            SelectedBooking.CheckOut = DateTime.Today.AddDays(1);  // You can replace this with a selected date
-            var success = await bookingService.UpdateBookingAsync(SelectedBooking);
-            if (success)
-            {
-                SuccessMessage = "Check-out date updated successfully.";
-                await LoadDataAsync();
-            }
-            else
-            {
-                ErrorMessage = "Failed to update check-out date.";
-            }
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = $"Error updating check-out date: {ex.Message}";
+            ErrorMessage = $"Feil ved kansellering av booking: {ex.Message}";
         }
         finally
         {

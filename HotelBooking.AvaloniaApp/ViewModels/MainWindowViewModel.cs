@@ -48,12 +48,12 @@ public partial class MainWindowViewModel : ViewModelBase
         GuestViewModel guestViewModel,
         ClientViewModel clientViewModel)
     {
-        _userService = userService;
-        _roleService = roleService;
-        _bookingService = bookingService;
-        _clientService = clientService;
-        _guestService = guestService;
-        _roomService = roomService;
+        _userService = userService ?? throw new ArgumentNullException(nameof(userService));
+        _roleService = roleService ?? throw new ArgumentNullException(nameof(roleService));
+        _bookingService = bookingService ?? throw new ArgumentNullException(nameof(bookingService));
+        _clientService = clientService ?? throw new ArgumentNullException(nameof(clientService));
+        _guestService = guestService ?? throw new ArgumentNullException(nameof(guestService));
+        _roomService = roomService ?? throw new ArgumentNullException(nameof(roomService));
 
         DashboardViewModel = dashboardViewModel ?? throw new ArgumentNullException(nameof(dashboardViewModel));
         BookingsViewModel = bookingsViewModel ?? throw new ArgumentNullException(nameof(bookingsViewModel));
@@ -86,7 +86,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void NavigateTo(string viewName)
+    private async Task NavigateTo(string viewName)
     {
         if (string.IsNullOrEmpty(viewName)) return;
 
@@ -100,15 +100,50 @@ public partial class MainWindowViewModel : ViewModelBase
             return; // Don't allow navigation to admin-only views
         }
 
-        CurrentView = viewName.ToLower() switch
+        ViewModelBase nextView;
+        switch (viewName.ToLower())
         {
-            "dashboard" => DashboardViewModel,
-            "bookings" => BookingsViewModel,
-            "rooms" => RoomManagementViewModel,
-            "guests" => GuestViewModel,
-            "clients" => ClientViewModel,
-            _ => DashboardViewModel
-        };
+            case "dashboard":
+                nextView = DashboardViewModel;
+                break;
+            case "bookings":
+                nextView = BookingsViewModel;
+                break;
+            case "rooms":
+                nextView = RoomManagementViewModel;
+                break;
+            case "guests":
+                nextView = GuestViewModel;
+                break;
+            case "clients":
+                nextView = ClientViewModel;
+                break;
+            default:
+                nextView = DashboardViewModel;
+                break;
+        }
+
+        // Initialize the view if needed
+        switch (nextView)
+        {
+            case BookingsViewModel bookingsVm:
+                await bookingsVm.InitializeAsync();
+                break;
+            case DashboardViewModel dashboardVm:
+                await dashboardVm.InitializeAsync();
+                break;
+            case RoomManagementViewModel roomsVm:
+                await roomsVm.InitializeAsync();
+                break;
+            case GuestViewModel guestVm:
+                await guestVm.InitializeAsync();
+                break;
+            case ClientViewModel clientVm:
+                await clientVm.InitializeAsync();
+                break;
+        }
+
+        CurrentView = nextView;
     }
 
     public async Task InitializeAsync()
