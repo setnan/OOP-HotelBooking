@@ -1,11 +1,12 @@
 ﻿using Dapper;
+using HotelBooking.Core.Backup;
 using HotelBooking.Core.Database;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Utilities;
 
 namespace HotelBooking.Core.Services;
 
-public class RoomService
+public class RoomService : IBackupService<Room>
 {
     private readonly DatabaseConnection _db;
 
@@ -39,13 +40,21 @@ public class RoomService
         return await _db.DeleteAsync(room);
     }
 
-    public async Task<List<Room>> GetAllRoomsAsync()
+    public async Task<IEnumerable<Room>> GetAllAsync()
     {
         return await _db.GetAllAsync<Room>();
     }
 
+    public async Task InsertManyAsync(IEnumerable<Room> items)
+    {
+        foreach (var item in items)
+        {
+            await  _db.InsertAsync(item);
+        }
+    }
 
-    public async Task<List<Room>> GetAvailableRoomsAsync(DateTime? checkIn = null, DateTime? checkOut = null)
+
+    public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime? checkIn = null, DateTime? checkOut = null)
     {
         var checkInReal = checkIn ?? DateTime.Now;
         var checkOutReal = checkOut ?? DateTime.Now.AddDays(1);
@@ -63,9 +72,9 @@ public class RoomService
         return await _db.GetOneAsync<Room>("RoomNumber", number);
     }
 
-    public async Task<List<Room>> GetRoomsByHotelIdAsync(int id)
+    public async Task<IEnumerable<Room>> GetRoomsByHotelIdAsync(int id)
     {
-        return await _db.GetAllWhereAsync<Room>("HotelId", id);
+        return await _db.GetAllByColumnValueAsync<Room>("HotelId", id);
     }
 
     public static bool IsRoomAvailable(Room room)
