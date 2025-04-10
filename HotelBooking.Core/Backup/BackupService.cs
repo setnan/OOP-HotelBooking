@@ -65,7 +65,6 @@ public class BackupService
 
     public async Task<string> BackupDataAsync(bool preRestore = false)
     {
-        await BackupDataAsync(true);
         var json = await GetAllForBackupAsync();
         
         var timestamp = DateTime.Now.ToString("dd-MM-yyyy_HH-mm-ss");
@@ -79,6 +78,7 @@ public class BackupService
     
     public async Task<string> RestoreDataAsync(string fileName)
     {
+        await BackupDataAsync(true);
         var filePath = GetFileForBackup(fileName);
         var json = await File.ReadAllTextAsync(filePath);
         var backupData = JsonConvert.DeserializeObject<Dictionary<string, JArray>>(json);
