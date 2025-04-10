@@ -74,9 +74,9 @@ public partial class DashboardViewModel : ViewModelBase
             ErrorMessage = null;
             SuccessMessage = null;
 
-            var allBookings = await bookingService.GetAllBookingsAsync();
-            var allRooms = await roomService.GetAllRoomsAsync();
-            var available = await roomService.GetAvailableRoomsAsync();
+            var allBookings = (await bookingService.GetAllAsync()).ToList();
+            var allRooms = (await roomService.GetAllAsync()).ToList();
+            var available = (await roomService.GetAvailableRoomsAsync()).ToList();
 
             var today = DateTime.Today;
             TodaysBookings = new ObservableCollection<Booking>(allBookings.Where(b => b.CheckIn.Date == today));
