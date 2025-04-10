@@ -7,7 +7,7 @@ using HotelBooking.Core.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
-public partial class ClientViewModel : ObservableObject
+public partial class ClientViewModel : ViewModelBase
 {
     private readonly ClientService _clientService;
 

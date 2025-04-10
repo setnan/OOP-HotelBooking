@@ -3,19 +3,19 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
-using HotelBooking.AvaloniaApp.Services;
+using HotelBooking.Core.Services;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class LoginViewModel : ViewModelBase
 {
-    private readonly UserServiceWrapper userService;
-    private readonly Action<User> onLoginSuccess;
+    private readonly UserService _userService;
+    private readonly Action<User> _onLoginSuccess;
 
-    public LoginViewModel(Action<User> onLoginSuccess)
+    public LoginViewModel(UserService userService, Action<User> onLoginSuccess)
     {
-        this.onLoginSuccess = onLoginSuccess;
-        this.userService = new UserServiceWrapper(); // Du kan også injecte hvis ønskelig
+        _userService = userService;
+        _onLoginSuccess = onLoginSuccess;
     }
 
     [ObservableProperty]
@@ -41,7 +41,7 @@ public partial class LoginViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = null;
 
-            var user = await userService.AuthenticateAsync(Username, Password);
+            var user = await _userService.AuthenticateAsync(Username, Password);
             if (user == null)
             {
                 ErrorMessage = "Ugyldig brukernavn eller passord";
@@ -50,10 +50,10 @@ public partial class LoginViewModel : ViewModelBase
 
             if (RememberMe)
             {
-                await userService.SaveCredentialsAsync(Username, Password);
+                await _userService.SaveCredentialsAsync(Username, Password);
             }
-            
-            onLoginSuccess(user);
+
+            _onLoginSuccess(user);
         }
         catch (Exception ex)
         {

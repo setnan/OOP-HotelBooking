@@ -27,12 +27,8 @@ public partial class RoomManagementViewModel : ViewModelBase
     [ObservableProperty] private bool isNewRoomDialogOpen;
     [ObservableProperty] private bool isEditRoomDialogOpen;
 
-    [ObservableProperty] private int roomNumber;
-    [ObservableProperty] private int floor;
+    [ObservableProperty] private string? roomNumber;
     [ObservableProperty] private string? type;
-    [ObservableProperty] private int numberOfBeds = 1;
-    [ObservableProperty] private string? quality;
-    [ObservableProperty] private string? description;
 
     private async Task LoadDataAsync()
     {
@@ -78,12 +74,8 @@ public partial class RoomManagementViewModel : ViewModelBase
 
             var room = new Room
             {
-                RoomNumber = RoomNumber.ToString(),
-                Floor = Floor,
-                Type = Type,
-                NumberOfBeds = NumberOfBeds,
-                Quality = Quality,
-                Description = Description,
+                RoomNumber = RoomNumber ?? string.Empty,
+                Type = Type ?? string.Empty,
                 IsAvailable = true
             };
 
@@ -111,11 +103,7 @@ public partial class RoomManagementViewModel : ViewModelBase
 
     private void ResetRoomForm()
     {
-        RoomNumber = 0;
-        Floor = 0;
-        Type = "";
-        NumberOfBeds = 1;
-        Quality = "";
-        Description = "";
+        RoomNumber = string.Empty;
+        Type = string.Empty;
     }
 }

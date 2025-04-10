@@ -15,6 +15,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ClientService _clientService;
     private readonly GuestService _guestService;
     private readonly RoomService _roomService;
+    private readonly RoleService _roleService;
 
     [ObservableProperty]
     private ViewModelBase currentView;
@@ -30,7 +31,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public RoomManagementViewModel RoomManagementViewModel { get; }
     public GuestViewModel GuestViewModel { get; }
     public BackupViewModel BackupViewModel { get; }
-    public ClientsViewModel ClientsViewModel { get; }
+    public ClientViewModel ClientViewModel { get; }
 
     public MainWindowViewModel(
         UserService userService,
@@ -44,7 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RoomManagementViewModel roomManagementViewModel,
         GuestViewModel guestViewModel,
         BackupViewModel backupViewModel,
-        ClientViewModel clientsViewModel)
+        ClientViewModel clientViewModel)
     {
         _userService = userService;
         _roleService = roleService;
@@ -58,11 +59,10 @@ public partial class MainWindowViewModel : ViewModelBase
         RoomManagementViewModel = roomManagementViewModel;
         GuestViewModel = guestViewModel;
         BackupViewModel = backupViewModel;
-        ClientsViewModel = clientsViewModel;
+        ClientViewModel = clientViewModel;
 
         CurrentView = DashboardViewModel;
     }
-
 
     [RelayCommand]
     private void NavigateTo(string viewName)
@@ -79,7 +79,7 @@ public partial class MainWindowViewModel : ViewModelBase
             "rooms" => RoomManagementViewModel,
             "guests" => GuestViewModel,
             "backup" => BackupViewModel,
-            "clients" => ClientsViewModel,
+            "clients" => ClientViewModel,
             _ => DashboardViewModel
         };
     }
@@ -88,8 +88,7 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         try
         {
-            CurrentUser = await _userService.GetCurrentUserAsync();
-            isAdmin = CurrentUser != null && _userService.IsAdmin(CurrentUser);
+            isAdmin = UserSession.Instance.IsAdmin;
         }
         catch (Exception)
         {
@@ -100,11 +99,12 @@ public partial class MainWindowViewModel : ViewModelBase
     public void OnUserLoggedIn(User user)
     {
         CurrentUser = user;
-        isAdmin = _userService.IsAdmin(user);
+        isAdmin = UserSession.Instance.IsAdmin;
+
     }
 
     public void Cleanup()
     {
-        // Unsubscribe from events if needed
+        
     }
 }
