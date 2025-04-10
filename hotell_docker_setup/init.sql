@@ -111,7 +111,8 @@ INSERT INTO User (Name, Email, Password, Role) VALUES
 ('Alice Admin', 'alice@hotel.com', 'pass123', 'Admin'),
 ('Bob Resepsjonist', 'bob@hotel.com', 'pass123', 'Receptionist'),
 ('Admin Person', 'admin@admin.com', 'pass123', 'Admin'),
-('Receptionist Person', 'receptionist@receptionist.com', 'pass123', 'Receptionist');
+('Receptionist Person', 'receptionist@receptionist.com', 'pass123', 'Receptionist'),
+('Admin', 'admin', 'admin', 'Admin');
 
 INSERT INTO Hotel (Name, Address) VALUES
 ('Ocean View Hotel', 'Strandgata 42, Oslo'),
