@@ -43,7 +43,10 @@ public partial class BookingsViewModel : ViewModelBase
     private Booking? selectedBooking;
 
     [ObservableProperty]
-    private Booking? newBooking;
+    private DateTimeOffset? checkInDate;
+
+    [ObservableProperty]
+    private DateTimeOffset? checkOutDate;
 
     [ObservableProperty]
     private bool isLoading;
@@ -69,7 +72,6 @@ public partial class BookingsViewModel : ViewModelBase
         {
             IsLoading = true;
             ErrorMessage = null;
-            SuccessMessage = null;
 
             var bookingsTask = bookingService.GetAllAsync();
             var roomsTask = roomService.GetAllAsync();
@@ -95,7 +97,8 @@ public partial class BookingsViewModel : ViewModelBase
     private void CancelNewBooking()
     {
         IsNewBookingDialogOpen = false;
-        NewBooking = null;
+        CheckInDate = null;
+        CheckOutDate = null;
         SelectedRoom = null;
         SelectedGuest = null;
         ErrorMessage = null;
@@ -104,11 +107,8 @@ public partial class BookingsViewModel : ViewModelBase
     [RelayCommand]
     private void ShowNewBookingDialog()
     {
-        NewBooking = new Booking
-        {
-            CheckIn = DateTime.Today,
-            CheckOut = DateTime.Today.AddDays(1)
-        };
+        CheckInDate = DateTimeOffset.Now.Date;
+        CheckOutDate = DateTimeOffset.Now.Date.AddDays(1);
         IsNewBookingDialogOpen = true;
         ErrorMessage = null;
     }
@@ -128,13 +128,19 @@ public partial class BookingsViewModel : ViewModelBase
             return;
         }
 
-        if (NewBooking == null)
+        if (!CheckInDate.HasValue)
         {
-            ErrorMessage = "Ugyldig booking data";
+            ErrorMessage = "Vennligst velg innsjekkingsdato";
             return;
         }
 
-        if (NewBooking.CheckIn >= NewBooking.CheckOut)
+        if (!CheckOutDate.HasValue)
+        {
+            ErrorMessage = "Vennligst velg utsjekkingsdato";
+            return;
+        }
+
+        if (CheckInDate.Value.Date >= CheckOutDate.Value.Date)
         {
             ErrorMessage = "Utsjekking må være etter innsjekking";
             return;
@@ -145,17 +151,25 @@ public partial class BookingsViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = null;
 
-            NewBooking.Guest = SelectedGuest;
-            NewBooking.Room = SelectedRoom;
-            NewBooking.Status = BookingStatus.Confirmed;
+            var newBooking = new Booking
+            {
+                Guest = SelectedGuest,
+                GuestId = SelectedGuest.GuestId,
+                Room = SelectedRoom,
+                RoomId = SelectedRoom.RoomId,
+                CheckIn = CheckInDate.Value.DateTime,
+                CheckOut = CheckOutDate.Value.DateTime,
+                Status = BookingStatus.Confirmed
+            };
 
-            var success = await bookingService.AddBookingAsync(NewBooking);
+            var success = await bookingService.AddBookingAsync(newBooking);
             if (success)
             {
                 await LoadDataAsync();
                 SuccessMessage = "Booking opprettet";
                 IsNewBookingDialogOpen = false;
-                NewBooking = null;
+                CheckInDate = null;
+                CheckOutDate = null;
                 SelectedRoom = null;
                 SelectedGuest = null;
             }

@@ -96,11 +96,11 @@
                     </ComboBox>
 
                     <TextBlock Text="Innsjekking"/>
-                    <DatePicker SelectedDate="{Binding NewBooking.CheckIn}"
+                    <DatePicker SelectedDate="{Binding CheckInDate}"
                               HorizontalAlignment="Stretch"/>
 
                     <TextBlock Text="Utsjekking"/>
-                    <DatePicker SelectedDate="{Binding NewBooking.CheckOut}"
+                    <DatePicker SelectedDate="{Binding CheckOutDate}"
                               HorizontalAlignment="Stretch"/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,10,0,0">
