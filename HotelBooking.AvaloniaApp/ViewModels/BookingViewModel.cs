@@ -4,20 +4,20 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
-using HotelBooking.AvaloniaApp.Services;
+using HotelBooking.Core.Services; // ← NB: direkte referanse til Core
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class BookingViewModel : ViewModelBase
 {
-    private readonly BookingServiceWrapper bookingService;
-    private readonly RoomServiceWrapper roomService;
-    private readonly GuestServiceWrapper guestService;
+    private readonly BookingService bookingService;
+    private readonly RoomService roomService;
+    private readonly GuestService guestService;
 
     public BookingViewModel(
-        BookingServiceWrapper bookingService,
-        RoomServiceWrapper roomService,
-        GuestServiceWrapper guestService)
+        BookingService bookingService,
+        RoomService roomService,
+        GuestService guestService)
     {
         this.bookingService = bookingService;
         this.roomService = roomService;
@@ -25,42 +25,20 @@ public partial class BookingViewModel : ViewModelBase
         LoadDataAsync();
     }
 
-    [ObservableProperty]
-    private ObservableCollection<Booking> bookings = new();
+    [ObservableProperty] private ObservableCollection<Booking> bookings = new();
+    [ObservableProperty] private ObservableCollection<Room> availableRooms = new();
+    [ObservableProperty] private ObservableCollection<Guest> guests = new();
 
-    [ObservableProperty]
-    private ObservableCollection<Room> availableRooms = new();
+    [ObservableProperty] private Booking? selectedBooking;
+    [ObservableProperty] private bool isLoading;
+    [ObservableProperty] private string? errorMessage;
+    [ObservableProperty] private string? successMessage;
+    [ObservableProperty] private bool isNewBookingDialogOpen;
 
-    [ObservableProperty]
-    private ObservableCollection<Guest> guests = new();
-
-    [ObservableProperty]
-    private Booking? selectedBooking;
-
-    [ObservableProperty]
-    private bool isLoading;
-
-    [ObservableProperty]
-    private string? errorMessage;
-
-    [ObservableProperty]
-    private string? successMessage;
-
-    [ObservableProperty]
-    private bool isNewBookingDialogOpen;
-
-    // New Booking Properties
-    [ObservableProperty]
-    private Room? selectedRoom;
-
-    [ObservableProperty]
-    private Guest? selectedGuest;
-
-    [ObservableProperty]
-    private DateTime checkIn = DateTime.Today;
-
-    [ObservableProperty]
-    private DateTime checkOut = DateTime.Today.AddDays(1);
+    [ObservableProperty] private Room? selectedRoom;
+    [ObservableProperty] private Guest? selectedGuest;
+    [ObservableProperty] private DateTime checkIn = DateTime.Today;
+    [ObservableProperty] private DateTime checkOut = DateTime.Today.AddDays(1);
 
     private async Task LoadDataAsync()
     {

@@ -1,278 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:models="using:HotelBooking.Core.Models"
+             xmlns:d="https://github.com/avaloniaui"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
              x:Class="HotelBooking.AvaloniaApp.Views.RoomManagementView"
-             x:DataType="vm:RoomManagementViewModel">
+             x:DataType="vm:RoomManagementViewModel"
+             d:DesignWidth="800"
+             d:DesignHeight="450">
     <Grid RowDefinitions="Auto,*">
         <!-- Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
-            <StackPanel Grid.Column="0" Spacing="10">
-                <TextBlock Text="Room Management"
-                         FontSize="24"
-                         FontWeight="Bold"
-                         Foreground="White"/>
-                
-                <!-- Error message -->
-                <TextBlock Text="{Binding ErrorMessage}"
-                         IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                         Foreground="#ff4444"
-                         TextWrapping="Wrap"/>
-                
-                <!-- Loading indicator -->
-                <ProgressBar IsIndeterminate="True"
-                           IsVisible="{Binding IsLoading}"
-                           Height="2"
-                           Margin="0,0,0,10"/>
-            </StackPanel>
-            
-            <Button Grid.Column="1"
-                    Content="Add Room"
-                    Command="{Binding ShowNewRoomDialogCommand}"
-                    Classes="accent"/>
-        </Grid>
+        <StackPanel Margin="20">
+            <TextBlock Text="Room Management"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10"/>
 
-        <!-- Main content -->
-        <TabControl Grid.Row="1">
-            <!-- Rooms List -->
-            <TabItem Header="Rooms">
-                <ScrollViewer>
-                    <ItemsControl ItemsSource="{Binding Rooms}">
-                        <ItemsControl.ItemTemplate>
-                            <DataTemplate>
-                                <Border Background="#2d2d2d"
-                                        BorderBrush="#3d3d3d"
-                                        BorderThickness="1"
-                                        CornerRadius="8"
-                                        Margin="0,0,0,10"
-                                        Padding="15">
-                                    <Grid ColumnDefinitions="*,Auto">
-                                        <StackPanel Grid.Column="0" Spacing="8">
-                                            <TextBlock Text="{Binding RoomNumber, StringFormat='Room {0}'}"
-                                                     FontSize="18"
-                                                     FontWeight="Bold"
-                                                     Foreground="White"/>
-                                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                                <TextBlock Text="Floor:"
-                                                         Foreground="LightGray"/>
-                                                <TextBlock Text="{Binding Floor}"
-                                                         Foreground="White"/>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                                <TextBlock Text="Type:"
-                                                         Foreground="LightGray"/>
-                                                <TextBlock Text="{Binding Type}"
-                                                         Foreground="White"/>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                                <TextBlock Text="Beds:"
-                                                         Foreground="LightGray"/>
-                                                <TextBlock Text="{Binding NumberOfBeds}"
-                                                         Foreground="White"/>
-                                            </StackPanel>
-                                            <StackPanel Orientation="Horizontal" Spacing="5">
-                                                <TextBlock Text="Quality:"
-                                                         Foreground="LightGray"/>
-                                                <TextBlock Text="{Binding Quality}"
-                                                         Foreground="White"/>
-                                            </StackPanel>
-                                            <TextBlock Text="{Binding Description}"
-                                                     Foreground="LightGray"
-                                                     TextWrapping="Wrap"/>
-                                        </StackPanel>
-                                        <StackPanel Grid.Column="1" Spacing="5">
-                                            <Button Content="Edit"
-                                                    Command="{Binding DataContext.ShowEditRoomDialogCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                    CommandParameter="{Binding}"
-                                                    Classes="accent"/>
-                                            <Button Content="Delete"
-                                                    Command="{Binding DataContext.DeleteRoomCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                                    CommandParameter="{Binding}"
-                                                    Classes="error"/>
-                                        </StackPanel>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ItemsControl.ItemTemplate>
-                    </ItemsControl>
-                </ScrollViewer>
-            </TabItem>
+            <TextBlock Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       Foreground="Red"/>
 
-            <!-- Statistics -->
-            <TabItem Header="Statistics">
-                <ScrollViewer>
-                    <StackPanel Spacing="20">
-                        <!-- Room Usage Statistics -->
-                        <StackPanel>
-                            <TextBlock Text="Room Usage Statistics"
-                                     FontSize="20"
-                                     FontWeight="Bold"
-                                     Margin="0,0,0,10"/>
-                            <ItemsControl ItemsSource="{Binding RoomUsageStats}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="#2d2d2d"
-                                                BorderBrush="#3d3d3d"
-                                                BorderThickness="1"
-                                                CornerRadius="8"
-                                                Margin="0,0,0,10"
-                                                Padding="15">
-                                            <StackPanel Spacing="5">
-                                                <TextBlock Text="{Binding Room.RoomNumber, StringFormat='Room {0}'}"
-                                                         FontSize="16"
-                                                         FontWeight="Bold"/>
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock Text="Total Bookings:"
-                                                             Foreground="LightGray"/>
-                                                    <TextBlock Text="{Binding BookingCount}"
-                                                             Foreground="White"/>
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock Text="Total Days Booked:"
-                                                             Foreground="LightGray"/>
-                                                    <TextBlock Text="{Binding TotalDays}"
-                                                             Foreground="White"/>
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock Text="Occupancy Rate:"
-                                                             Foreground="LightGray"/>
-                                                    <TextBlock Text="{Binding OccupancyRate, StringFormat='{}{0:P1}'}"
-                                                             Foreground="White"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
+            <TextBlock Text="{Binding SuccessMessage}"
+                       IsVisible="{Binding SuccessMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       Foreground="Green"/>
 
-                        <!-- Client Revenue Statistics -->
-                        <StackPanel>
-                            <TextBlock Text="Top Revenue Clients"
-                                     FontSize="20"
-                                     FontWeight="Bold"
-                                     Margin="0,0,0,10"/>
-                            <ItemsControl ItemsSource="{Binding ClientRevenueStats}">
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Border Background="#2d2d2d"
-                                                BorderBrush="#3d3d3d"
-                                                BorderThickness="1"
-                                                CornerRadius="8"
-                                                Margin="0,0,0,10"
-                                                Padding="15">
-                                            <StackPanel Spacing="5">
-                                                <TextBlock Text="{Binding Client.Name}"
-                                                         FontSize="16"
-                                                         FontWeight="Bold"/>
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock Text="Total Revenue:"
-                                                             Foreground="LightGray"/>
-                                                    <TextBlock Text="{Binding TotalRevenue, StringFormat='${0:N2}'}"
-                                                             Foreground="White"/>
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock Text="Bookings:"
-                                                             Foreground="LightGray"/>
-                                                    <TextBlock Text="{Binding BookingCount}"
-                                                             Foreground="White"/>
-                                                </StackPanel>
-                                                <StackPanel Orientation="Horizontal" Spacing="5">
-                                                    <TextBlock Text="Events:"
-                                                             Foreground="LightGray"/>
-                                                    <TextBlock Text="{Binding EventCount}"
-                                                             Foreground="White"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Border>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </TabItem>
-        </TabControl>
+            <ProgressBar IsIndeterminate="True"
+                         IsVisible="{Binding IsLoading}"
+                         Height="4"
+                         Margin="0,10,0,10"/>
+
+            <Button Content="Add Room"
+                    Command="{Binding ShowNewRoomDialogCommand}"/>
+        </StackPanel>
+
+        <!-- Rooms List -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Rooms}"
+                  SelectedItem="{Binding SelectedRoom}"
+                  AutoGenerateColumns="False"
+                  Margin="20"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Room" Binding="{Binding RoomNumber}"/>
+                <DataGridTextColumn Header="Floor" Binding="{Binding Floor}"/>
+                <DataGridTextColumn Header="Type" Binding="{Binding Type}"/>
+                <DataGridTextColumn Header="Beds" Binding="{Binding NumberOfBeds}"/>
+                <DataGridTextColumn Header="Quality" Binding="{Binding Quality}"/>
+                <DataGridTextColumn Header="Description" Binding="{Binding Description}"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <!-- New Room Dialog -->
-        <ContentDialog IsVisible="{Binding IsNewRoomDialogOpen}"
-                      Title="New Room"
-                      CloseButtonText="Cancel"
-                      PrimaryButtonText="Create"
-                      PrimaryButtonCommand="{Binding CreateRoomCommand}">
-            <StackPanel Spacing="10">
-                <NumericUpDown Value="{Binding RoomNumber}"
-                              Minimum="1"
-                              Maximum="9999"
-                              ShowButtonSpinner="True"
-                              Watermark="Room Number"/>
+        <Grid Grid.Row="2"
+              IsVisible="{Binding IsNewRoomDialogOpen}"
+              Background="#80000000">
+            <Border Background="White"
+                    Padding="20"
+                    Width="400"
+                    CornerRadius="10"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="New Room" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
-                <NumericUpDown Value="{Binding Floor}"
-                              Minimum="0"
-                              Maximum="999"
-                              ShowButtonSpinner="True"
-                              Watermark="Floor"/>
+                    <TextBlock Text="Room Number"/>
+                    <NumericUpDown Value="{Binding RoomNumber}" Minimum="1" Maximum="9999"/>
 
-                <TextBox Text="{Binding Type}"
-                        Watermark="Room Type"/>
+                    <TextBlock Text="Floor"/>
+                    <NumericUpDown Value="{Binding Floor}" Minimum="0" Maximum="100"/>
 
-                <NumericUpDown Value="{Binding NumberOfBeds}"
-                              Minimum="1"
-                              Maximum="10"
-                              ShowButtonSpinner="True"
-                              Watermark="Number of Beds"/>
+                    <TextBlock Text="Room Type"/>
+                    <TextBox Text="{Binding Type}"/>
 
-                <TextBox Text="{Binding Quality}"
-                        Watermark="Room Quality"/>
+                    <TextBlock Text="Number of Beds"/>
+                    <NumericUpDown Value="{Binding NumberOfBeds}" Minimum="1" Maximum="10"/>
 
-                <TextBox Text="{Binding Description}"
-                        Watermark="Description (Optional)"
-                        AcceptsReturn="True"
-                        TextWrapping="Wrap"
-                        Height="100"/>
-            </StackPanel>
-        </ContentDialog>
+                    <TextBlock Text="Quality"/>
+                    <TextBox Text="{Binding Quality}"/>
 
-        <!-- Edit Room Dialog -->
-        <ContentDialog IsVisible="{Binding IsEditRoomDialogOpen}"
-                      Title="Edit Room"
-                      CloseButtonText="Cancel"
-                      PrimaryButtonText="Save"
-                      PrimaryButtonCommand="{Binding UpdateRoomCommand}">
-            <StackPanel Spacing="10">
-                <NumericUpDown Value="{Binding RoomNumber}"
-                              Minimum="1"
-                              Maximum="9999"
-                              ShowButtonSpinner="True"
-                              Watermark="Room Number"/>
+                    <TextBlock Text="Description"/>
+                    <TextBox Text="{Binding Description}" AcceptsReturn="True" Height="100"/>
 
-                <NumericUpDown Value="{Binding Floor}"
-                              Minimum="0"
-                              Maximum="999"
-                              ShowButtonSpinner="True"
-                              Watermark="Floor"/>
-
-                <TextBox Text="{Binding Type}"
-                        Watermark="Room Type"/>
-
-                <NumericUpDown Value="{Binding NumberOfBeds}"
-                              Minimum="1"
-                              Maximum="10"
-                              ShowButtonSpinner="True"
-                              Watermark="Number of Beds"/>
-
-                <TextBox Text="{Binding Quality}"
-                        Watermark="Room Quality"/>
-
-                <TextBox Text="{Binding Description}"
-                        Watermark="Description (Optional)"
-                        AcceptsReturn="True"
-                        TextWrapping="Wrap"
-                        Height="100"/>
-            </StackPanel>
-        </ContentDialog>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,10,0,0">
+                        <Button Content="Cancel" Command="{Binding CloseNewRoomDialogCommand}"/>
+                        <Button Content="Create" Command="{Binding CreateRoomCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>

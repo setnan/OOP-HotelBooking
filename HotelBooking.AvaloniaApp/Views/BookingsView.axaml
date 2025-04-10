@@ -1,254 +1,109 @@
-<?xml version="1.0" encoding="utf-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
              xmlns:models="using:HotelBooking.Core.Models"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="HotelBooking.AvaloniaApp.Views.BookingsView"
-             x:DataType="vm:BookingsViewModel">
-    <Grid RowDefinitions="Auto,Auto,*">
+             xmlns:d="https://github.com/avaloniaui"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             x:Class="HotelBooking.AvaloniaApp.Views.BookingView"
+             x:DataType="vm:BookingViewModel"
+             d:DesignWidth="800"
+             d:DesignHeight="600">
+
+    <Grid RowDefinitions="Auto,*,Auto">
         <!-- Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Margin="0,0,0,20">
-            <StackPanel Grid.Column="0" Spacing="10">
-                <TextBlock Text="Bookings Management"
-                         FontSize="24"
-                         FontWeight="Bold"
-                         Foreground="White"/>
-                
-                <!-- Error message -->
-                <TextBlock Text="{Binding ErrorMessage}"
-                         IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                         Foreground="#ff4444"
-                         TextWrapping="Wrap"/>
-                
-                <!-- Loading indicator -->
-                <ProgressBar IsIndeterminate="True"
-                           IsVisible="{Binding IsLoading}"
-                           Height="2"
-                           Margin="0,0,0,10"/>
+        <StackPanel Margin="20">
+            <TextBlock Text="Bookings"
+                       FontSize="24"
+                       FontWeight="Bold"
+                       Margin="0,0,0,10"/>
+
+            <TextBlock Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       Foreground="Red"/>
+
+            <TextBlock Text="{Binding SuccessMessage}"
+                       IsVisible="{Binding SuccessMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       Foreground="Green"/>
+
+            <ProgressBar IsIndeterminate="True"
+                         IsVisible="{Binding IsLoading}"
+                         Height="4"
+                         Margin="0,10,0,10"/>
+
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button Content="New Booking"
+                        Command="{Binding ShowNewBookingDialogCommand}"/>
+                <Button Content="Update Booking"
+                        Command="{Binding UpdateBookingCommand}"
+                        IsEnabled="{Binding SelectedBooking, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                <Button Content="Cancel Booking"
+                        Command="{Binding CancelBookingCommand}"
+                        IsEnabled="{Binding SelectedBooking, Converter={x:Static ObjectConverters.IsNotNull}}"/>
             </StackPanel>
-            
-            <Button Grid.Column="1"
-                    Content="New Booking"
-                    Command="{Binding ShowNewBookingDialogCommand}"
-                    Classes="accent"/>
-        </Grid>
+        </StackPanel>
 
-        <!-- Filters -->
-        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,Auto" Margin="0,0,0,10">
-            <TextBox Grid.Column="0"
-                     Text="{Binding SearchQuery}"
-                     Watermark="Search bookings..."
-                     Margin="0,0,10,0"/>
-            
-            <ComboBox Grid.Column="1"
-                      ItemsSource="{Binding AvailableStatuses}"
-                      SelectedItem="{Binding StatusFilter}"
-                      PlaceholderText="Filter by status"
-                      HorizontalAlignment="Stretch"
-                      Margin="0,0,10,0"/>
-            
-            <ComboBox Grid.Column="2"
-                      SelectedItem="{Binding SortBy}"
-                      HorizontalAlignment="Stretch"
-                      Margin="0,0,10,0">
-                <ComboBoxItem Content="Check-in Date" Tag="CheckIn"/>
-                <ComboBoxItem Content="Client" Tag="Client"/>
-                <ComboBoxItem Content="Guest" Tag="Guest"/>
-                <ComboBoxItem Content="Room" Tag="Room"/>
-                <ComboBoxItem Content="Status" Tag="Status"/>
-            </ComboBox>
-            
-            <ToggleButton Grid.Column="3"
-                         IsChecked="{Binding SortAscending}"
-                         Content="↑"
-                         ToolTip.Tip="Toggle sort direction"/>
-        </Grid>
-
-        <!-- Bookings list -->
-        <ScrollViewer Grid.Row="2">
-            <ItemsControl ItemsSource="{Binding FilteredBookings}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Border Background="#2d2d2d"
-                                BorderBrush="#3d3d3d"
-                                BorderThickness="1"
-                                CornerRadius="8"
-                                Margin="0,0,0,10"
-                                Padding="15">
-                            <Grid ColumnDefinitions="*,Auto">
-                                <StackPanel Grid.Column="0" Spacing="8">
-                                    <TextBlock Text="{Binding Room.RoomNumber, StringFormat='Room {0}'}"
-                                             FontSize="18"
-                                             FontWeight="Bold"
-                                             Foreground="White"/>
-                                    <TextBlock Text="{Binding Room.Type}"
-                                             Foreground="LightGray"/>
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <TextBlock Text="Client:"
-                                                 Foreground="LightGray"/>
-                                        <TextBlock Text="{Binding Client.Name}"
-                                                 Foreground="White"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <TextBlock Text="Guest:"
-                                                 Foreground="LightGray"/>
-                                        <TextBlock Text="{Binding Guest.Name}"
-                                                 Foreground="White"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <TextBlock Text="Check-in:"
-                                                 Foreground="LightGray"/>
-                                        <TextBlock Text="{Binding CheckIn, StringFormat='{}{0:dd MMM yyyy}'}"
-                                                 Foreground="White"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <TextBlock Text="Check-out:"
-                                                 Foreground="LightGray"/>
-                                        <TextBlock Text="{Binding CheckOut, StringFormat='{}{0:dd MMM yyyy}'}"
-                                                 Foreground="White"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="5">
-                                        <TextBlock Text="Status:"
-                                                 Foreground="LightGray"/>
-                                        <TextBlock Text="{Binding Status}"
-                                                 Foreground="{Binding Status, Converter={StaticResource BookingStatusColorConverter}}"/>
-                                    </StackPanel>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" Spacing="5">
-                                    <Button Content="Edit"
-                                            Command="{Binding DataContext.ShowEditBookingDialogCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"
-                                            Classes="accent"/>
-                                    <Button Content="Cancel"
-                                            Command="{Binding DataContext.CancelBookingCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"
-                                            Classes="accent"
-                                            IsEnabled="{Binding Status, Converter={StaticResource BookingStatusCancelableConverter}}"/>
-                                    <Button Content="Check In"
-                                            Command="{Binding DataContext.CheckInBookingCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"
-                                            Classes="accent"
-                                            IsVisible="{Binding Status, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:BookingStatus.Confirmed}}"/>
-                                    <Button Content="Check Out"
-                                            Command="{Binding DataContext.CheckOutBookingCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                                            CommandParameter="{Binding}"
-                                            Classes="accent"
-                                            IsVisible="{Binding Status, Converter={x:Static ObjectConverters.Equal}, ConverterParameter={x:Static models:BookingStatus.CheckedIn}}"/>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </ScrollViewer>
+        <!-- Bookings List -->
+        <DataGrid Grid.Row="1"
+                  ItemsSource="{Binding Bookings}"
+                  SelectedItem="{Binding SelectedBooking}"
+                  AutoGenerateColumns="False"
+                  Margin="20"
+                  IsReadOnly="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding BookingId}"/>
+                <DataGridTextColumn Header="Guest" Binding="{Binding Guest.Name}"/>
+                <DataGridTextColumn Header="Room" Binding="{Binding Room.RoomNumber}"/>
+                <DataGridTextColumn Header="Check In" Binding="{Binding CheckIn, StringFormat={}{0:dd.MM.yyyy}}"/>
+                <DataGridTextColumn Header="Check Out" Binding="{Binding CheckOut, StringFormat={}{0:dd.MM.yyyy}}"/>
+            </DataGrid.Columns>
+        </DataGrid>
 
         <!-- New Booking Dialog -->
-        <ContentDialog IsVisible="{Binding IsNewBookingDialogOpen}"
-                      Title="New Booking"
-                      CloseButtonText="Cancel"
-                      PrimaryButtonText="Create"
-                      PrimaryButtonCommand="{Binding CreateBookingCommand}">
-            <StackPanel Spacing="10">
-                <ComboBox ItemsSource="{Binding Clients}"
-                         SelectedItem="{Binding SelectedClient}"
-                         PlaceholderText="Select Client"
-                         HorizontalAlignment="Stretch">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+        <Grid Grid.Row="2"
+              IsVisible="{Binding IsNewBookingDialogOpen}"
+              Background="#80000000">
+            <Border Background="White"
+                    Padding="20"
+                    Width="400"
+                    CornerRadius="10"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center">
+                <StackPanel Spacing="10">
+                    <TextBlock Text="New Booking" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
 
-                <ComboBox ItemsSource="{Binding Guests}"
-                         SelectedItem="{Binding SelectedGuest}"
-                         PlaceholderText="Select Guest"
-                         HorizontalAlignment="Stretch">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
+                    <TextBlock Text="Guest"/>
+                    <ComboBox ItemsSource="{Binding Guests}"
+                              SelectedItem="{Binding SelectedGuest}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Name}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                <DatePicker SelectedDate="{Binding CheckInDate}"
-                          Header="Check-in Date"/>
+                    <TextBlock Text="Room"/>
+                    <ComboBox ItemsSource="{Binding AvailableRooms}"
+                              SelectedItem="{Binding SelectedRoom}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding RoomNumber}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
 
-                <DatePicker SelectedDate="{Binding CheckOutDate}"
-                          Header="Check-out Date"/>
+                    <TextBlock Text="Check In"/>
+                    <DatePicker SelectedDate="{Binding CheckIn}"/>
 
-                <ComboBox ItemsSource="{Binding AvailableRooms}"
-                         SelectedItem="{Binding SelectedRoom}"
-                         PlaceholderText="Select Room"
-                         HorizontalAlignment="Stretch">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding RoomNumber, StringFormat='Room {0}'}"/>
-                                <TextBlock Text="{Binding Type}"
-                                         FontSize="12"
-                                         Foreground="LightGray"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
-        </ContentDialog>
+                    <TextBlock Text="Check Out"/>
+                    <DatePicker SelectedDate="{Binding CheckOut}"/>
 
-        <!-- Edit Booking Dialog -->
-        <ContentDialog IsVisible="{Binding IsEditBookingDialogOpen}"
-                      Title="Edit Booking"
-                      CloseButtonText="Cancel"
-                      PrimaryButtonText="Save"
-                      PrimaryButtonCommand="{Binding UpdateBookingCommand}">
-            <StackPanel Spacing="10">
-                <ComboBox ItemsSource="{Binding Clients}"
-                         SelectedItem="{Binding SelectedClient}"
-                         PlaceholderText="Select Client"
-                         HorizontalAlignment="Stretch">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <ComboBox ItemsSource="{Binding Guests}"
-                         SelectedItem="{Binding SelectedGuest}"
-                         PlaceholderText="Select Guest"
-                         HorizontalAlignment="Stretch">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Name}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <DatePicker SelectedDate="{Binding CheckInDate}"
-                          Header="Check-in Date"/>
-
-                <DatePicker SelectedDate="{Binding CheckOutDate}"
-                          Header="Check-out Date"/>
-
-                <ComboBox ItemsSource="{Binding AvailableRooms}"
-                         SelectedItem="{Binding SelectedRoom}"
-                         PlaceholderText="Select Room"
-                         HorizontalAlignment="Stretch">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding RoomNumber, StringFormat='Room {0}'}"/>
-                                <TextBlock Text="{Binding Type}"
-                                         FontSize="12"
-                                         Foreground="LightGray"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </StackPanel>
-        </ContentDialog>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" Margin="0,10,0,0">
+                        <Button Content="Cancel" Command="{Binding CloseNewBookingDialogCommand}"/>
+                        <Button Content="Create" Command="{Binding CreateBookingCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
     </Grid>
 </UserControl>
