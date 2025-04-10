@@ -44,9 +44,11 @@ CREATE TABLE Booking (
     RoomId INT,
     CheckIn DATE,
     CheckOut DATE,
+    Status VARCHAR(50) NOT NULL DEFAULT 'Confirmed',
     FOREIGN KEY (GuestId) REFERENCES Guest(GuestId),
     FOREIGN KEY (RoomId) REFERENCES Room(RoomId)
 );
+
 
 CREATE TABLE Client (
     ClientId INT AUTO_INCREMENT PRIMARY KEY,
