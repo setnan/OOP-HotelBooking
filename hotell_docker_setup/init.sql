@@ -208,34 +208,6 @@ INSERT INTO Meal (HotelId,Name, Date, MealType) VALUES
 (1, 'Conference Lunch', '2025-04-11 12:00:00', 'Lunch'),
 (1, 'Gala Dinner', '2025-04-11 19:00:00', 'Dinner');
 
-/*INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
-(1, 3, '2025-05-10', '12:00:00', '13:00:00', 30, 'Vegetarian options needed'),
-(2, 4, '2025-06-15', '18:00:00', '20:00:00', 100, 'Gluten-free & vegan options'),
-(3, 5, '2025-07-02', '08:00:00', '09:00:00', 15, ''),
-(4, 3, '2025-08-20', '11:30:00', '12:30:00', 40, 'Nut allergies'),
-(5, 6, '2025-09-05', '19:30:00', '21:00:00', 80, 'Halal meals required'),
-(6, 3, '2025-10-12', '13:00:00', '14:00:00', 20, ''),
-(7, 5, '2025-11-01', '17:00:00', '18:00:00', 50, 'Lactose-free dessert'),
-(8, 4, '2025-12-24', '20:00:00', '21:00:00', 60, 'Traditional Norwegian food'),
-(9, 6, '2026-01-14', '13:00:00', '14:00:00', 25, 'Vegetarian only'),
-(10, 3, '2026-02-01', '12:30:00', '13:30:00', 12, '');*/
-
-/*
--- Meals på nytt hotell i Bergen
-INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
-(1, 201, '2025-09-12', '12:00:00', '13:30:00', 40, 'Vegetarian friendly'),
-(2, 202, '2025-10-05', '18:00:00', '20:00:00', 60, 'Vegan and gluten-free options'),
-(3, 301, '2025-11-22', '08:00:00', '09:30:00', 25, 'No nuts, lactose-free milk'),
-(4, 102, '2026-01-15', '12:30:00', '14:00:00', 30, 'Kosher meals required'),
-(5, 101, '2026-02-20', '19:00:00', '21:00:00', 45, 'Halal, vegan dessert');
-
-
-INSERT INTO Meal (OrganiserId, RoomId, MealDate, StartTime, EndTime, Attendees, DietaryNotes) VALUES
-(6, 3, '2025-08-18', '13:00:00', '14:30:00', 35, 'Pescatarian options'),
-(7, 4, '2025-12-31', '20:00:00', '23:59:00', 80, 'Festive menu, includes traditional dishes'),
-(8, 5, '2026-03-17', '07:30:00', '09:00:00', 20, 'Gluten-free pastries'),
-(9, 6, '2026-04-25', '18:00:00', '20:30:00', 50, 'Low-carb options'),
-(10, 1, '2026-05-05', '12:00:00', '13:00:00', 15, 'Vegetarian only'); */
 
 INSERT INTO EventClient (EventId, ClientId) VALUES
 (1, 1),
