@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,126 +5,277 @@
              xmlns:vm="using:HotelBooking.AvaloniaApp.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="HotelBooking.AvaloniaApp.Views.DashboardView"
-             x:DataType="vm:DashboardViewModel"
-             x:Name="DashboardRoot">
-    <Grid RowDefinitions="Auto,*">
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,20">
-            <TextBlock Text="{Binding WelcomeMessage}" FontSize="24" FontWeight="Bold" Foreground="White"/>
-            <TextBlock Text="{Binding ErrorMessage}" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" Foreground="#ff4444" TextWrapping="Wrap"/>
-            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}" Height="2" Margin="0,0,0,10"/>
-            <Button Command="{Binding RefreshDashboardCommand}" Classes="accent">
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <PathIcon Data="{StaticResource refresh_regular}"/>
-                    <TextBlock Text="Refresh"/>
-                </StackPanel>
-            </Button>
-        </StackPanel>
+             x:DataType="vm:DashboardViewModel">
+
+    <Design.DataContext>
+        <vm:DashboardViewModel />
+    </Design.DataContext>
+
+    <Grid>
+        <!-- Loading Overlay -->
+        <Panel IsVisible="{Binding IsLoading}">
+            <Rectangle Fill="Black" Opacity="0.5"/>
+            <ProgressBar IsIndeterminate="True" 
+                        Width="100" 
+                        Height="2" 
+                        VerticalAlignment="Center"/>
+        </Panel>
+
+        <!-- Error Message -->
+        <TextBlock Text="{Binding ErrorMessage}"
+                 IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                 Foreground="Red"
+                 Margin="20,10"
+                 VerticalAlignment="Top"/>
 
         <!-- Main Content -->
-        <ScrollViewer Grid.Row="1">
-            <StackPanel Spacing="20">
+        <ScrollViewer>
+            <Grid Margin="20" RowDefinitions="Auto,*">
+                <!-- Header -->
+                <Grid Grid.Row="0" 
+                      ColumnDefinitions="*,Auto" 
+                      Margin="0,0,0,20">
+                    <TextBlock Grid.Column="0"
+                             Text="Dashboard" 
+                             FontSize="32" 
+                             FontWeight="Bold"/>
+                    <Button Grid.Column="1"
+                            Command="{Binding LoadDashboardDataAsync}"
+                            Classes="accent">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <PathIcon Data="{StaticResource refresh_regular}"/>
+                            <TextBlock Text="Refresh"/>
+                        </StackPanel>
+                    </Button>
+                </Grid>
 
-                <!-- Statistics Overview -->
-                <Border Classes="card">
-                    <Grid ColumnDefinitions="*,*,*,*">
-                        <Border Classes="stat">
-                            <StackPanel>
-                                <TextBlock Text="Today's Check-ins" Classes="subtitle"/>
-                                <TextBlock Text="{Binding TodayCheckIns}" Classes="stat-value"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="1" Classes="stat">
-                            <StackPanel>
-                                <TextBlock Text="Today's Check-outs" Classes="subtitle"/>
-                                <TextBlock Text="{Binding TodayCheckOuts}" Classes="stat-value"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="2" Classes="stat">
-                            <StackPanel>
-                                <TextBlock Text="Available Rooms" Classes="subtitle"/>
-                                <TextBlock Text="{Binding AvailableRooms}" Classes="stat-value"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Grid.Column="3" Classes="stat">
-                            <StackPanel>
-                                <TextBlock Text="Occupancy Rate" Classes="subtitle"/>
-                                <TextBlock Text="{Binding OccupancyRate, StringFormat='{}{0:P0}'}" Classes="stat-value"/>
-                            </StackPanel>
-                        </Border>
-                    </Grid>
-                </Border>
+                <!-- Main Content -->
+                <Grid Grid.Row="1" 
+                      ColumnDefinitions="*,*" 
+                      RowDefinitions="Auto,*,Auto" 
+                      Margin="0,10">
 
-                <!-- Today's Bookings -->
-                <Border Classes="card">
-                    <StackPanel>
-                        <TextBlock Text="Today's Bookings" Classes="section-header"/>
-                        <ItemsControl ItemsSource="{Binding TodaysBookings}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Classes="list-item">
-                                        <Grid ColumnDefinitions="*,Auto">
-                                            <StackPanel Grid.Column="0" Spacing="4">
-                                                <TextBlock Text="{Binding Guest.Name}" Classes="primary"/>
-                                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                                    <TextBlock Text="{Binding Room.RoomNumber, StringFormat='Room {0}'}" Classes="secondary"/>
-                                                    <TextBlock Text="{Binding Status}" Classes="secondary"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                        </Grid>
-                                    </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
-
-                <!-- Upcoming Bookings -->
-                <Border Classes="card">
-                    <StackPanel>
-                        <TextBlock Text="Upcoming Bookings" Classes="section-header"/>
-                        <ItemsControl ItemsSource="{Binding UpcomingBookings}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Classes="list-item">
-                                        <StackPanel Spacing="4">
-                                            <TextBlock Text="{Binding Guest.Name}" Classes="primary"/>
-                                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                                <TextBlock Text="{Binding Room.RoomNumber, StringFormat='Room {0}'}" Classes="secondary"/>
-                                                <TextBlock Text="{Binding CheckIn, StringFormat='{}{0:d}'}" Classes="secondary"/>
-                                            </StackPanel>
+                    <!-- Left Column -->
+                    <StackPanel Grid.Column="0" Grid.Row="0" Margin="0,0,10,0">
+                        <!-- Statistics Cards -->
+                        <Border Background="#1a1a1a" 
+                                CornerRadius="10" 
+                                Padding="20" 
+                                Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Text="Current Statistics" 
+                                         FontSize="24" 
+                                         FontWeight="Bold" 
+                                         Margin="0,0,0,15"/>
+                                
+                                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" Margin="0,10">
+                                    <!-- Total Rooms -->
+                                    <Border Grid.Column="0" Grid.Row="0"
+                                            Background="#2d2d2d"
+                                            CornerRadius="8"
+                                            Padding="15"
+                                            Margin="0,0,10,10">
+                                        <StackPanel>
+                                            <TextBlock Text="Total Rooms"
+                                                     FontSize="16"
+                                                     Opacity="0.7"/>
+                                            <TextBlock Text="{Binding TotalRooms}"
+                                                     FontSize="24"
+                                                     FontWeight="Bold"/>
                                         </StackPanel>
                                     </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
-                </Border>
 
-                <!-- Rooms Needing Attention -->
-                <Border Classes="card">
-                    <StackPanel>
-                        <TextBlock Text="Rooms Needing Attention" Classes="section-header"/>
-                        <ItemsControl ItemsSource="{Binding RoomsNeedingAttention}">
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <Border Classes="list-item">
-                                        <Grid ColumnDefinitions="*,Auto">
-                                            <StackPanel Grid.Column="0" Spacing="4">
-                                                <TextBlock Text="{Binding RoomNumber, StringFormat='Room {0}'}" Classes="primary"/>
-                                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                                    <TextBlock Text="{Binding Type}" Classes="secondary"/>
-                                                </StackPanel>
-                                            </StackPanel>
-                                            <!-- Removed the Mark Cleaned Button -->
-                                        </Grid>
+                                    <!-- Available Rooms -->
+                                    <Border Grid.Column="1" Grid.Row="0"
+                                            Background="#2d2d2d"
+                                            CornerRadius="8"
+                                            Padding="15"
+                                            Margin="0,0,0,10">
+                                        <StackPanel>
+                                            <TextBlock Text="Available Rooms"
+                                                     FontSize="16"
+                                                     Opacity="0.7"/>
+                                            <TextBlock Text="{Binding AvailableRooms}"
+                                                     FontSize="24"
+                                                     FontWeight="Bold"/>
+                                        </StackPanel>
                                     </Border>
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
+
+                                    <!-- Total Guests -->
+                                    <Border Grid.Column="0" Grid.Row="1"
+                                            Background="#2d2d2d"
+                                            CornerRadius="8"
+                                            Padding="15"
+                                            Margin="0,0,10,10">
+                                        <StackPanel>
+                                            <TextBlock Text="Total Guests"
+                                                     FontSize="16"
+                                                     Opacity="0.7"/>
+                                            <TextBlock Text="{Binding TotalGuests}"
+                                                     FontSize="24"
+                                                     FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Active Bookings -->
+                                    <Border Grid.Column="1" Grid.Row="1"
+                                            Background="#2d2d2d"
+                                            CornerRadius="8"
+                                            Padding="15"
+                                            Margin="0,0,0,10">
+                                        <StackPanel>
+                                            <TextBlock Text="Active Bookings"
+                                                     FontSize="16"
+                                                     Opacity="0.7"/>
+                                            <TextBlock Text="{Binding ActiveBookings}"
+                                                     FontSize="24"
+                                                     FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- Upcoming Events -->
+                                    <Border Grid.Column="0" Grid.Row="2"
+                                            Grid.ColumnSpan="2"
+                                            Background="#2d2d2d"
+                                            CornerRadius="8"
+                                            Padding="15"
+                                            Margin="0,0,0,10">
+                                        <StackPanel>
+                                            <TextBlock Text="Upcoming Events"
+                                                     FontSize="16"
+                                                     Opacity="0.7"/>
+                                            <TextBlock Text="{Binding UpcomingEvents}"
+                                                     FontSize="24"
+                                                     FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Recent Activity -->
+                        <Border Background="#1a1a1a" 
+                                CornerRadius="10" 
+                                Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="Recent Activity" 
+                                         FontSize="24" 
+                                         FontWeight="Bold" 
+                                         Margin="0,0,0,15"/>
+                                
+                                <ItemsControl ItemsSource="{Binding RecentActivities}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#2d2d2d"
+                                                    CornerRadius="8"
+                                                    Padding="15"
+                                                    Margin="0,0,0,10">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Description}"
+                                                             FontSize="16"/>
+                                                    <TextBlock Text="{Binding Timestamp}"
+                                                             FontSize="14"
+                                                             Opacity="0.7"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
                     </StackPanel>
-                </Border>
-            </StackPanel>
+
+                    <!-- Right Column -->
+                    <StackPanel Grid.Column="1" Grid.Row="0" Margin="10,0,0,0">
+                        <!-- Latest Bookings -->
+                        <Border Background="#1a1a1a" 
+                                CornerRadius="10" 
+                                Padding="20" 
+                                Margin="0,0,0,20">
+                            <StackPanel>
+                                <TextBlock Text="Latest Bookings" 
+                                         FontSize="24" 
+                                         FontWeight="Bold" 
+                                         Margin="0,0,0,15"/>
+                                
+                                <ItemsControl ItemsSource="{Binding LatestBookings}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#2d2d2d"
+                                                    CornerRadius="8"
+                                                    Padding="15"
+                                                    Margin="0,0,0,10">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="{Binding GuestName}"
+                                                                 FontSize="16"
+                                                                 FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding RoomNumber}"
+                                                                 FontSize="14"
+                                                                 Opacity="0.7"/>
+                                                        <TextBlock Text="{Binding DateRange}"
+                                                                 FontSize="14"
+                                                                 Opacity="0.7"/>
+                                                    </StackPanel>
+                                                    <Border Grid.Column="1"
+                                                            Background="{Binding StatusColor}"
+                                                            CornerRadius="4"
+                                                            Padding="8,4"
+                                                            VerticalAlignment="Top">
+                                                        <TextBlock Text="{Binding Status}"
+                                                                 FontSize="12"/>
+                                                    </Border>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Upcoming Events -->
+                        <Border Background="#1a1a1a" 
+                                CornerRadius="10" 
+                                Padding="20">
+                            <StackPanel>
+                                <TextBlock Text="Upcoming Events" 
+                                         FontSize="24" 
+                                         FontWeight="Bold" 
+                                         Margin="0,0,0,15"/>
+                                
+                                <ItemsControl ItemsSource="{Binding UpcomingEventsList}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="#2d2d2d"
+                                                    CornerRadius="8"
+                                                    Padding="15"
+                                                    Margin="0,0,0,10">
+                                                <Grid ColumnDefinitions="*,Auto">
+                                                    <StackPanel Grid.Column="0">
+                                                        <TextBlock Text="{Binding Title}"
+                                                                 FontSize="16"
+                                                                 FontWeight="Bold"/>
+                                                        <TextBlock Text="{Binding DateTime}"
+                                                                 FontSize="14"
+                                                                 Opacity="0.7"/>
+                                                        <TextBlock Text="{Binding Location}"
+                                                                 FontSize="14"
+                                                                 Opacity="0.7"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1"
+                                                             Text="{Binding AttendeeCount}"
+                                                             FontSize="14"
+                                                             VerticalAlignment="Top"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </Grid>
         </ScrollViewer>
     </Grid>
 </UserControl>

@@ -2,9 +2,9 @@ using Avalonia.Controls;
 
 namespace HotelBooking.AvaloniaApp.Views;
 
-public partial class RoomManagementView : UserControl
+public partial class RoomView : UserControl
 {
-    public RoomManagementView()
+    public RoomView()
     {
         InitializeComponent();
     }

@@ -32,10 +32,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public DashboardViewModel DashboardViewModel { get; }
     public BookingsViewModel BookingsViewModel { get; }
-    public RoomManagementViewModel RoomManagementViewModel { get; }
     public GuestViewModel GuestViewModel { get; }
     public ClientViewModel ClientViewModel { get; }
     public EventViewModel EventViewModel { get; }
+    public RoomViewModel RoomViewModel { get; }
 
     public MainWindowViewModel(
         UserService userService,
@@ -47,10 +47,10 @@ public partial class MainWindowViewModel : ViewModelBase
         EventService eventService,
         DashboardViewModel dashboardViewModel,
         BookingsViewModel bookingsViewModel,
-        RoomManagementViewModel roomManagementViewModel,
         GuestViewModel guestViewModel,
         ClientViewModel clientViewModel,
-        EventViewModel eventViewModel)
+        EventViewModel eventViewModel,
+        RoomViewModel roomViewModel)
     {
         _userService = userService ?? throw new ArgumentNullException(nameof(userService));
         _roleService = roleService ?? throw new ArgumentNullException(nameof(roleService));
@@ -62,10 +62,10 @@ public partial class MainWindowViewModel : ViewModelBase
 
         DashboardViewModel = dashboardViewModel ?? throw new ArgumentNullException(nameof(dashboardViewModel));
         BookingsViewModel = bookingsViewModel ?? throw new ArgumentNullException(nameof(bookingsViewModel));
-        RoomManagementViewModel = roomManagementViewModel ?? throw new ArgumentNullException(nameof(roomManagementViewModel));
         GuestViewModel = guestViewModel ?? throw new ArgumentNullException(nameof(guestViewModel));
         ClientViewModel = clientViewModel ?? throw new ArgumentNullException(nameof(clientViewModel));
         EventViewModel = eventViewModel ?? throw new ArgumentNullException(nameof(eventViewModel));
+        RoomViewModel = roomViewModel ?? throw new ArgumentNullException(nameof(roomViewModel));
 
         // Initialize current user from session if exists
         var session = UserSession.Instance;
@@ -117,7 +117,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 nextView = BookingsViewModel;
                 break;
             case "rooms":
-                nextView = RoomManagementViewModel;
+                nextView = RoomViewModel;
                 break;
             case "guests":
                 nextView = GuestViewModel;
@@ -142,8 +142,8 @@ public partial class MainWindowViewModel : ViewModelBase
             case DashboardViewModel dashboardVm:
                 await dashboardVm.InitializeAsync();
                 break;
-            case RoomManagementViewModel roomsVm:
-                await roomsVm.InitializeAsync();
+            case RoomViewModel roomVm:
+                await roomVm.InitializeAsync();
                 break;
             case GuestViewModel guestVm:
                 await guestVm.InitializeAsync();

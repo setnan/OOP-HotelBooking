@@ -32,7 +32,7 @@ public partial class MainWindow : Window
         await ViewModel.BookingsViewModel.InitializeAsync();
         await ViewModel.GuestViewModel.InitializeAsync();
         await ViewModel.ClientViewModel.InitializeAsync();
-        await ViewModel.RoomManagementViewModel.InitializeAsync();
+        await ViewModel.RoomViewModel.InitializeAsync();
         await ViewModel.EventViewModel.InitializeAsync();
     }
 }

@@ -1,7 +1,11 @@
 using System;
+using System.Runtime.InteropServices;
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Animation;
+using Avalonia.Styling;
 using HotelBooking.AvaloniaApp.ViewModels;
 using HotelBooking.AvaloniaApp.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +27,8 @@ public partial class App : Application
     {
         AvaloniaXamlLoader.Load(this);
     }
+
+    private bool IsMacOS => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
 
     public override void OnFrameworkInitializationCompleted()
     {
@@ -63,20 +69,20 @@ public partial class App : Application
             services.AddTransient<LoginWindow>();
             services.AddTransient<BookingsView>();
             services.AddTransient<DashboardView>();
-            services.AddTransient<RoomManagementView>();
             services.AddTransient<GuestView>();
             services.AddTransient<ClientView>();
             services.AddTransient<EventView>();
+            services.AddTransient<RoomView>();
 
             // ViewModels
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<DashboardViewModel>();
             services.AddTransient<BookingsViewModel>();
-            services.AddTransient<RoomManagementViewModel>();
             services.AddTransient<GuestViewModel>();
             services.AddTransient<ClientViewModel>();
             services.AddTransient<EventViewModel>();
+            services.AddTransient<RoomViewModel>();
 
             Services = services.BuildServiceProvider();
 
@@ -84,9 +90,41 @@ public partial class App : Application
             {
                 var loginWindow = App.GetService<LoginWindow>();
                 desktop.MainWindow = loginWindow;
-                loginWindow.Show();
+
+                // Legg til macOS-spesifikk animasjon
+                if (IsMacOS)
+                {
+                    loginWindow.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    loginWindow.Show();
+
+                    // Bruk Avalonia's innebygde animasjonssystem
+                    var animation = new Animation
+                    {
+                        Duration = TimeSpan.FromSeconds(0.3),
+                        FillMode = FillMode.Forward,
+                        Children =
+                        {
+                            new KeyFrame
+                            {
+                                Cue = new Cue(0d),
+                                Setters = { new Setter(Window.OpacityProperty, 0d) }
+                            },
+                            new KeyFrame
+                            {
+                                Cue = new Cue(1d),
+                                Setters = { new Setter(Window.OpacityProperty, 1d) }
+                            }
+                        }
+                    };
+
+                    animation.RunAsync(loginWindow);
+                }
+                else
+                {
+                    loginWindow.Show();
+                }
             }
-            catch (InvalidOperationException ex)
+            catch (Exception ex)
             {
                 Console.WriteLine($"Error resolving service: {ex.Message}");
             }

@@ -109,11 +109,12 @@ public class DatabaseConnection
 
     public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(DateTime checkIn, DateTime checkOut)
     {
-        var query = @"SELECT * 
-                  FROM Room r
-                  LEFT JOIN Booking b ON r.RoomId = b.RoomId
-                  AND NOT (b.CheckIn >= @checkOut OR b.CheckOut <= @checkIn)
-                  WHERE b.BookingId IS NULL;";
+        var query = @"SELECT DISTINCT r.* 
+                     FROM Room r
+                     LEFT JOIN Booking b ON r.RoomId = b.RoomId
+                     AND NOT (b.CheckIn >= @checkOut OR b.CheckOut <= @checkIn)
+                     WHERE b.BookingId IS NULL
+                     AND r.IsAvailable = 1;";
 
         return (await _connection.QueryAsync<Room>(query, new { checkIn, checkOut })).ToList();
     }

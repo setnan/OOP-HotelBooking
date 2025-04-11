@@ -1,10 +1,12 @@
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Services;
+using HotelBooking.Core.Database;
 
 namespace HotelBooking.AvaloniaApp.ViewModels;
 
@@ -12,11 +14,13 @@ public partial class GuestViewModel : ViewModelBase
 {
     private readonly GuestService guestService;
     private readonly RoomService roomService;
+    private readonly DatabaseConnection db;
     
-    public GuestViewModel(GuestService guestService, RoomService roomService)
+    public GuestViewModel(GuestService guestService, RoomService roomService, DatabaseConnection db)
     {
         this.guestService = guestService;
         this.roomService = roomService;
+        this.db = db;
     }
 
     public async Task InitializeAsync()
@@ -46,7 +50,7 @@ public partial class GuestViewModel : ViewModelBase
     private string newGuestContact = "";
     
     [ObservableProperty]
-    private ObservableCollection<Room> availableRooms = new();  // Liste av tilgjengelige rom
+    private ObservableCollection<Room> availableRooms = new();
     
     [ObservableProperty]
     private Room? selectedRoom;
@@ -62,12 +66,22 @@ public partial class GuestViewModel : ViewModelBase
             ErrorMessage = "Please provide both a name and contact number.";
             return;
         }
+
+        // Sjekk om gjesten allerede eksisterer
+        var existingGuest = Guests.FirstOrDefault(g => 
+            g.Name.Equals(NewGuestName, StringComparison.OrdinalIgnoreCase) && 
+            g.ContactNumber == NewGuestContact);
+
+        if (existingGuest != null)
+        {
+            ErrorMessage = "A guest with this name and contact number already exists.";
+            return;
+        }
         
         var newGuest = new Guest
         {
             Name = NewGuestName,
             ContactNumber = NewGuestContact
-            // Hvis vi ønsker å knytte et rom, kan vi bruke selectedRoom her
         };
 
         try
@@ -75,6 +89,7 @@ public partial class GuestViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = SuccessMessage = null;
 
+            db.Open();
             var success = await guestService.AddGuestAsync(newGuest);
             if (success)
             {
@@ -93,6 +108,7 @@ public partial class GuestViewModel : ViewModelBase
         }
         finally
         {
+            db.Close();
             IsLoading = false;
         }
     }
@@ -105,8 +121,16 @@ public partial class GuestViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = SuccessMessage = null;
             
+            db.Open();
             var guestsList = await guestService.GetAllAsync();
-            Guests = new ObservableCollection<Guest>(guestsList);
+            
+            // Fjern duplikater basert på navn og kontaktnummer
+            var uniqueGuests = guestsList
+                .GroupBy(g => new { g.Name, g.ContactNumber })
+                .Select(g => g.First())
+                .OrderBy(g => g.Name);
+            
+            Guests = new ObservableCollection<Guest>(uniqueGuests);
             
             var roomsList = await roomService.GetAvailableRoomsAsync();
             AvailableRooms = new ObservableCollection<Room>(roomsList);
@@ -119,6 +143,7 @@ public partial class GuestViewModel : ViewModelBase
         }
         finally
         {
+            db.Close();
             IsLoading = false;
         }
     }
@@ -146,6 +171,19 @@ public partial class GuestViewModel : ViewModelBase
 
         try
         {
+            // Sjekk om oppdateringen vil skape en duplikat
+            var potentialDuplicate = Guests.FirstOrDefault(g => 
+                g.GuestId != SelectedGuest.GuestId && 
+                g.Name.Equals(SelectedGuest.Name, StringComparison.OrdinalIgnoreCase) && 
+                g.ContactNumber == SelectedGuest.ContactNumber);
+
+            if (potentialDuplicate != null)
+            {
+                ErrorMessage = "A guest with this name and contact number already exists.";
+                return;
+            }
+
+            db.Open();
             var success = await guestService.UpdateGuestAsync(SelectedGuest);
             if (success)
             {
@@ -161,6 +199,10 @@ public partial class GuestViewModel : ViewModelBase
         {
             ErrorMessage = $"Error updating guest: {ex.Message}";
         }
+        finally
+        {
+            db.Close();
+        }
     }
     
     [RelayCommand]
@@ -174,6 +216,10 @@ public partial class GuestViewModel : ViewModelBase
 
         try
         {
+            IsLoading = true;
+            ErrorMessage = SuccessMessage = null;
+
+            db.Open();
             var success = await guestService.DeleteGuestAsync(SelectedGuest);
             if (success)
             {
@@ -189,6 +235,11 @@ public partial class GuestViewModel : ViewModelBase
         catch (Exception ex)
         {
             ErrorMessage = $"Error deleting guest: {ex.Message}";
+        }
+        finally
+        {
+            db.Close();
+            IsLoading = false;
         }
     }
 }

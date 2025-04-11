@@ -28,7 +28,8 @@ CREATE TABLE Room (
     Type VARCHAR(50),
     Price DECIMAL(10,2),
     IsAvailable BOOLEAN,
-    FOREIGN KEY (HotelId) REFERENCES Hotel(HotelId)
+    FOREIGN KEY (HotelId) REFERENCES Hotel(HotelId),
+    UNIQUE (HotelId, RoomNumber)
 );
 
 CREATE TABLE Guest (
@@ -120,12 +121,7 @@ INSERT INTO Room (HotelId, RoomNumber, Type, Price, IsAvailable) VALUES
 (1, '202', 'Family', 1499.00, 1),
 (1, '301', 'Deluxe', 1599.00, 1),
 (1, '302', 'Presidential Suite', 2999.00, 1),
-(1, '401', 'Twin', 999.00, 1),
-(1, '101', 'Single', 799.00, 1),
-(1, '102', 'Double', 1199.00, 1),
-(1, '201', 'Suite', 2099.00, 1),
-(1, '202', 'Family', 1599.00, 1),
-(1, '301', 'Deluxe', 1799.00, 1);
+(1, '401', 'Twin', 999.00, 1);
 
 INSERT INTO Guest (Name, ContactNumber, Email) VALUES
 ('Anna Berg', '+4798765432', 'anna.berg92@gmail.com'),
@@ -261,5 +257,3 @@ INSERT INTO EventRoom (EventId, RoomId) VALUES
 (14, 301),
 (15, 101),
 (15, 202);
-
-

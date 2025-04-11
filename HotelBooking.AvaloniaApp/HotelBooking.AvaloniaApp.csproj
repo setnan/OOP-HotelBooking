@@ -6,8 +6,8 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-      <UserSecretsId>2b3bd540-d2d0-40c7-85c4-c08289ebcc8c</UserSecretsId>
-  </PropertyGroup>
+        <UserSecretsId>2b3bd540-d2d0-40c7-85c4-c08289ebcc8c</UserSecretsId>
+    </PropertyGroup>
 
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
@@ -24,6 +24,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="10.0.0-preview.2.25163.2" />
         <PackageReference Include="MySql.Data" Version="9.2.0" />
         <PackageReference Include="ReactiveUI" Version="20.2.45" />
+        <PackageReference Include="NativeLibraryLoader" Version="1.0.13" />
     </ItemGroup>
 
     <ItemGroup>
@@ -33,6 +34,9 @@
     <ItemGroup>
       <Compile Update="Views\EventView.axaml.cs">
         <DependentUpon>EventView.axaml</DependentUpon>
+      </Compile>
+      <Compile Update="Views\RoomView.axaml.cs">
+        <DependentUpon>RoomView.axaml</DependentUpon>
       </Compile>
     </ItemGroup>
 </Project>

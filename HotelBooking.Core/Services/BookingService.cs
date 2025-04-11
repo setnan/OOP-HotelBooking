@@ -12,7 +12,6 @@ public class BookingService : IBackupService<Booking>
     private readonly RoomService _roomService;
     private readonly GuestService _guestService;
 
-
     public BookingService(DatabaseConnection db, RoomService roomService, GuestService guestService)
     {
         _db = db;
@@ -22,14 +21,23 @@ public class BookingService : IBackupService<Booking>
 
     public async Task<bool> AddBookingAsync(Booking booking)
     {
-        if (await _db.InsertAsync(booking))
+        var cleanBooking = new Booking
+        {
+            GuestId = booking.GuestId,
+            RoomId = booking.RoomId,
+            CheckIn = booking.CheckIn,
+            CheckOut = booking.CheckOut,
+            Status = booking.Status
+        };
+
+        if (await _db.InsertAsync(cleanBooking))
         {
             var room = await _roomService.GetRoomByIdAsync(booking.RoomId);
             return room != null && await _roomService.UpdateRoomAvailabilityAsync(room, false);
         }
+
         return false;
     }
-
 
     public async Task<bool> UpdateBookingAsync(Booking booking, string json)
     {
@@ -45,9 +53,8 @@ public class BookingService : IBackupService<Booking>
     {
         var oldBooking = await GetBookingByIdAsync(booking.BookingId);
         if (oldBooking == null)
-        {
             return false;
-        }
+
         var oldRoom = await _roomService.GetRoomByIdAsync(oldBooking.RoomId);
         if (oldRoom == null || oldRoom.RoomId == booking.RoomId)
         {
@@ -57,9 +64,11 @@ public class BookingService : IBackupService<Booking>
         if (await _db.UpdateAsync(booking))
         {
             await _roomService.UpdateRoomAvailabilityAsync(oldRoom, true);
-            var room = await _roomService.GetRoomByIdAsync(oldBooking.RoomId);
-            await _roomService.UpdateRoomAvailabilityAsync(room, false);
+            var newRoom = await _roomService.GetRoomByIdAsync(booking.RoomId);
+            if (newRoom != null)
+                await _roomService.UpdateRoomAvailabilityAsync(newRoom, false);
         }
+
         return true;
     }
 
@@ -68,11 +77,11 @@ public class BookingService : IBackupService<Booking>
         var room = await _roomService.GetRoomByIdAsync(booking.RoomId);
         if (await _db.DeleteAsync(booking))
         {
-            return  room != null && await _roomService.UpdateRoomAvailabilityAsync(room, true);
+            return room != null && await _roomService.UpdateRoomAvailabilityAsync(room, true);
         }
+
         return false;
     }
-
 
     public async Task<Booking?> GetBookingByIdAsync(int id)
     {
@@ -82,20 +91,20 @@ public class BookingService : IBackupService<Booking>
             booking.Room = await _roomService.GetRoomByIdAsync(booking.RoomId);
             booking.Guest = await _guestService.GetGuestByIdAsync(booking.GuestId);
         }
+
         return booking;
     }
-
 
     public async Task<IEnumerable<Booking>> GetAllAsync()
     {
         var bookings = (await _db.GetAllAsync<Booking>()).ToList();
- 
+
         foreach (var booking in bookings)
         {
             booking.Room = await _roomService.GetRoomByIdAsync(booking.RoomId) ?? new Room();
             booking.Guest = await _guestService.GetGuestByIdAsync(booking.GuestId) ?? new Guest();
         }
- 
+
         return bookings;
     }
 
@@ -108,7 +117,14 @@ public class BookingService : IBackupService<Booking>
     {
         foreach (var item in items)
         {
-            await _db.InsertAsync(item);
+            await _db.InsertAsync(new Booking
+            {
+                GuestId = item.GuestId,
+                RoomId = item.RoomId,
+                CheckIn = item.CheckIn,
+                CheckOut = item.CheckOut,
+                Status = item.Status
+            });
         }
     }
 

@@ -1,4 +1,5 @@
-﻿using HotelBooking.Core.Services;
+﻿using System.Runtime.Serialization;
+using HotelBooking.Core.Services;
 
 namespace HotelBooking.Core.Models;
 
@@ -18,6 +19,10 @@ public class Booking
     public DateTime CheckIn { get; set; }
     public DateTime CheckOut { get; set; }
     public BookingStatus Status { get; set; } = BookingStatus.Confirmed;
+
+    [IgnoreDataMember]
     public Guest? Guest { get; set; }
+
+    [IgnoreDataMember]
     public Room? Room { get; set; }
 }

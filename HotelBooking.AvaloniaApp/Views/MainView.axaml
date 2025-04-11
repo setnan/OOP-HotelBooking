@@ -110,17 +110,17 @@
                         <DataTemplate DataType="vm:BookingsViewModel">
                             <views:BookingsView />
                         </DataTemplate>
-                        <DataTemplate DataType="vm:RoomManagementViewModel">
-                            <views:RoomManagementView />
-                        </DataTemplate>
-                        <DataTemplate DataType="vm:EventViewModel">
-                            <views:EventView />
+                        <DataTemplate DataType="vm:RoomViewModel">
+                            <views:RoomView />
                         </DataTemplate>
                         <DataTemplate DataType="vm:GuestViewModel">
                             <views:GuestView />
                         </DataTemplate>
                         <DataTemplate DataType="vm:ClientViewModel">
                             <views:ClientView />
+                        </DataTemplate>
+                        <DataTemplate DataType="vm:EventViewModel">
+                            <views:EventView />
                         </DataTemplate>
                     </ContentControl.DataTemplates>
                 </ContentControl>

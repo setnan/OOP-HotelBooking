@@ -59,7 +59,7 @@ public partial class BookingsViewModel : ViewModelBase
 
     [ObservableProperty]
     private bool isNewBookingDialogOpen;
-    
+
     [ObservableProperty]
     private Room? selectedRoom;
 
@@ -72,28 +72,14 @@ public partial class BookingsViewModel : ViewModelBase
         {
             IsLoading = true;
             ErrorMessage = null;
-            
-            
+
             var brooms = await roomService.GetAllAsync();
             var bguests = await guestService.GetAllAsync();
-            
             var bbookings = await bookingService.GetAllAsync();
 
-            
             AvailableRooms = new ObservableCollection<Room>(brooms);
             Guests = new ObservableCollection<Guest>(bguests);
             Bookings = new ObservableCollection<Booking>(bbookings);
-
-
-            // var bookingsTask = bookingService.GetAllAsync();
-            // var roomsTask = roomService.GetAllAsync();
-            // var guestsTask = guestService.GetAllAsync();
-            //
-            // await Task.WhenAll(bookingsTask, roomsTask, guestsTask);
-            //
-            // Bookings = new ObservableCollection<Booking>(await bookingsTask);
-            // AvailableRooms = new ObservableCollection<Room>(await roomsTask);
-            // Guests = new ObservableCollection<Guest>(await guestsTask);
         }
         catch (Exception ex)
         {
@@ -163,18 +149,15 @@ public partial class BookingsViewModel : ViewModelBase
             IsLoading = true;
             ErrorMessage = null;
 
-            var newBooking = new Booking
+            var success = await bookingService.AddBookingAsync(new Booking
             {
-                Guest = SelectedGuest,
                 GuestId = SelectedGuest.GuestId,
-                Room = SelectedRoom,
                 RoomId = SelectedRoom.RoomId,
                 CheckIn = CheckInDate.Value.DateTime,
                 CheckOut = CheckOutDate.Value.DateTime,
                 Status = BookingStatus.Confirmed
-            };
+            });
 
-            var success = await bookingService.AddBookingAsync(newBooking);
             if (success)
             {
                 await LoadDataAsync();
@@ -199,6 +182,7 @@ public partial class BookingsViewModel : ViewModelBase
             IsLoading = false;
         }
     }
+
 
     [RelayCommand]
     private async Task UpdateBooking()

@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using HotelBooking.Core.Backup;
 using HotelBooking.Core.Database;
 using HotelBooking.Core.Models;
@@ -63,7 +63,7 @@ public class RoomService : IBackupService<Room>
 
     public async Task DeleteAllAsync()
     {
-        await _db.DeleteAllAsync<Guest>();
+        await _db.DeleteAllAsync<Room>();
     }
 
 

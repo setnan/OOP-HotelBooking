@@ -67,7 +67,7 @@ public partial class EventViewModel : ViewModelBase
             EndDate = value.EndDate;
             StartTime = value.StartTime;
             EndTime = value.EndTime;
-            var client = _clients.FirstOrDefault(c => c.ClientId == value.OrganiserId);
+            var client = Clients.FirstOrDefault(c => c.ClientId == value.OrganiserId);
             if (client != null)
             {
                 SelectedClient = client;
@@ -160,7 +160,7 @@ public partial class EventViewModel : ViewModelBase
                 StartTime = StartTime,
                 EndTime = EndTime,
                 HotelId = 1,
-                OrganiserId = SelectedClient.ClientId // 💥 Dette var viktig!
+                OrganiserId = SelectedClient.ClientId 
             };
 
             var success = await _eventService.AddEventAsync(newEvent);

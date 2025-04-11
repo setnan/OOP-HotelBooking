@@ -88,16 +88,12 @@ dotnet run --project HotelBooking.AvaloniaApp
 
 ## 👥 Contributors and reflections
 Simon - Contribution  
-<<I’ve worked mostly on setting up the database structure and making sure our Docker environment runs smoothly.
-I also handled the Avalonia integration and worked on parts of the frontend logic to connect it with the backend services.  
-Along the way, I focused on keeping the project organized and ensuring that we had a proper development 
-flow with dummy data and user secrets.>>
+<< I’ve worked mostly on setting up the database structure and making sure our Docker environment ran smoothly.
+I also handled the Avalonia integration and worked on the frontend logic to connect it with the backend services.Along the way, I focused on keeping the project organized and ensuring that we had a proper development flow with dummy data and user secrets.>>
 
 Simon - Reflection  
-<< I’ve learned a lot about working with services and how to properly connect frontend and backend in a clean way. 
-Also, setting up Docker for database development is something I feel much more confident about now.   
-If I could do something better, I would spend more time upfront on designing the API and overall structure to 
-avoid small fixes later. >>
+<< I’ve learned a lot about working with services and how to properly connect frontend and backend in a clean way. I have almost drowned in Avalonia and its many design posibilities. One of the things I enjoyed the most though was working with Marcus and learning from his ingenious way of using AI as tools for learning and sparring. It has helped me to become a better programmer and tought me a lot. I would love to work with him again as he is a smart, kind, funny, hardworking man and a pure joy to be around.
+My only regret is perhaps that I got us sidetracked towards a fullstack solution which we almost managed to pull off. But we changed our plans in time to turn it around to an crossplatform app instead and I'm happy to say that I'm proud of what we have accomplished.>>
 
 Marcus - Contribution  
 << I’ve been focusing mainly on building the backend logic, including services for handling bookings, 
