@@ -108,7 +108,13 @@ Throughout the project, I kept an eye on making our code clean and following bes
 Marcus - Reflection  
 << This project has really improved my understanding of structuring backend applications with clear service layers 
 and async handling. I’ve also learned how important it is to test data flow properly between layers, especially 
-when using Dapper. If I had more time, I would probably work more on testing and maybe expand the reporting features. >>  
+when using Dapper. If I had more time, I would probably work more on testing and maybe expand the reporting features.
+If there is one mayor thing I wanne take away from everything is that we should have talked more about how the other person
+would have wanted their part to work, and have a solid plan for it. I feel we both wrote pretty solid code, but ended 
+tripping over eachothers legs more than we should have. If we both knew how we wanted everything to function, it would
+have been easier for us to just write everything working smoothly together. It cost us this time and we got bugs when
+we added new stuff because we had the same idea but slightly different approaches to things. But all in all it was great
+working with Simon! *10/10 would fall into a pit of doubt and selfloathing together with the man again.*>>  
 
 #### 🤖 AI Bruk  
 - **In this Project Ai has been used for conceptual sparring and learing some new features previously uknow.**
