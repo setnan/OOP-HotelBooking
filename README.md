@@ -88,16 +88,27 @@ dotnet run --project HotelBooking.AvaloniaApp
 
 ## 👥 Contributors and reflections
 Simon - Contribution  
-<< Simon bidrag avsnitt >>
+<<I’ve worked mostly on setting up the database structure and making sure our Docker environment runs smoothly.
+I also handled the Avalonia integration and worked on parts of the frontend logic to connect it with the backend services.  
+Along the way, I focused on keeping the project organized and ensuring that we had a proper development 
+flow with dummy data and user secrets.>>
 
 Simon - Reflection  
-<< Simon Hva har man lært og hva kan jobbes med >>
+<< I’ve learned a lot about working with services and how to properly connect frontend and backend in a clean way. 
+Also, setting up Docker for database development is something I feel much more confident about now.   
+If I could do something better, I would spend more time upfront on designing the API and overall structure to 
+avoid small fixes later. >>
 
-Marcus - Bidrag  
-<< Marcus bidrag avsnitt >>
+Marcus - Contribution  
+<< I’ve been focusing mainly on building the backend logic, including services for handling bookings, 
+guests, events, and meals. I also worked on the backup and restore functionality, 
+and made sure that the data flow from database to service is solid. 
+Throughout the project, I kept an eye on making our code clean and following best practices. >>
 
-Marcus - Refleksjon  
-<< Marcus Hva har man lært og hva kan jobbes med >>  
+Marcus - Reflection  
+<< This project has really improved my understanding of structuring backend applications with clear service layers 
+and async handling. I’ve also learned how important it is to test data flow properly between layers, especially 
+when using Dapper. If I had more time, I would probably work more on testing and maybe expand the reporting features. >>  
 
 #### 🤖 AI Bruk  
 - **In this Project Ai has been used for conceptual sparring and learing some new features previously uknow.**
