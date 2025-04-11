@@ -88,36 +88,33 @@ dotnet run --project HotelBooking.AvaloniaApp
 
 ## 👥 Contributors and reflections
 Simon - Contribution  
-<< Her fyller Simon inn én paragraf om hva han har bidratt med i prosjektet. >>
+<< Simon bidrag avsnitt >>
 
 Simon - Reflection  
-<< Her fyller Simon inn én paragraf om hva han har lært eller kan utvikle videre. >>
+<< Simon Hva har man lært og hva kan jobbes med >>
 
 Marcus - Bidrag  
-<< Her fyller Marcus inn én paragraf om hva han har bidratt med i prosjektet. >>
+<< Marcus bidrag avsnitt >>
 
 Marcus - Refleksjon  
-<< Her fyller Marcus inn én paragraf om hva han har lært eller kan utvikle videre. >>
+<< Marcus Hva har man lært og hva kan jobbes med >>  
 
-🤖 AI Bruk  
-I prosjektet har vi brukt AI for konseptuell sparring og hjelp til å tenke gjennom strukturer og arkitekturvalg. Spesielt i forbindelse med:
+#### 🤖 AI Bruk  
+- **In this Project Ai has been used for conceptual sparring and learing some new features previously uknow.**
+- **Checklists and good workplans have been reviewed by and helped with by Ai for some parts.**
+- **Prompts and conversations were used for inspiration and guiding, no direct code.**   
+-*some code were copied where 1 or two words were changed.*  
+-*Ai was used for a good structured and clean looking read.me. Which was kind of a waste,*  
+-*since we ended up having to redo the whole thing (**but the emojies are nice**)*
+- 
+### 🛠️ Debug setup / Testdata  
+The database will automaticly initialized with init.sql when docker-compose up -d is ran to start  
+the container.   
+Dummy-data is included for all tables: Clients, Rooms, Guests, Bookings,  
+Events, Meals. Every table is on the other all in singulars (Meal, Room, etc.)
 
-Planlegging av BackupService og datahåndtering
-
-Strukturering av Meal-entiteten
-
-Oppsummering og sjekklister før levering
-
-Promptene og samtalene ble brukt som inspirasjon og guiding, uten direkte kopiering av kode.
-
-(💡 Hvis dere ønsker, kan dere også legge ved eksakte prompter eller si: "Ingen AI-generert kode ble direkte brukt i prosjektet.")
-
-🛠️ Debug setup / Testdata
-Databasen blir automatisk initialisert med init.sql når Docker starter containeren.
-
-Dummy-data er inkludert for Clients, Rooms, Guests, Bookings, Events og Meals.
-
-Ingen ekstra miljøvariabler er nødvendig, alt er håndtert via User Secrets.
-
-💡 Annet
-<< Hvis dere har noe ekstra dere vil si, f.eks. "Vi vurderte Discord-integrasjon, men valgte å fokusere på kjernefunksjonalitet grunnet tidsrammen." >>
+## 💡 Annet
+<< We were planning on doing more of a full stack solution with frontend working through and API , but 
+because of the time constraints we had to scrap that last minute and spend the last few days 
+instead working with Avalonia. This forced some issues and refactoring, but we still feel that what
+we are handing in is something we can say us decently happy with. " >>
