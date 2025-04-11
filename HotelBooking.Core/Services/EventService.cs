@@ -32,6 +32,7 @@ public class EventService : IBackupService<Event>
         {
             Name = thisevent.Name,
             HotelId = thisevent.HotelId,
+            OrganiserId = thisevent.OrganiserId,
             StartDate = thisevent.StartDate,
             EndDate = thisevent.EndDate,
             StartTime = thisevent.StartTime,
@@ -53,7 +54,7 @@ public class EventService : IBackupService<Event>
         foreach (var billingaddress in clientBillingAddress)
         {
             Client? client = await _clientService.GetClientByBillingAddressAsync(billingaddress);
-            if (client == null) return false;
+            if (client == null) continue;
             EventClient newEventClient = new EventClient
             {
                 EventId = lastEvent.EventId,
@@ -65,7 +66,7 @@ public class EventService : IBackupService<Event>
         foreach (var roomNumber in roomNumbers)
         {
             Room? room = await _roomService.GetRoomByNumberAsync(roomNumber);
-            if (room == null) return false;
+            if (room == null) continue;
             EventRoom newEventRoom = new EventRoom
             {
                 EventId = lastEvent.EventId,
