@@ -51,11 +51,11 @@ public partial class App : Application
             services.AddSingleton<RoleService>(_ => RoleService.Instance);
             services.AddSingleton<EventRoomService>();
             services.AddSingleton<EventClientService>();
-            services.AddSingleton<ClientService>();
+            services.AddSingleton<ClientService>();  
             services.AddSingleton<GuestService>();
             services.AddSingleton<RoomService>();
             services.AddSingleton<BookingService>();
-            services.AddSingleton<EventService>();  // Moved to end since it depends on other services
+            services.AddSingleton<EventService>();
 
             // Views
             services.AddTransient<MainWindow>();
@@ -65,7 +65,7 @@ public partial class App : Application
             services.AddTransient<RoomManagementView>();
             services.AddTransient<GuestView>();
             services.AddTransient<ClientView>();
-            services.AddTransient<EventView>();  // Added EventView
+            services.AddTransient<EventView>();
 
             // ViewModels
             services.AddTransient<MainWindowViewModel>();
@@ -75,13 +75,20 @@ public partial class App : Application
             services.AddTransient<RoomManagementViewModel>();
             services.AddTransient<GuestViewModel>();
             services.AddTransient<ClientViewModel>();
-            services.AddTransient<EventViewModel>();  // Added EventViewModel
+            services.AddTransient<EventViewModel>();
 
             Services = services.BuildServiceProvider();
 
-            var loginWindow = App.GetService<LoginWindow>();
-            desktop.MainWindow = loginWindow;
-            loginWindow.Show();
+            try
+            {
+                var loginWindow = App.GetService<LoginWindow>();
+                desktop.MainWindow = loginWindow;
+                loginWindow.Show();
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"Error resolving service: {ex.Message}");
+            }
         }
 
         base.OnFrameworkInitializationCompleted();
@@ -94,12 +101,20 @@ public partial class App : Application
             throw new InvalidOperationException("Services have not been initialized.");
         }
 
-        var service = Services.GetService<T>();
-        if (service == null)
+        try
         {
-            throw new InvalidOperationException($"Service of type {typeof(T).Name} not found.");
-        }
+            var service = Services.GetService<T>();
+            if (service == null)
+            {
+                throw new InvalidOperationException($"Service of type {typeof(T).Name} not found.");
+            }
 
-        return service;
+            return service;
+        }
+        catch (InvalidOperationException ex)
+        {
+            Console.WriteLine($"Error resolving service: {ex.Message}");
+            throw;
+        }
     }
 }

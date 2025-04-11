@@ -82,7 +82,7 @@
                             Height="40"
                             Classes="nav"/>
 
-                    <Button Content="Hendelser"
+                    <Button Content="Event"
                             Command="{Binding NavigateToCommand}"
                             CommandParameter="events"
                             HorizontalAlignment="Stretch"
