@@ -56,6 +56,7 @@ public partial class App : Application
             services.AddSingleton<RoomService>();
             services.AddSingleton<BookingService>();
             services.AddSingleton<EventService>();
+            services.AddSingleton<SettingsService>();
 
             // Views
             services.AddTransient<MainWindow>();

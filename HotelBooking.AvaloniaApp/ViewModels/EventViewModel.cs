@@ -12,8 +12,9 @@ namespace HotelBooking.AvaloniaApp.ViewModels;
 
 public partial class EventViewModel : ViewModelBase
 {
-    private readonly EventService _eventService;
     private readonly ClientService _clientService;
+    private readonly EventService _eventService;
+    private readonly EventClientService _eventClientService;
 
     [ObservableProperty]
     private ObservableCollection<Event> _events;
@@ -48,10 +49,11 @@ public partial class EventViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isLoading;
 
-    public EventViewModel(EventService eventService, ClientService clientService)
+    public EventViewModel(EventService eventService, ClientService clientService, EventClientService eventClientService)
     {
         _eventService = eventService;
         _clientService = clientService;
+        _eventClientService = eventClientService;
         _events = new ObservableCollection<Event>();
         _clients = new ObservableCollection<Client>();
     }
@@ -65,7 +67,6 @@ public partial class EventViewModel : ViewModelBase
             EndDate = value.EndDate;
             StartTime = value.StartTime;
             EndTime = value.EndTime;
-            // Finn og sett valgt klient
             var client = _clients.FirstOrDefault(c => c.ClientId == value.OrganiserId);
             if (client != null)
             {
@@ -107,21 +108,36 @@ public partial class EventViewModel : ViewModelBase
     {
         try
         {
-            IsLoading = true;
-            ErrorMessage = string.Empty;
             var events = await _eventService.GetAllAsync();
+            Events.Clear();
+
             if (events != null)
             {
-                Events = new ObservableCollection<Event>(events);
+                var allClients = await _clientService.GetAllAsync();
+
+                foreach (var evt in events)
+                {
+                    var eventClients = await _eventClientService.GetAllByEventIdAsync(evt.EventId);
+                    if (eventClients != null && eventClients.Any())
+                    {
+                        var hasValidClient = eventClients
+                            .Any(ec => allClients.Any(c => c.ClientId == ec.ClientId));
+
+                        if (hasValidClient)
+                        {
+                            Events.Add(evt);
+                        }
+                    }
+                    else
+                    {
+                        Events.Add(evt);
+                    }
+                }
             }
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Kunne ikke laste hendelser: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
+            ErrorMessage = $"Kunne ikke laste events: {ex.Message}";
         }
     }
 
@@ -130,15 +146,12 @@ public partial class EventViewModel : ViewModelBase
     {
         if (SelectedClient == null)
         {
-            ErrorMessage = "Vennligst velg en klient som organiserer hendelsen.";
+            ErrorMessage = "Vennligst velg en arrangør.";
             return;
         }
 
         try
         {
-            IsLoading = true;
-            ErrorMessage = string.Empty;
-
             var newEvent = new Event
             {
                 Name = Name,
@@ -147,27 +160,42 @@ public partial class EventViewModel : ViewModelBase
                 StartTime = StartTime,
                 EndTime = EndTime,
                 HotelId = 1,
-                OrganiserId = SelectedClient.ClientId
+                OrganiserId = SelectedClient.ClientId // 💥 Dette var viktig!
             };
 
-            var success = await _eventService.CreateEventAsync(newEvent, new List<string>(), new List<string>());
-            if (success)
+            var success = await _eventService.AddEventAsync(newEvent);
+            if (!success)
             {
-                await LoadEvents();
-                ClearForm();
+                ErrorMessage = "Kunne ikke opprette hendelsen.";
+                return;
             }
-            else
+
+            var createdEvent = await _eventService.GetEventByNameAndDateAsync(newEvent.Name, newEvent.StartDate);
+            if (createdEvent == null)
             {
-                ErrorMessage = "Kunne ikke opprette hendelsen. Prøv igjen.";
+                ErrorMessage = "Kunne ikke finne det opprettede eventet.";
+                return;
             }
+
+            var eventClient = new EventClient
+            {
+                EventId = createdEvent.EventId,
+                ClientId = SelectedClient.ClientId
+            };
+
+            var clientAdded = await _eventClientService.AddAsync(eventClient);
+            if (!clientAdded)
+            {
+                ErrorMessage = "Kunne ikke koble klient til hendelsen.";
+                return;
+            }
+
+            await LoadEvents();
+            ClearForm();
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"Feil ved oppretting av hendelse: {ex.Message}";
-        }
-        finally
-        {
-            IsLoading = false;
+            ErrorMessage = $"En feil oppstod: {ex.Message}";
         }
     }
 
@@ -247,7 +275,6 @@ public partial class EventViewModel : ViewModelBase
         EndDate = DateTime.Now;
         StartTime = DateTime.Now.TimeOfDay;
         EndTime = DateTime.Now.TimeOfDay;
-        SelectedEvent = null;
         SelectedClient = null;
         ErrorMessage = string.Empty;
     }

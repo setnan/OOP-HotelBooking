@@ -7,6 +7,10 @@
              x:Class="HotelBooking.AvaloniaApp.Views.LoginView"
              x:DataType="vm:LoginViewModel">
     
+    <UserControl.KeyBindings>
+        <KeyBinding Gesture="Enter" Command="{Binding LoginCommand}"/>
+    </UserControl.KeyBindings>
+    
     <Border Background="#1e1e1e"
             CornerRadius="8"
             Width="350"

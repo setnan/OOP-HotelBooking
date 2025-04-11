@@ -101,7 +101,8 @@ public partial class MainWindowViewModel : ViewModelBase
             return; // Don't allow navigation if not logged in
         }
 
-        if (!IsAdmin && (viewName == "rooms" || viewName == "backup"))
+        // Only admin can access guests and clients
+        if (!IsAdmin && (viewName == "guests" || viewName == "clients"))
         {
             return; // Don't allow navigation to admin-only views
         }
@@ -176,6 +177,7 @@ public partial class MainWindowViewModel : ViewModelBase
             if (CurrentView == null)
             {
                 CurrentView = DashboardViewModel;
+                await DashboardViewModel.InitializeAsync();
             }
         }
     }

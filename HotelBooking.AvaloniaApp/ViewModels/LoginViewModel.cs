@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using HotelBooking.AvaloniaApp.Services;
 using HotelBooking.Core.Models;
 using HotelBooking.Core.Services;
 
@@ -10,12 +11,15 @@ namespace HotelBooking.AvaloniaApp.ViewModels;
 public partial class LoginViewModel : ViewModelBase
 {
     private readonly UserService _userService;
+    private readonly SettingsService _settingsService;
 
     public event EventHandler<User>? LoginSuccessful;
 
-    public LoginViewModel(UserService userService)
+    public LoginViewModel(UserService userService, SettingsService settingsService)
     {
         _userService = userService;
+        _settingsService = settingsService;
+        LoadSavedCredentials();
     }
 
     [ObservableProperty]
@@ -32,6 +36,17 @@ public partial class LoginViewModel : ViewModelBase
 
     [ObservableProperty]
     private string? errorMessage;
+
+    private async void LoadSavedCredentials()
+    {
+        var settings = await _settingsService.LoadUserCredentialsAsync();
+        if (settings != null)
+        {
+            Username = settings.Email ?? string.Empty;
+            Password = settings.Password ?? string.Empty;
+            RememberMe = true;
+        }
+    }
 
     [RelayCommand]
     private async Task Login()
@@ -50,7 +65,11 @@ public partial class LoginViewModel : ViewModelBase
 
             if (RememberMe)
             {
-                // Her kan vi vurdere om vi vil implementer lagring etterhvert
+                await _settingsService.SaveUserCredentialsAsync(Username, Password);
+            }
+            else
+            {
+                await _settingsService.ClearUserCredentialsAsync();
             }
 
             UserSession.Instance.Login(user);

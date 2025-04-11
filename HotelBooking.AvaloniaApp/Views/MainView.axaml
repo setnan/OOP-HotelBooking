@@ -102,10 +102,28 @@
 
             <!-- Content Area -->
             <Panel>
-                <views:DashboardView IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=dashboard}"/>
-                <views:BookingsView IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=bookings}"/>
-                <views:RoomManagementView IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=rooms}"/>
-                <views:EventView IsVisible="{Binding CurrentView, Converter={x:Static ObjectConverters.Equal}, ConverterParameter=events}"/>
+                <ContentControl Content="{Binding CurrentView}">
+                    <ContentControl.DataTemplates>
+                        <DataTemplate DataType="vm:DashboardViewModel">
+                            <views:DashboardView />
+                        </DataTemplate>
+                        <DataTemplate DataType="vm:BookingsViewModel">
+                            <views:BookingsView />
+                        </DataTemplate>
+                        <DataTemplate DataType="vm:RoomManagementViewModel">
+                            <views:RoomManagementView />
+                        </DataTemplate>
+                        <DataTemplate DataType="vm:EventViewModel">
+                            <views:EventView />
+                        </DataTemplate>
+                        <DataTemplate DataType="vm:GuestViewModel">
+                            <views:GuestView />
+                        </DataTemplate>
+                        <DataTemplate DataType="vm:ClientViewModel">
+                            <views:ClientView />
+                        </DataTemplate>
+                    </ContentControl.DataTemplates>
+                </ContentControl>
             </Panel>
         </SplitView>
     </Grid>
