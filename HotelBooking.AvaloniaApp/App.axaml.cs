@@ -52,8 +52,8 @@ public partial class App : Application
             services.AddSingleton<EventRoomService>();
             services.AddSingleton<EventClientService>();
             services.AddSingleton<ClientService>();  
-            services.AddSingleton<GuestService>();
             services.AddSingleton<RoomService>();
+            services.AddSingleton<GuestService>();
             services.AddSingleton<BookingService>();
             services.AddSingleton<EventService>();
             services.AddSingleton<SettingsService>();
