@@ -28,8 +28,20 @@ public class EventService : IBackupService<Event>
     
     public async Task<bool> AddEventAsync(Event thisevent)
     {
-        return await _db.InsertAsync(thisevent);
+        var cleanEvent = new Event
+        {
+            Name = thisevent.Name,
+            HotelId = thisevent.HotelId,
+            StartDate = thisevent.StartDate,
+            EndDate = thisevent.EndDate,
+            StartTime = thisevent.StartTime,
+            EndTime = thisevent.EndTime
+        };
+
+        return await _db.InsertAsync(cleanEvent);
+
     }
+
 
     public async Task<bool> CreateEventAsync(Event thisevent, List<string> clientBillingAddress, List<string> roomNumbers)
     {
