@@ -68,8 +68,8 @@ CREATE TABLE Event (
     EndDate DATE,
     StartTime TIME,
     EndTime TIME,
-    FOREIGN KEY (HotelId) REFERENCES Hotel(HotelId),
-    FOREIGN KEY (OrganiserId) REFERENCES Client(ClientId)
+    FOREIGN KEY (HotelId) REFERENCES Hotel(HotelId)
+    -- FOREIGN KEY (OrganiserId) REFERENCES Client(ClientId)
 
 );
 
@@ -87,8 +87,12 @@ CREATE TABLE EventClient (
     ClientId INT,
 
     PRIMARY KEY (EventId, ClientId),
-    FOREIGN KEY (EventId) REFERENCES Event(EventId),
+    FOREIGN KEY (EventId) REFERENCES Event(EventId)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
     FOREIGN KEY (ClientId) REFERENCES Client(ClientId)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
 );
 
 CREATE TABLE EventRoom (
