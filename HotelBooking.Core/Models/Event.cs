@@ -1,5 +1,4 @@
-﻿using HotelBooking.Core.Services;
-
+﻿
 namespace HotelBooking.Core.Models;
 
 public class Event
@@ -15,6 +14,6 @@ public class Event
     public TimeSpan EndTime { get; set; }
 
     // Relasjoner, data-only
-    public List<EventClient> EventClients { get; set; } = new();
-    public List<EventRoom> EventRooms { get; set; } = new();
+    public List<EventClient>? EventClients { get; set; }
+    public List<EventRoom>? EventRooms { get; set; }
 }
