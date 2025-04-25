@@ -109,7 +109,8 @@ public partial class DashboardViewModel : ViewModelBase
                     Title = e.Name,
                     DateTime = $"{e.StartDate:d} {e.StartTime:hh\\:mm}",
                     Location = "TBD",
-                    AttendeeCount = $"{e.EventClients.Count} attendees"
+                    AttendeeCount = $"{(e.EventClients?.Count ?? 0)} attendees"
+
                 });
             UpcomingEventsList = new ObservableCollection<EventDisplay>(upcomingEventsList);
 
