@@ -28,28 +28,20 @@ public class EventService : IBackupService<Event>
     
     public async Task<bool> AddEventAsync(Event thisevent)
     {
-        var cleanEvent = new Event
-        {
-            Name = thisevent.Name,
-            HotelId = thisevent.HotelId,
-            OrganiserId = thisevent.OrganiserId,
-            StartDate = thisevent.StartDate,
-            EndDate = thisevent.EndDate,
-            StartTime = thisevent.StartTime,
-            EndTime = thisevent.EndTime
-        };
-
+        var cleanEvent = GetCleanEvent(thisevent);
         return await _db.InsertAsync(cleanEvent);
-
     }
 
 
-    public async Task<bool> CreateEventAsync(Event thisevent, List<string> clientBillingAddress, List<string> roomNumbers)
+    public async Task<bool> CreateEventAsync(Event thisevent, List<string> clientBillingAddress, List<string>? roomNumbers = null)
     {
         if (!await AddEventAsync(thisevent)) return false;
         var lastEvent = await GetEventByNameAndDateAsync(thisevent.Name, thisevent.StartDate);
-        
-        if (lastEvent == null) return false;
+        if (lastEvent == null)
+        {
+            return false;
+        }
+
 
         foreach (var billingaddress in clientBillingAddress)
         {
@@ -63,31 +55,33 @@ public class EventService : IBackupService<Event>
             await _db.InsertAsync(newEventClient);
         }
 
-        foreach (var roomNumber in roomNumbers)
-        {
-            Room? room = await _roomService.GetRoomByNumberAsync(roomNumber);
-            if (room == null) continue;
-            EventRoom newEventRoom = new EventRoom
+        if (roomNumbers != null)
+            foreach (var roomNumber in roomNumbers)
             {
-                EventId = lastEvent.EventId,
-                RoomId = room.RoomId,
-            };
-            await _db.InsertAsync(newEventRoom);
-        }
-        
+                Room? room = await _roomService.GetRoomByNumberAsync(roomNumber);
+                if (room == null) continue;
+                EventRoom newEventRoom = new EventRoom
+                {
+                    EventId = lastEvent.EventId,
+                    RoomId = room.RoomId,
+                };
+                await _db.InsertAsync(newEventRoom);
+            }
+
         return true;
     }
 
     public async Task<Event?> GetEventByNameAndDateAsync(string name, DateTime startDate)
     {
         var connection = _db.GetConnection();
-        var query = @"SELECT * FROM Event WHERE Name = @Name AND StartDate = @StartDate";
+        var query = @"SELECT * FROM Event WHERE Name = @Name AND DATE(StartDate) = DATE(@StartDate)";
         return await connection.QuerySingleOrDefaultAsync<Event>(query, new { Name = name, StartDate = startDate });
     }
 
     public async Task<bool> UpdateEventAsync(Event thisevent)
     {
-        return await _db.UpdateAsync(thisevent);
+        var cleanEvent = GetCleanEvent(thisevent);
+        return await _db.UpdateAsync(cleanEvent);
     }
 
     public async Task<bool> DeleteEventAsync(Event thisevent)
@@ -124,7 +118,7 @@ public class EventService : IBackupService<Event>
     {
         foreach (var item in items)
         {
-            await _db.InsertAsync(item);
+            await AddEventAsync(item);
         }
     }
 
@@ -172,6 +166,21 @@ public class EventService : IBackupService<Event>
         return roomsForEvent;
     }
 
+    public EventDBWriter GetCleanEvent(Event thisevent)
+    {
+        var cleanEvent = new EventDBWriter
+        {
+            EventId = thisevent.EventId,
+            Name = thisevent.Name,
+            HotelId = thisevent.HotelId,
+            OrganiserId = thisevent.OrganiserId,
+            StartDate = thisevent.StartDate,
+            EndDate = thisevent.EndDate,
+            StartTime = thisevent.StartTime,
+            EndTime = thisevent.EndTime
+        };
+        return cleanEvent;
+    }
 
 
 }
