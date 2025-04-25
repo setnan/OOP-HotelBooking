@@ -162,40 +162,25 @@ public partial class EventViewModel : ViewModelBase
                 HotelId = 1,
                 OrganiserId = SelectedClient.ClientId 
             };
+            List<string> clientsEmails = new List<string>()
+            {
+                SelectedClient.BillingAddress
+            };
 
-            var success = await _eventService.AddEventAsync(newEvent);
+            var success = await _eventService.CreateEventAsync(newEvent, clientsEmails);
             if (!success)
             {
                 ErrorMessage = "Kunne ikke opprette hendelsen.";
                 return;
             }
-
-            var createdEvent = await _eventService.GetEventByNameAndDateAsync(newEvent.Name, newEvent.StartDate);
-            if (createdEvent == null)
-            {
-                ErrorMessage = "Kunne ikke finne det opprettede eventet.";
-                return;
-            }
-
-            var eventClient = new EventClient
-            {
-                EventId = createdEvent.EventId,
-                ClientId = SelectedClient.ClientId
-            };
-
-            var clientAdded = await _eventClientService.AddAsync(eventClient);
-            if (!clientAdded)
-            {
-                ErrorMessage = "Kunne ikke koble klient til hendelsen.";
-                return;
-            }
+            
 
             await LoadEvents();
             ClearForm();
         }
         catch (Exception ex)
         {
-            ErrorMessage = $"En feil oppstod: {ex.Message}";
+            ErrorMessage = $"En feil oppstod: {ex.Message} errortype: {ex.GetType()}";
         }
     }
 
